@@ -15,7 +15,7 @@
 ## 📸 Project Preview
 
 <p align="center">
-  <img src="img/tourism-website-template.jpg" alt="Travel Qila website preview" width="90%"/>
+  <img src="tourism-website-template.jpg" alt="Travel Qila website preview" width="90%"/>
 </p>
 
 *Travel Qila brings destinations, travel packages and travel-related information together in one website experience.*
