@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Terms and Conditions for using the Travel Qila website and submitting travel enquiries.">
+  <meta name="robots" content="index,follow">
+  <title>Terms &amp; Conditions | Travel Qila</title>
+
+  <!-- Travel Qila's existing template styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+
+  <style>
+    /* Travel Qila colours matched to the supplied live-site screenshot. */
+    :root {
+      color-scheme: light;
+      --tq-primary: #13357B;       /* royal-blue header and buttons */
+      --tq-content: #B8C2DB;       /* pale blue/lavender content panel */
+      --tq-footer: #14141F;        /* charcoal footer */
+      --tq-ink: #101B32;           /* dark navy text on pale content */
+      --tq-muted: #35415B;
+      --tq-link: #13357B;
+      --tq-border: rgba(19, 53, 123, .22);
+    }
+
+    html { color-scheme: light; }
+    body {
+      background: var(--tq-content) !important;
+      color: var(--tq-ink);
+      color-scheme: light;
+    }
+    /* Explicit colours help keep Edge's dark-mode heuristics from recolouring the page. */
+    .legal-content,
+    main.legal-content {
+      background: #B8C2DB !important;
+      color: #101B32 !important;
+    }
+    .legal-card { max-width: 1000px; margin: 0 auto; }
+    .legal-card h2 {
+      color: #101B32 !important;
+      font-size: 1.45rem;
+      margin: 2rem 0 .85rem;
+      font-weight: 600;
+    }
+    .legal-card h2:first-of-type { margin-top: 0; }
+    .legal-card p, .legal-card li {
+      color: #17233D !important;
+      line-height: 1.85;
+    }
+    .legal-card ul { padding-left: 1.25rem; }
+    .legal-card li { margin-bottom: .45rem; }
+    .legal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem 1.5rem;
+      color: #35415B !important;
+      font-size: .95rem;
+    }
+    .legal-notice {
+      border-left: 4px solid #13357B;
+      background: #CAD3E7 !important;
+      color: #101B32 !important;
+      padding: 1rem 1.25rem;
+      border-radius: .25rem;
+    }
+    .legal-notice strong { color: #101B32 !important; }
+    .legal-card a { color: #13357B !important; overflow-wrap: anywhere; }
+    .legal-card a:hover { color: #0B2456 !important; }
+    .legal-card hr { border-color: var(--tq-border); opacity: 1; }
+    .legal-card .text-muted,
+    .legal-card .small.text-muted { color: #35415B !important; }
+    .legal-card .btn-primary,
+    .legal-card .btn-outline-primary:hover {
+      background: #13357B !important;
+      border-color: #13357B !important;
+      color: #FFFFFF !important;
+    }
+    .legal-card .btn-outline-primary {
+      color: #13357B !important;
+      border-color: #13357B !important;
+    }
+
+    /* Brand header and footer stay identical to the supplied site reference. */
+    .container-fluid.bg-primary,
+    .btn-primary,
+    .bg-primary { background-color: #13357B !important; }
+    .btn-primary { border-color: #13357B !important; color: #FFFFFF !important; }
+    .btn-primary:hover { background-color: #0E2B68 !important; border-color: #0E2B68 !important; }
+    .container-fluid.footer { background: #14141F !important; }
+    .navbar .navbar-brand h1,
+    .navbar .nav-link { color: #FFFFFF !important; }
+    .navbar .nav-link:hover,
+    .navbar .nav-link.active { color: #B8C2DB !important; }
+
+    @media (max-width: 767.98px) {
+      .legal-content { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+      .legal-card h2 { font-size: 1.25rem; }
+      .legal-meta { font-size: .88rem; }
+    }
+
+    @media print {
+      body, .legal-content { background: #FFFFFF !important; }
+      .navbar, .container-fluid.footer, #spinner, .topbar, .print-hide { display: none !important; }
+      .container-fluid.bg-breadcrumb { background: #FFFFFF !important; padding: 1rem !important; }
+      .container-fluid.bg-breadcrumb h1, .container-fluid.bg-breadcrumb .breadcrumb-item,
+      .container-fluid.bg-breadcrumb .breadcrumb-item a { color: #000000 !important; }
+      .legal-card h2, .legal-card p, .legal-card li, .legal-notice,
+      .legal-meta, .legal-card .text-muted { color: #222222 !important; }
+      .legal-notice { background: #F3F3F3 !important; border-color: #333333 !important; }
+      a { text-decoration: none; color: #000000 !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Spinner Start -->
+  <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <!-- Spinner End -->
+
+  <!-- Topbar Start -->
+  <div class="container-fluid bg-primary px-5 d-none d-lg-block">
+    <div class="row gx-0">
+      <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+        <div class="d-inline-flex align-items-center" style="height: 45px;">
+          <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#" aria-label="Travel Qila on Twitter"><i class="fab fa-twitter"></i></a>
+          <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#" aria-label="Travel Qila on Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#" aria-label="Travel Qila on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#" aria-label="Travel Qila on Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-4 text-center text-lg-end"><div class="d-inline-flex align-items-center" style="height:45px;"><a href="contact.html" class="text-light"><small><i class="fa fa-envelope me-2"></i>Contact us</small></a></div></div>
+    </div>
+  </div>
+  <!-- Topbar End -->
+
+  <!-- Navbar Start -->
+  <div class="container-fluid position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+      <a href="index.html" class="navbar-brand p-0"><h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila</h1></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"><span class="fa fa-bars"></span></button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0">
+          <a href="index.html" class="nav-item nav-link">Home</a>
+          <a href="about.html" class="nav-item nav-link">About</a>
+          <a href="services.html" class="nav-item nav-link">Services</a>
+          <a href="packages.html" class="nav-item nav-link">Packages</a>
+          <a href="blog.html" class="nav-item nav-link">Blog</a>
+          <a href="contact.html" class="nav-item nav-link">Contact</a>
+        </div>
+        <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Send an Enquiry</a>
+      </div>
+    </nav>
+  </div>
+  <!-- Navbar End -->
+
+  <!-- Page Header -->
+  <div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+      <h1 class="text-white display-3 mb-4">Terms &amp; Conditions</h1>
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">Terms &amp; Conditions</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Terms Content -->
+  <main class="container-fluid legal-content py-5">
+    <div class="container py-3">
+      <article class="legal-card">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <div>
+            <h2 class="mb-2">Terms governing your use of Travel Qila</h2>
+            <div class="legal-meta"><span><i class="far fa-calendar-alt me-2"></i>Effective date: 15 November 2026</span><span><i class="fas fa-building me-2"></i>Operated by Imperial Technologies</span></div>
+          </div>
+          <button class="btn btn-outline-primary rounded-pill px-4 print-hide" type="button" onclick="window.print()"><i class="fas fa-print me-2"></i>Print terms</button>
+        </div>
+
+        <div class="legal-notice mb-4">
+          <strong>Please read carefully.</strong> Travel Qila currently provides destination and travel information and a way to submit travel enquiries. Sending an enquiry through this website is <strong>not</strong> a confirmed reservation, ticket, hotel booking, tour booking or contract for travel services. No online payment is collected through the enquiry form.
+        </div>
+
+        <p>These Terms and Conditions ("Terms") govern your access to and use of the Travel Qila website, including its pages, content, enquiry forms and related features (the "Website"). The Website is operated by <strong>Imperial Technologies</strong> ("Travel Qila", "we", "us" or "our"). By accessing or using the Website, you agree to these Terms. If you do not agree, please do not use the Website.</p>
+
+        <h2>1. About Travel Qila and the services currently offered</h2>
+        <p>Travel Qila is an online travel discovery and enquiry platform. Visitors may browse destinations, travel guides, tours and package information and may send us a request for further information or a proposed itinerary.</p>
+        <p>At this time, the Website's booking interface is an <strong>enquiry facility</strong>. It allows you to tell us what you are interested in so that our team may review the request and, where appropriate, contact you with further information or a proposal. The Website does not itself confirm or issue airline tickets, hotel reservations, transport bookings, visas, tour reservations or other travel products merely because you submit a form or click a button.</p>
+        <p>We may update, suspend, remove or add Website features. A feature described on the Website should not be treated as available for purchase unless we separately confirm its availability and applicable terms in writing.</p>
+
+        <h2>2. Eligibility and acceptable use</h2>
+        <p>You must be legally capable of entering into a binding agreement under the laws applicable to you to make a request or enter into a transaction. If you are making an enquiry for another person or a group, you confirm that you are authorised to provide the information you submit on their behalf.</p>
+        <p>You agree to use the Website lawfully and not to:</p>
+        <ul>
+          <li>submit false, misleading, incomplete or unauthorised personal or travel information;</li>
+          <li>use the Website for fraud, harassment, unlawful activity or to infringe another person's rights;</li>
+          <li>attempt to gain unauthorised access to the Website, its systems, accounts or data;</li>
+          <li>introduce malware, interfere with the Website's operation, scrape it in a manner that overloads it, or bypass security controls; or</li>
+          <li>copy, republish, commercially exploit or misuse Website content except as permitted by law or with our prior written permission.</li>
+        </ul>
+
+        <h2>3. Enquiries are not bookings</h2>
+        <p>Submitting an enquiry, receiving an automated acknowledgement, speaking with our team, or seeing a package on the Website does not create a confirmed booking or guarantee that a service is available. An enquiry is a request for information only.</p>
+        <p>A booking or other travel-service arrangement will exist only if and when the relevant service provider and/or Travel Qila (as applicable to the specific arrangement) expressly accepts the request and issues written confirmation identifying the service, travellers, dates, price, payment instructions and applicable supplier conditions. Do not make non-refundable travel arrangements in reliance on an unconfirmed enquiry.</p>
+        <p>We may ask you for additional information before preparing a proposal. We may decline or be unable to progress an enquiry, including where dates, inventory, supplier availability or other requirements cannot be met.</p>
+
+        <h2>4. Information, itineraries and prices</h2>
+        <p>Destination descriptions, photographs, sample itineraries, package details, durations, ratings, prices, discounts and other Website content are provided for general information and may be illustrative, indicative, incomplete or subject to change. Images may not depict the exact room, vehicle, activity, view or service that would be supplied.</p>
+        <p>Unless a written offer expressly states otherwise, displayed prices are not a binding quotation and do not guarantee availability. The final price may depend on travel dates, number and age of travellers, room or fare class, exchange rates, taxes, fees, supplier rules, availability and requested changes. Any applicable taxes, surcharges, inclusions and exclusions will be identified in the proposal or confirmation where relevant.</p>
+        <p>We make reasonable efforts to keep information useful and current, but we do not warrant that every listing, price, image, link or description is accurate, complete or up to date. Please verify important details with us and the relevant supplier before making a decision.</p>
+
+        <h2>5. Quotes, acceptance and changes</h2>
+        <p>Any proposal or quotation sent in response to an enquiry will be subject to the validity period, availability, payment deadline, inclusions, exclusions and conditions stated in that proposal. If no validity period is stated, you should ask us to reconfirm the offer before relying on it.</p>
+        <p>A proposal becomes binding only when accepted in the manner stated in that proposal and confirmed in writing by the relevant contracting party. Requests to change names, dates, destinations, passenger details, accommodation, transport or other arrangements are not effective unless accepted in writing. Changes may affect availability, price and supplier charges.</p>
+
+        <h2>6. Payments and payment instructions</h2>
+        <p>The Website currently does not collect online payments or process card transactions. Submitting an enquiry does not require you to pay through the Website.</p>
+        <p>If a travel arrangement is later offered and accepted, any payment will be made offline using the payment method and instructions separately provided in an official written quotation, invoice or confirmation. Before transferring money, verify the recipient name, amount, due date and payment details with us through the contact details independently confirmed by you. Do not send cash, bank credentials, card details, passwords, one-time passwords (OTPs) or UPI PINs in an enquiry form, email or message.</p>
+        <p>Do not make a payment solely on the basis of an unverified message, changed bank details or a payment request from an unknown person. Contact us to verify any unexpected payment instruction. Payment to a supplier or other third party may be governed by that party's own terms and payment rules.</p>
+
+        <h2>7. Cancellations, refunds and travel changes</h2>
+        <p>Because an enquiry is not a booking, there is no booking to cancel and no booking payment to refund merely as a result of submitting an enquiry. If you later accept a written travel proposal, the cancellation, amendment, no-show and refund rules applicable to that specific arrangement will be provided as part of the written offer or confirmation and may include supplier-imposed charges or deadlines.</p>
+        <p>Cancellation and refund rights can differ between airlines, hotels, transport operators, tour operators, insurers and other providers. Where a supplier is responsible for delivering a service or processing a refund, its applicable terms and procedures may apply. We will communicate the process applicable to the arrangement and, where agreed, assist with passing on a request; we do not promise a refund, amount or processing time unless that has been confirmed in writing and is within our control.</p>
+        <p>Nothing in these Terms removes any cancellation, refund or consumer right that cannot lawfully be excluded.</p>
+
+        <h2>8. Third-party travel providers and external websites</h2>
+        <p>Travel services may be provided by independent airlines, hotels, accommodation owners, transport operators, guides, tour operators, insurers, visa-service providers and other suppliers. Unless a written confirmation expressly says otherwise, those providers are independent businesses and are responsible for delivering the services they undertake to provide.</p>
+        <p>Where your confirmed arrangement is directly with a third-party provider, that provider's booking conditions, safety requirements, baggage rules, check-in rules, cancellation terms and other policies may apply. We are not responsible for acts or omissions of independent providers to the extent permitted by applicable law, but this does not exclude any responsibility that we may have under a contract with you or that cannot legally be excluded.</p>
+        <p>The Website may contain links to third-party websites or services. Those links are provided for convenience; we do not control and are not responsible for their content, security, availability or privacy practices. Review their terms and privacy notices before using them.</p>
+
+        <h2>9. Traveller responsibilities</h2>
+        <p>You are responsible for checking that all traveller details supplied by you are accurate and for reviewing any written proposal or confirmation promptly. Depending on your destination and itinerary, you may also be responsible for:</p>
+        <ul>
+          <li>holding valid passports, visas, permits and other required travel documents;</li>
+          <li>meeting entry, transit, vaccination, health, insurance and other requirements applicable to your journey;</li>
+          <li>arriving at airports, stations, hotels and meeting points on time and following supplier instructions;</li>
+          <li>complying with local laws, customs, safety instructions and accommodation or transport rules; and</li>
+          <li>checking that the proposed itinerary, physical activities and travel conditions are suitable for you and the people travelling with you.</li>
+        </ul>
+        <p>Travel requirements can change and may differ by nationality, residence, transit point and destination. You should verify requirements with the relevant government authorities and service providers before travel. General information on the Website is not immigration, medical, legal or other professional advice.</p>
+
+        <h2>10. Website content and intellectual property</h2>
+        <p>Unless otherwise stated, the Website's original text, branding, layout, graphics and other materials are owned by or licensed to Imperial Technologies and are protected by applicable intellectual-property laws. You may view and use the Website for personal, non-commercial information purposes. You must not reproduce, modify, distribute, publicly display or commercially exploit Website materials without permission, except where permitted by law.</p>
+        <p>Third-party names, logos, photographs and materials remain the property of their respective owners. Their appearance on the Website does not necessarily imply endorsement or affiliation.</p>
+
+        <h2>11. Privacy and communications</h2>
+        <p>When you submit an enquiry or contact us, you may provide personal information such as your name, email address, travel dates, destination preferences, traveller count and message. We use information in accordance with our Privacy Policy and applicable law, including to review and respond to enquiries, communicate with you and, where relevant, coordinate a requested proposal.</p>
+        <p>Please do not submit payment credentials, government identity documents or sensitive personal information unless we specifically request information that is necessary for a confirmed service and provide an appropriate channel. Our enquiry form should not be used to send confidential or highly sensitive information.</p>
+        <p><strong>Privacy Policy:</strong> A separate Privacy Policy should be published at <a href="privacy-policy.html">privacy-policy.html</a> and linked here once it is available. Until then, do not treat this Terms page as a complete privacy notice.</p>
+
+        <h2>12. Availability, security and disclaimers</h2>
+        <p>We aim to keep the Website available and functional, but we do not guarantee uninterrupted, error-free or secure access. The Website may be unavailable temporarily for maintenance, updates, technical issues or reasons outside our reasonable control.</p>
+        <p>To the extent permitted by law, the Website and its general information are provided on an "as is" and "as available" basis. We do not warrant that the Website will meet every user's requirements, that errors will always be corrected, or that files or servers are free of harmful components. You are responsible for using appropriate device security and checking information that is important to your travel plans.</p>
+
+        <h2>13. Limitation of liability</h2>
+        <p>Nothing in these Terms excludes or limits liability where doing so would be unlawful, including liability for fraud, wilful misconduct, death or personal injury caused by negligence where such exclusion is prohibited, or statutory consumer rights that cannot be waived.</p>
+        <p>Subject to the preceding paragraph and to the maximum extent permitted by applicable law, we are not liable for indirect or consequential loss, loss of profit, loss of opportunity, loss of data, or costs arising from your use of general Website information, inability to access the Website, or reliance on an unconfirmed enquiry. This paragraph does not remove any responsibility we have expressly accepted in a written booking confirmation or under applicable law.</p>
+        <p>Where a travel service is supplied by an independent provider, responsibility for that provider's performance will be determined by the contract and applicable law governing that service. Nothing here is intended to misrepresent our role or remove a remedy available to you by law.</p>
+
+        <h2>14. Indemnity</h2>
+        <p>To the extent permitted by applicable law, you agree to be responsible for reasonable losses, claims and expenses directly caused by your unlawful use of the Website, your material breach of these Terms, or your infringement of another person's rights. This does not require you to indemnify us for our own negligence, unlawful conduct or other liability that cannot lawfully be transferred to you.</p>
+
+        <h2>15. Suspension and termination</h2>
+        <p>We may restrict or suspend access to the Website where reasonably necessary to protect the Website, users, our business or third parties, to comply with law, or to address misuse or a security risk. Where appropriate and lawful, we will take reasonable steps to explain the reason. Suspension of Website access does not remove rights or obligations that have already arisen under a separate confirmed agreement.</p>
+
+        <h2>16. Changes to these Terms</h2>
+        <p>We may revise these Terms to reflect changes to the Website, our operations or applicable law. The updated version will be posted on this page with a revised effective date. Changes apply from the date stated on the updated page and do not retrospectively alter a confirmed booking agreement unless permitted by that agreement and applicable law. Please review this page periodically.</p>
+
+        <h2>17. Governing law and disputes</h2>
+        <p>These Terms are intended to be governed by the laws of India, subject to any mandatory consumer-protection or other laws that apply to you and cannot lawfully be excluded. Courts having competent jurisdiction in New Delhi, India shall have jurisdiction, subject always to any non-excludable right to bring a claim before another competent court, consumer commission or dispute-resolution body.</p>
+        <p>If you have a concern, please contact us first so that we can try to resolve it informally. Nothing in this section prevents you from using a statutory complaint, consumer-protection or other legal remedy available to you.</p>
+
+        <h2>18. General provisions</h2>
+        <p>If any provision of these Terms is held invalid or unenforceable, the remaining provisions will continue to apply to the extent permitted by law. A failure or delay in enforcing a provision is not a waiver of that provision. These Website Terms do not replace any separate written agreement or supplier terms that apply to a confirmed travel service. If there is a conflict, the specific written booking confirmation and mandatory applicable law will govern the relevant service to the extent of the conflict.</p>
+
+        <h2>19. Contact us</h2>
+        <p>For questions about these Terms or a Travel Qila enquiry, contact the Website operator:</p>
+        <ul>
+          <li><strong>Operator:</strong> Imperial Technologies (operating the Travel Qila website)</li>
+          <li><strong>Email:</strong> <a href="mailto:info@travelqila.com">info@travelqila.com</a></li>
+          <li><strong>Telephone:</strong> <a href="tel:+919871101345">+91 98711 01345</a></li>
+          <li><strong>Postal address shown on the Website:</strong> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi – 110034, India</li>
+        </ul>
+        <p class="small text-muted mb-0">Please verify that the operator's legal name, postal address, email address and telephone number above are current and accurate before publishing this page.</p>
+
+        <hr class="my-5">
+        <p class="small text-muted mb-0">© <span id="currentYear">2026</span> Travel Qila. Operated by Imperial Technologies. All rights reserved.</p>
+      </article>
+    </div>
+  </main>
+
+  <!-- Footer Start -->
+  <div class="container-fluid footer py-5">
+    <div class="container py-5">
+      <div class="row g-5">
+        <div class="col-md-6 col-lg-6 col-xl-4">
+          <div class="footer-item d-flex flex-column">
+            <h4 class="mb-4 text-white">Get In Touch</h4>
+            <a href="contact.html"><i class="fas fa-home me-2"></i>80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
+            <a href="mailto:info@travelqila.com"><i class="fas fa-envelope me-2"></i>info@travelqila.com</a>
+            <a href="tel:+919871101345"><i class="fas fa-phone me-2"></i>+91 9871101345</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-4">
+          <div class="footer-item d-flex flex-column">
+            <h4 class="mb-4 text-white">Explore</h4>
+            <a href="index.html"><i class="fas fa-angle-right me-2"></i>Home</a>
+            <a href="about.html"><i class="fas fa-angle-right me-2"></i>About</a>
+            <a href="packages.html"><i class="fas fa-angle-right me-2"></i>Packages</a>
+            <a href="contact.html"><i class="fas fa-angle-right me-2"></i>Contact</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-4">
+          <div class="footer-item d-flex flex-column">
+            <h4 class="mb-4 text-white">Legal &amp; Support</h4>
+            <a href="terms.html"><i class="fas fa-angle-right me-2"></i>Terms &amp; Conditions</a>
+            <a href="privacy-policy.html"><i class="fas fa-angle-right me-2"></i>Privacy Policy</a>
+            <a href="contact.html"><i class="fas fa-angle-right me-2"></i>Contact</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer End -->
+
+  <a href="#" class="btn btn-primary btn-lg-square back-to-top" aria-label="Back to top"><i class="fa fa-arrow-up"></i></a>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/easing/easing.min.js"></script>
+  <script src="lib/waypoints/waypoints.min.js"></script>
+  <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+  <script src="lib/lightbox/js/lightbox.min.js"></script>
+  <script src="js/main.js"></script>
+  <script>document.getElementById('currentYear').textContent = new Date().getFullYear();</script>
+</body>
+</html>
