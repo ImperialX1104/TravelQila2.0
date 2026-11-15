@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Manage your Travel Qila account.">
+    <meta name="theme-color" content="#13357B">
+    <title>My Dashboard | Travel Qila</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/auth.css" rel="stylesheet">
+    <script src="js/auth-config.js"></script>
+</head><body class="auth-page" data-auth-page="dashboard">
+<header class="bg-white border-bottom">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+        <a class="auth-brand" href="index.html"><i class="fas fa-map-marker-alt"></i>Travel Qila</a>
+        <nav class="auth-site-nav" aria-label="Main navigation">
+            <a href="index.html">Home</a>
+            <a href="packages.html">Packages</a>
+            <a href="booking.html">Booking</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </div>
+</header>
+<main class="auth-main"><div class="container"><div class="container" style="max-width:960px"><div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <span class="auth-eyebrow">Your account</span>
+        <h1 class="auth-title h2 mb-1">My Dashboard</h1>
+        <p class="text-secondary mb-0">Welcome back, <strong data-profile-name>Traveller</strong>.</p>
+    </div>
+    <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-logout><i class="fas fa-sign-out-alt me-2"></i>Sign Out</button>
+</div>
+<div class="auth-message" data-dashboard-message></div>
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="auth-dashboard-card">
+            <span class="auth-account-icon mb-3"><i class="fas fa-envelope"></i></span>
+            <h3>Registered email</h3>
+            <div class="auth-dashboard-value" data-profile-email>Loading…</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="auth-dashboard-card">
+            <span class="auth-account-icon mb-3"><i class="fas fa-calendar-check"></i></span>
+            <h3>Member since</h3>
+            <div class="auth-dashboard-value" data-profile-created>Loading…</div>
+        </div>
+    </div>
+</div>
+<section class="auth-card p-4 p-lg-5" id="profile">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <span class="auth-account-icon"><i class="fas fa-user-edit"></i></span>
+        <div><h2 class="auth-title h4 mb-1">Personal information</h2><p class="text-secondary mb-0">Update the details saved to your account.</p></div>
+    </div>
+    <form class="auth-form" data-profile-form>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="profile-name">Full name</label>
+                <input class="form-control" id="profile-name" name="full_name" type="text" minlength="2" maxlength="100" autocomplete="name" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="profile-phone">Mobile number</label>
+                <input class="form-control" id="profile-phone" name="phone" type="tel" maxlength="30" autocomplete="tel">
+            </div>
+        </div>
+        <button class="btn btn-primary px-5 mt-4" type="submit">Save Changes</button>
+    </form>
+</section>
+<p class="small text-secondary mt-4 mb-0">Booking history, payments and notifications are not connected to this starter dashboard yet. They require their own backend workflows and access policies.</p>
+</div></div></main><footer class="auth-footer">
+    <div class="container">© <span id="auth-year"></span> Travel Qila. All rights reserved.</div>
+</footer>
+<script>document.getElementById("auth-year").textContent = new Date().getFullYear();</script>
+<script type="module" src="js/auth-pages.js"></script>
+</body>
+</html>
