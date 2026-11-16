@@ -1,9 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /dashboard.html
-Disallow: /login.html
-Disallow: /register.html
-Disallow: /forgot-password.html
-Disallow: /reset-password.html
 
+# Account pages carry noindex directives in their HTML.
+# Do not block crawling of these URLs; crawlers must be able to read noindex.
 Sitemap: https://travelqila.com/sitemap.xml
