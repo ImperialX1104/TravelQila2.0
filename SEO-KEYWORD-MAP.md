@@ -18,10 +18,10 @@ This is a page-to-intent map, not a list to paste into a meta-keywords tag. Use 
 | /tour.html | Customized holiday tours and itineraries | tailor-made trips, sightseeing, family tours, couple holidays |
 | /booking.html | Holiday booking enquiry | plan a trip, request itinerary, travel quote |
 | /contact.html | Contact Travel Qila | travel agency contact, Pitampura travel agency, New Delhi travel planner |
-| /blog.html | Travel blog and destination guides | travel tips, itineraries, budgets, trip planning |
-| /guides.html | Travel guides and visa information | entry requirements, travel preparation, destination advice |
-| /gallery.html | Travel photo gallery | destination inspiration, holiday photographs |
-| /testimonial.html | Travel Qila customer reviews | traveller feedback, service experiences |
+| /blog.html | Travel blog and destination guides | travel tips, itineraries, budgets, trip planning (currently noindex until original articles replace template content) |
+| /guides.html | Travel guides and visa information | entry requirements, travel preparation, destination advice (currently noindex until useful original guide content is published) |
+| /gallery.html | Travel photo gallery | destination inspiration, holiday photographs (currently noindex until curated original/appropriately licensed image content and descriptive alt text are ready) |
+| /testimonial.html | Travel Qila customer reviews | traveller feedback, service experiences (currently noindex until genuine, permissioned customer reviews replace template content) |
 | /privacy.html | Privacy policy | branded/legal intent |
 | /terms.html | Terms and conditions | branded/legal intent |
 
@@ -55,3 +55,7 @@ This is a page-to-intent map, not a list to paste into a meta-keywords tag. Use 
 ## Keyword research still required
 
 Search-volume, competition and country-specific demand have not been verified with a keyword tool or Search Console data. Validate priority phrases in Google Keyword Planner and Search Console, using target country, language and device filters. Refine based on impressions, clicks, enquiries and conversion quality.
+
+## Temporary indexing decisions
+
+The blog, guides, gallery and testimonial template pages are set to `noindex, follow` and excluded from the XML sitemap until they contain original, accurate content. Remove noindex and add them back to the sitemap only after their content is reviewed and ready for search visitors. Do not publish fabricated testimonials or placeholder blog entries.
