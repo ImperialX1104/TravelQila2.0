@@ -34,7 +34,7 @@ async function collectHtml(directory) {
 
 function getAttribute(tag, attribute) {
   const escaped = attribute.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = tag.match(new RegExp("\\b" + escaped + "\\s*=\\s*([\\"'])(.*?)\\1", "i"));
+  const match = tag.match(new RegExp(String.raw`\b${escaped}\s*=\s*([\'"])(.*?)\1`, "i"));
   return match?.[2]?.trim() ?? "";
 }
 
