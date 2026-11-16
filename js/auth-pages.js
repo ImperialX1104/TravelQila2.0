@@ -253,11 +253,14 @@ if (page === "dashboard") {
                 const save = profileForm.querySelector('[type="submit"]');
                 save.disabled = true;
                 try {
-                    const { error } = await supabase.from("profiles").update({
+                    const { data: updatedProfile, error } = await supabase.from("profiles").update({
                         full_name: fullName,
                         phone: phone || null
-                    }).eq("id", user.id);
+                    }).eq("id", user.id).select("id").maybeSingle();
                     if (error) throw error;
+                    if (!updatedProfile) {
+                        throw new Error("Profile row was not updated. Apply supabase/schema.sql and verify the auth-user profile trigger.");
+                    }
                     const { error: metadataError } = await supabase.auth.updateUser({
                         data: { full_name: fullName, phone }
                     });
