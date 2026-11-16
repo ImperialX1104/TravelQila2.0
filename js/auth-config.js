@@ -17,7 +17,7 @@
 
 window.TRAVELQILA_AUTH_CONFIG = Object.freeze({
     supabaseUrl: "https://stjhubpzshzyjqkscjty.supabase.co",
-    supabasePublishableKey: "YOUR_EXISTING_PUBLISHABLE_KEY",
+    supabasePublishableKey: "sb_publishable_MHOsXjYvXj5Ah6_WFEl6HQ_ObHg8bro",
     siteUrl: siteUrl
 });
 });
