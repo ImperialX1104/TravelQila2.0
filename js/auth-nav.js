@@ -1,7 +1,7 @@
 import { supabase, authPageUrl } from "./auth-client.js";
 
 function normalizedText(anchor) {
-    return (anchor.textContent || "").replace(/\\s+/g, " ").trim().toLowerCase();
+    return (anchor.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
 }
 
 function findAnchors(test) {
