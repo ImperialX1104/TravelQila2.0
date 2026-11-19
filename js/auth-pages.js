@@ -1,198 +1,313 @@
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.117.1";
+import {
+    supabase,
+    authPageUrl,
+    setAuthMessage,
+    clearAuthMessage
+} from "./auth-client.js";
+
+"use strict";
 
 // =====================================================
-// 1. CONFIGURATION VALIDATION
+// 1. PAGE INITIALIZATION
 // =====================================================
 
-const config = window.TRAVELQILA_AUTH_CONFIG;
+const page = document.body.dataset.authPage;
+const form = document.querySelector("[data-auth-form]");
+const message = document.querySelector("[data-auth-message]");
 
-if (
-    !config ||
-    typeof config.supabaseUrl !== "string" ||
-    typeof config.supabasePublishableKey !== "string" ||
-    !config.supabaseUrl.trim() ||
-    !config.supabasePublishableKey.trim() ||
-    config.supabaseUrl.includes("YOUR_PROJECT_REF") ||
-    config.supabasePublishableKey.includes("YOUR_SUPABASE_")
-) {
-    throw new Error(
-        "Travel Qila authentication is not configured. Check js/auth-config.js."
-    );
+const MIN_PASSWORD_LENGTH = 12;
+const MAX_PASSWORD_BYTES = 72;
+
+function showMessage(text, type = "info") {
+    setAuthMessage(message, text, type);
 }
 
-function validateUrl(value, label, allowLocalHttp = false) {
-    let url;
+function getField(name) {
+    return form?.elements.namedItem(name);
+}
+
+function getPasswordBytes(password) {
+    return new TextEncoder().encode(password).length;
+}
+
+function validatePassword(password) {
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        return "Password must contain at least 12 characters.";
+    }
+
+    if (getPasswordBytes(password) > MAX_PASSWORD_BYTES) {
+        return "Password is too long. Use a shorter password.";
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return "Include at least one uppercase letter.";
+    }
+
+    if (!/[a-z]/.test(password)) {
+        return "Include at least one lowercase letter.";
+    }
+
+    if (!/[0-9]/.test(password)) {
+        return "Include at least one number.";
+    }
+
+    if (!/[^A-Za-z0-9]/.test(password)) {
+        return "Include at least one special character.";
+    }
+
+    return null;
+}
+
+function getSafeError(error) {
+    const code = error?.code;
+    const message = error?.message || "";
+
+    const knownErrors = {
+        invalid_credentials:
+            "Incorrect email or password.",
+
+        email_not_confirmed:
+            "Please verify your email address before signing in.",
+
+        user_not_found:
+            "Incorrect email or password.",
+
+        weak_password:
+            "Your password does not meet the security requirements.",
+
+        over_email_send_rate_limit:
+            "Too many email requests. Please try again later.",
+
+        over_request_rate_limit:
+            "Too many attempts. Please wait before trying again."
+    };
+
+    if (code && knownErrors[code]) {
+        return knownErrors[code];
+    }
+
+    if (/invalid login credentials/i.test(message)) {
+        return "Incorrect email or password.";
+    }
+
+    if (/email not confirmed/i.test(message)) {
+        return "Please verify your email address before signing in.";
+    }
+
+    return message || "Something went wrong. Please try again.";
+}
+
+function setSubmitting(isSubmitting) {
+    if (!form) return;
+
+    const button = form.querySelector('button[type="submit"]');
+
+    if (!button) return;
+
+    if (isSubmitting) {
+        button.dataset.originalText = button.innerHTML;
+        button.disabled = true;
+        button.textContent = "Please wait...";
+        form.setAttribute("aria-busy", "true");
+    } else {
+        button.disabled = false;
+
+        if (button.dataset.originalText) {
+            button.innerHTML = button.dataset.originalText;
+            delete button.dataset.originalText;
+        }
+
+        form.removeAttribute("aria-busy");
+    }
+}
+
+// =====================================================
+// 2. LOGIN
+// =====================================================
+
+async function handleLogin(event) {
+    event.preventDefault();
+
+    clearAuthMessage(message);
+
+    const email = getField("email")?.value.trim();
+    const password = getField("password")?.value;
+
+    if (!email || !password) {
+        showMessage("Please enter your email and password.", "error");
+        return;
+    }
+
+    setSubmitting(true);
 
     try {
-        url = new URL(value);
-    } catch {
-        throw new Error(`${label} must be a valid URL.`);
-    }
+        const { data, error } =
+            await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
 
-    const isLocalhost =
-        url.hostname === "localhost" ||
-        url.hostname === "127.0.0.1";
-
-    if (
-        url.protocol !== "https:" &&
-        !(allowLocalHttp && isLocalhost && url.protocol === "http:")
-    ) {
-        throw new Error(`${label} must use HTTPS.`);
-    }
-
-    if (url.username || url.password) {
-        throw new Error(`${label} must not contain credentials.`);
-    }
-
-    return url;
-}
-
-const supabaseUrl = validateUrl(
-    config.supabaseUrl.trim(),
-    "Supabase URL",
-    true
-);
-
-if (supabaseUrl.search || supabaseUrl.hash) {
-    throw new Error(
-        "Supabase URL must not contain query parameters or fragments."
-    );
-}
-
-const siteUrl = validateUrl(
-    config.siteUrl || window.location.origin,
-    "Site URL",
-    true
-);
-
-if (siteUrl.search || siteUrl.hash) {
-    throw new Error(
-        "Site URL must not contain query parameters or fragments."
-    );
-}
-
-const normalizedSiteUrl = siteUrl.href.replace(/\/+$/, "");
-
-// =====================================================
-// 2. APPROVED PAGE DESTINATIONS
-// =====================================================
-
-const ALLOWED_PAGES = new Set([
-    "index.html",
-    "booking.html",
-    "packages.html",
-    "dashboard.html",
-    "about.html",
-    "services.html",
-    "contact.html",
-    "login.html",
-    "register.html",
-    "forgot-password.html",
-    "reset-password.html"
-]);
-
-const ALLOWED_MESSAGE_TYPES = new Set([
-    "info",
-    "error",
-    "success",
-    "warning"
-]);
-
-// =====================================================
-// 3. SUPABASE CLIENT
-// =====================================================
-
-export const supabase = createClient(
-    supabaseUrl.href.replace(/\/+$/, ""),
-    config.supabasePublishableKey.trim(),
-    {
-        auth: {
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true,
-            flowType: "implicit"
+        if (error) {
+            throw error;
         }
-    }
-);
 
-// =====================================================
-// 4. SAFE INTERNAL PAGE URL
-// =====================================================
+        if (!data.session || !data.user) {
+            throw new Error(
+                "Login could not be completed. Please try again."
+            );
+        }
 
-export function authPageUrl(fileName) {
-    if (
-        typeof fileName !== "string" ||
-        !ALLOWED_PAGES.has(fileName)
-    ) {
-        throw new Error(
-            "Invalid authentication page destination."
+        window.location.replace(
+            authPageUrl("dashboard.html")
         );
+
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+    } finally {
+        setSubmitting(false);
     }
-
-    const baseUrl = new URL(`${normalizedSiteUrl}/`);
-    const destination = new URL(fileName, baseUrl);
-
-    const expectedPath =
-        `${baseUrl.pathname}${fileName}`;
-
-    if (
-        destination.origin !== baseUrl.origin ||
-        destination.pathname !== expectedPath ||
-        destination.search ||
-        destination.hash
-    ) {
-        throw new Error(
-            "Unsafe authentication redirect destination."
-        );
-    }
-
-    return destination.href;
 }
 
 // =====================================================
-// 5. SAFE RETURN DESTINATION
+// 3. REGISTRATION
 // =====================================================
 
-export function safeReturnTo(value) {
-    if (
-        typeof value !== "string" ||
-        !ALLOWED_PAGES.has(value)
-    ) {
-        return "dashboard.html";
+async function handleRegistration(event) {
+    event.preventDefault();
+
+    clearAuthMessage(message);
+
+    const fullName = getField("full_name")?.value.trim();
+    const email = getField("email")?.value.trim();
+    const phone = getField("phone")?.value.trim() || "";
+    const password = getField("password")?.value;
+    const confirmPassword =
+        getField("confirm_password")?.value;
+    const termsAccepted = getField("terms")?.checked;
+
+    if (!fullName || fullName.length < 2) {
+        showMessage("Please enter your full name.", "error");
+        return;
     }
 
-    return value;
+    if (!email || !password) {
+        showMessage("Please complete all required fields.", "error");
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showMessage("Your passwords do not match.", "error");
+        return;
+    }
+
+    const passwordError = validatePassword(password);
+
+    if (passwordError) {
+        showMessage(passwordError, "error");
+        return;
+    }
+
+    if (!termsAccepted) {
+        showMessage(
+            "Please accept the Terms and Privacy Policy.",
+            "error"
+        );
+        return;
+    }
+
+    setSubmitting(true);
+
+    try {
+        // Build the approved redirect first.
+        const verificationUrl = new URL(
+            authPageUrl("login.html")
+        );
+
+        verificationUrl.searchParams.set("verified", "1");
+
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: verificationUrl.href,
+                data: {
+                    full_name: fullName,
+                    phone
+                }
+            }
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        if (data.session) {
+            showMessage(
+                "Your account has been created successfully.",
+                "success"
+            );
+
+            window.location.replace(
+                authPageUrl("dashboard.html")
+            );
+
+            return;
+        }
+
+        showMessage(
+            "If your registration was successful, a verification email will arrive shortly. Please check your inbox and spam folder.",
+            "success"
+        );
+
+        form.reset();
+
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+    } finally {
+        setSubmitting(false);
+    }
 }
 
 // =====================================================
-// 6. AUTHENTICATION MESSAGE HANDLING
+// 4. EMAIL VERIFICATION MESSAGE
 // =====================================================
 
-export function setAuthMessage(element, message, kind = "info") {
-    if (!element) return;
+function handleVerificationMessage() {
+    if (page !== "login") return;
 
-    const safeKind = ALLOWED_MESSAGE_TYPES.has(kind)
-        ? kind
-        : "info";
+    const currentUrl = new URL(window.location.href);
 
-    element.textContent = String(message ?? "");
-    element.className = `auth-message is-visible is-${safeKind}`;
+    if (currentUrl.searchParams.get("verified") !== "1") {
+        return;
+    }
 
-    element.setAttribute(
-        "role",
-        safeKind === "error" ? "alert" : "status"
+    showMessage(
+        "Email verification completed. You can now sign in.",
+        "success"
     );
 
-    element.setAttribute("aria-live", "polite");
+    currentUrl.searchParams.delete("verified");
+
+    window.history.replaceState(
+        {},
+        document.title,
+        currentUrl.pathname +
+        currentUrl.search +
+        currentUrl.hash
+    );
 }
 
-export function clearAuthMessage(element) {
-    if (!element) return;
+// =====================================================
+// 5. EVENT REGISTRATION
+// =====================================================
 
-    element.textContent = "";
-    element.className = "auth-message";
-
-    element.removeAttribute("aria-live");
-    element.removeAttribute("role");
+if (form && page === "login") {
+    form.addEventListener("submit", handleLogin);
 }
+
+if (form && page === "register") {
+    form.addEventListener("submit", handleRegistration);
+}
+
+handleVerificationMessage();
