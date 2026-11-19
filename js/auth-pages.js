@@ -8,13 +8,22 @@ import {
 } from "./auth-client.js";
 
 /*
- * Travel Qila — Authentication Controller
+ * TRAVEL QILA — AUTHENTICATION CONTROLLER
  *
- * Browser-side validation improves UX; it is not an authorization boundary.
- * Supabase Auth enforces identity and password policy.
- * RLS enforces all database authorization.
- * Never expose a service-role or secret key in browser code.
+ * Compatible with the existing data-auth-page and data-auth-form
+ * HTML integration.
+ *
+ * Security boundaries:
+ * - Supabase Auth validates identities and credentials.
+ * - Database RLS controls profile access.
+ * - Never expose a service-role or secret key in browser code.
  */
+
+"use strict";
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
 const page = document.body?.dataset?.authPage || "";
 const form = document.querySelector("[data-auth-form]");
@@ -26,40 +35,43 @@ const MAX_PASSWORD_LENGTH = 128;
 const MAX_NAME_LENGTH = 100;
 const MAX_PHONE_LENGTH = 25;
 
-const GENERIC_AUTH_ERROR =
-    "We couldn't complete that request. Please try again later.";
+const ORIGINAL_SUBMIT_LABEL =
+    submitButton?.textContent?.trim() || "Continue";
 
 let isBusy = false;
 let recoverySession = false;
+let savingProfile = false;
 
-const originalDisabledState = new WeakMap();
-const originalSubmitLabel = submitButton?.textContent?.trim() || "Continue";
+const originalDisabledStates = new WeakMap();
 
-// ------------------------------------------------------------
-// SAFE DIAGNOSTICS
-// ------------------------------------------------------------
+// ============================================================
+// SAFE ERROR HANDLING
+// ============================================================
 
 function logSafeError(context, error) {
-    // Never log passwords, tokens, session objects, or form contents.
     console.error(`[Travel Qila] ${context}`, {
-        name: error?.name || "Error",
-        message: error?.message || "No error message supplied",
-        code: error?.code || null,
-        status: error?.status || error?.statusCode || null
+        name: error?.name || "UnknownError",
+        message: error?.message || String(error ?? "Unknown error"),
+        code: error?.code ?? null,
+        status: error?.status ?? error?.statusCode ?? null
     });
 }
 
-function showError(text = GENERIC_AUTH_ERROR) {
-    setAuthMessage(message, text, "error");
+function showError(text) {
+    setAuthMessage(
+        message,
+        text || "We couldn't complete that request. Please try again.",
+        "error"
+    );
 }
 
 function showSuccess(text) {
     setAuthMessage(message, text, "success");
 }
 
-// ------------------------------------------------------------
-// FORM HELPERS
-// ------------------------------------------------------------
+// ============================================================
+// FORM UTILITIES
+// ============================================================
 
 function field(name) {
     return form?.elements?.namedItem(name) ?? null;
@@ -77,23 +89,30 @@ function trimmedValue(name) {
     return rawValue(name).trim();
 }
 
-function controlsShouldBeDisabled() {
+function shouldLockControls() {
     return isBusy || (page === "reset" && !recoverySession);
 }
 
-function setFormControlsDisabled() {
+function updateFormLock() {
     if (!form) return;
 
-    const disabled = controlsShouldBeDisabled();
+    const locked = shouldLockControls();
 
-    form.querySelectorAll("input, select, textarea, button").forEach((control) => {
-        if (!originalDisabledState.has(control)) {
-            originalDisabledState.set(control, control.disabled);
+    form.querySelectorAll(
+        "input, select, textarea, button"
+    ).forEach((control) => {
+        if (!originalDisabledStates.has(control)) {
+            originalDisabledStates.set(
+                control,
+                control.disabled
+            );
         }
 
         control.disabled =
-            disabled || originalDisabledState.get(control);
+            locked || originalDisabledStates.get(control);
     });
+
+    form.setAttribute("aria-busy", String(isBusy));
 }
 
 function setBusy(busy, label = "Please wait…") {
@@ -102,21 +121,23 @@ function setBusy(busy, label = "Please wait…") {
     if (submitButton) {
         submitButton.textContent = busy
             ? label
-            : originalSubmitLabel;
+            : ORIGINAL_SUBMIT_LABEL;
     }
 
-    form?.setAttribute("aria-busy", String(busy));
-    setFormControlsDisabled();
+    updateFormLock();
 }
 
-function disableRecoveryForm() {
-    recoverySession = false;
-    setFormControlsDisabled();
+function showFormError(text) {
+    showError(text);
 }
 
-// ------------------------------------------------------------
+function clearFormMessage() {
+    clearAuthMessage(message);
+}
+
+// ============================================================
 // VALIDATION
-// ------------------------------------------------------------
+// ============================================================
 
 function validEmail(email) {
     return (
@@ -143,7 +164,7 @@ function validPhone(phone) {
     );
 }
 
-function passwordIsAcceptable(password) {
+function validPassword(password) {
     return (
         typeof password === "string" &&
         password.length >= MIN_PASSWORD_LENGTH &&
@@ -155,16 +176,14 @@ function passwordIsAcceptable(password) {
     );
 }
 
-function passwordErrorMessage() {
+function passwordRequirementsMessage() {
     return "Use 12–128 characters with uppercase, lowercase, a number and a symbol.";
 }
 
-// ------------------------------------------------------------
-// AUTH STATE EVENTS
-// ------------------------------------------------------------
+// ============================================================
+// AUTH STATE LISTENER
+// ============================================================
 
-// Register before page initialization so URL recovery processing
-// cannot emit PASSWORD_RECOVERY before our listener exists.
 const {
     data: { subscription }
 } = supabase.auth.onAuthStateChange((event, session) => {
@@ -172,8 +191,8 @@ const {
         recoverySession = true;
 
         if (page === "reset") {
-            setFormControlsDisabled();
-            clearAuthMessage(message);
+            updateFormLock();
+            clearFormMessage();
         }
     }
 
@@ -181,18 +200,24 @@ const {
         recoverySession = false;
 
         if (page === "reset") {
-            setFormControlsDisabled();
+            updateFormLock();
         }
     }
 });
 
-// ------------------------------------------------------------
-// AUTHENTICATED USER CHECK
-// ------------------------------------------------------------
+// ============================================================
+// SESSION HELPERS
+// ============================================================
 
+/*
+ * Never call getUser() without first establishing that a
+ * session exists. A missing session is a normal logged-out state.
+ */
 async function getVerifiedUser() {
-    const { data: sessionData, error: sessionError } =
-        await supabase.auth.getSession();
+    const {
+        data: sessionData,
+        error: sessionError
+    } = await supabase.auth.getSession();
 
     if (sessionError) {
         throw sessionError;
@@ -202,40 +227,66 @@ async function getVerifiedUser() {
         return null;
     }
 
-    const { data, error } = await supabase.auth.getUser();
+    const {
+        data: userData,
+        error: userError
+    } = await supabase.auth.getUser();
 
-    if (error) {
-        throw error;
+    if (userError) {
+        throw userError;
     }
 
-    return data?.user || null;
+    return userData?.user || null;
 }
 
+/*
+ * A local session is sufficient to decide whether to redirect
+ * away from login/register. The dashboard independently verifies
+ * the identity with getUser().
+ */
 async function redirectIfAuthenticated() {
     if (!["login", "register"].includes(page)) {
         return;
     }
 
     try {
-        const user = await getVerifiedUser();
+        const {
+            data,
+            error
+        } = await supabase.auth.getSession();
 
-        if (user) {
+        if (error) {
+            throw error;
+        }
+
+        if (data?.session?.user) {
             window.location.replace("dashboard.html");
         }
     } catch (error) {
-        logSafeError("Existing-session verification failed", error);
+        logSafeError(
+            "Existing-session check failed",
+            error
+        );
     }
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // LOGIN
-// ------------------------------------------------------------
+// ============================================================
 
 function handleLogin() {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(
+        window.location.search
+    );
 
     if (params.get("verified") === "1") {
-        showSuccess("Your email has been confirmed. You can now sign in.");
+        showSuccess(
+            "Your email has been confirmed. You can now sign in."
+        );
+    } else if (params.get("password_updated") === "1") {
+        showSuccess(
+            "Your password has been updated. Please sign in."
+        );
     }
 
     form.addEventListener("submit", async (event) => {
@@ -243,7 +294,7 @@ function handleLogin() {
 
         if (isBusy) return;
 
-        clearAuthMessage(message);
+        clearFormMessage();
 
         const email = trimmedValue("email").toLowerCase();
         const password = rawValue("password");
@@ -253,25 +304,30 @@ function handleLogin() {
             !password ||
             password.length > MAX_PASSWORD_LENGTH
         ) {
-            showError("Enter a valid email address and password.");
+            showFormError(
+                "Enter a valid email address and password."
+            );
             return;
         }
 
         setBusy(true, "Signing in…");
 
         try {
-            const { data, error } =
-                await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
+            const {
+                data,
+                error
+            } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
 
-            if (error) throw error;
+            if (error) {
+                throw error;
+            }
 
-            // The Auth response itself must contain a valid session.
             if (!data?.session || !data?.user) {
-                throw new Error(
-                    "Authentication succeeded without a usable session."
+                throw new globalThis.Error(
+                    "Supabase returned no authenticated session after sign-in."
                 );
             }
 
@@ -284,8 +340,8 @@ function handleLogin() {
         } catch (error) {
             logSafeError("Sign-in failed", error);
 
-            showError(
-                "We couldn't sign you in. Check your details, verify your email, or reset your password."
+            showFormError(
+                "We couldn't sign you in. Check your credentials, verify your email, or reset your password."
             );
 
         } finally {
@@ -294,9 +350,9 @@ function handleLogin() {
     });
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // REGISTRATION
-// ------------------------------------------------------------
+// ============================================================
 
 function handleRegistration() {
     form.addEventListener("submit", async (event) => {
@@ -304,7 +360,7 @@ function handleRegistration() {
 
         if (isBusy) return;
 
-        clearAuthMessage(message);
+        clearFormMessage();
 
         const fullName = trimmedValue("full_name");
         const email = trimmedValue("email").toLowerCase();
@@ -312,35 +368,38 @@ function handleRegistration() {
 
         const password = rawValue("password");
         const confirmPassword = rawValue("confirm_password");
+
         const terms = field("terms");
 
         if (!validName(fullName)) {
-            showError("Enter a valid name (2–100 characters).");
+            showFormError(
+                "Enter a valid name (2–100 characters)."
+            );
             return;
         }
 
         if (!validEmail(email)) {
-            showError("Enter a valid email address.");
+            showFormError("Enter a valid email address.");
             return;
         }
 
         if (!validPhone(phone)) {
-            showError("Enter a valid phone number.");
+            showFormError("Enter a valid phone number.");
             return;
         }
 
-        if (!passwordIsAcceptable(password)) {
-            showError(passwordErrorMessage());
+        if (!validPassword(password)) {
+            showFormError(passwordRequirementsMessage());
             return;
         }
 
         if (password !== confirmPassword) {
-            showError("Your passwords do not match.");
+            showFormError("Your passwords do not match.");
             return;
         }
 
         if (!terms?.checked) {
-            showError(
+            showFormError(
                 "Please accept the Terms and Privacy Policy to continue."
             );
             return;
@@ -349,7 +408,10 @@ function handleRegistration() {
         setBusy(true, "Creating account…");
 
         try {
-            const { data, error } = await supabase.auth.signUp({
+            const {
+                data,
+                error
+            } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
@@ -368,20 +430,22 @@ function handleRegistration() {
             }
 
             if (!data?.user) {
-                throw new Error(
-                    "Supabase returned no user after registration."
+                throw new globalThis.Error(
+                    "Registration returned no user and no Auth error."
                 );
             }
 
             /*
-             * IMPORTANT:
+             * Signup has two legitimate success outcomes:
              *
-             * A successful signup may return:
-             * - user + session: immediate authenticated signup
-             * - user + no session: email confirmation required
+             * A. Session returned:
+             *    Email confirmation is not required, or the user
+             *    was authenticated immediately.
              *
-             * Both are successful signup outcomes.
-             * Do not call getUser() to decide whether signup succeeded.
+             * B. No session returned:
+             *    Email confirmation is required.
+             *
+             * Neither outcome requires an immediate getUser() call.
              */
 
             if (data.session) {
@@ -392,13 +456,16 @@ function handleRegistration() {
             form.reset();
 
             showSuccess(
-                "Your account request has been received. Please check your email for the verification link before signing in."
+                "Your account has been created. Please check your email for the verification link before signing in."
             );
 
         } catch (error) {
-            logSafeError("Registration request failed", error);
+            logSafeError(
+                "Registration request failed",
+                error
+            );
 
-            showError(
+            showFormError(
                 "We couldn't create your account. Please check your details and try again."
             );
 
@@ -408,9 +475,9 @@ function handleRegistration() {
     });
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // FORGOT PASSWORD
-// ------------------------------------------------------------
+// ============================================================
 
 function handleForgotPassword() {
     form.addEventListener("submit", async (event) => {
@@ -418,24 +485,32 @@ function handleForgotPassword() {
 
         if (isBusy) return;
 
-        clearAuthMessage(message);
+        clearFormMessage();
 
         const email = trimmedValue("email").toLowerCase();
 
         if (!validEmail(email)) {
-            showError("Enter a valid email address.");
+            showFormError("Enter a valid email address.");
             return;
         }
 
         setBusy(true, "Sending link…");
 
         try {
-            const { error } =
-                await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: authPageUrl("reset-password.html")
-                });
+            const {
+                error
+            } = await supabase.auth.resetPasswordForEmail(
+                email,
+                {
+                    redirectTo: authPageUrl(
+                        "reset-password.html"
+                    )
+                }
+            );
 
-            if (error) throw error;
+            if (error) {
+                throw error;
+            }
 
             form.reset();
 
@@ -444,9 +519,12 @@ function handleForgotPassword() {
             );
 
         } catch (error) {
-            logSafeError("Password recovery request failed", error);
+            logSafeError(
+                "Password recovery request failed",
+                error
+            );
 
-            showError(
+            showFormError(
                 "We couldn't process that request right now. Please try again later."
             );
 
@@ -456,18 +534,20 @@ function handleForgotPassword() {
     });
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // RESET PASSWORD
-// ------------------------------------------------------------
+// ============================================================
 
 function handlePasswordReset() {
-    // A normal authenticated session does not unlock this page.
-    // Only the PASSWORD_RECOVERY event establishes recovery state.
+    /*
+     * Supabase processes the recovery callback and emits
+     * PASSWORD_RECOVERY. A normal logged-in session is not enough.
+     */
 
     if (!recoverySession) {
-        disableRecoveryForm();
+        updateFormLock();
 
-        showError(
+        showFormError(
             "This password-reset link is invalid or has expired. Request a new link to continue."
         );
     }
@@ -477,10 +557,10 @@ function handlePasswordReset() {
 
         if (isBusy) return;
 
-        clearAuthMessage(message);
+        clearFormMessage();
 
         if (!recoverySession) {
-            showError(
+            showFormError(
                 "Request a fresh password-reset link before continuing."
             );
             return;
@@ -489,32 +569,36 @@ function handlePasswordReset() {
         const password = rawValue("password");
         const confirmPassword = rawValue("confirm_password");
 
-        if (!passwordIsAcceptable(password)) {
-            showError(passwordErrorMessage());
+        if (!validPassword(password)) {
+            showFormError(passwordRequirementsMessage());
             return;
         }
 
         if (password !== confirmPassword) {
-            showError("Your passwords do not match.");
+            showFormError("Your passwords do not match.");
             return;
         }
 
         setBusy(true, "Updating password…");
 
         try {
-            const { error } = await supabase.auth.updateUser({
+            const {
+                error
+            } = await supabase.auth.updateUser({
                 password
             });
 
-            if (error) throw error;
+            if (error) {
+                throw error;
+            }
 
             recoverySession = false;
 
-            // End the recovery session locally.
-            const { error: signOutError } =
-                await supabase.auth.signOut({
-                    scope: "local"
-                });
+            const {
+                error: signOutError
+            } = await supabase.auth.signOut({
+                scope: "local"
+            });
 
             if (signOutError) {
                 logSafeError(
@@ -523,12 +607,17 @@ function handlePasswordReset() {
                 );
             }
 
-            window.location.replace("login.html");
+            window.location.replace(
+                "login.html?password_updated=1"
+            );
 
         } catch (error) {
-            logSafeError("Password update failed", error);
+            logSafeError(
+                "Password update failed",
+                error
+            );
 
-            showError(
+            showFormError(
                 "We couldn't update your password. The reset link may have expired; request a fresh one and try again."
             );
 
@@ -538,12 +627,14 @@ function handlePasswordReset() {
     });
 }
 
-// ------------------------------------------------------------
+// ============================================================
 // DASHBOARD
-// ------------------------------------------------------------
+// ============================================================
 
 function getProfileControl(name) {
-    return document.querySelector(`[data-profile-${name}]`);
+    return document.querySelector(
+        `[data-profile-${name}]`
+    );
 }
 
 async function handleDashboard() {
@@ -551,18 +642,27 @@ async function handleDashboard() {
     const emailNode = getProfileControl("email");
     const createdNode = getProfileControl("created");
 
-    const profileForm = document.querySelector("[data-profile-form]");
+    const profileForm = document.querySelector(
+        "[data-profile-form]"
+    );
+
     const dashboardMessage = document.querySelector(
         "[data-dashboard-message]"
     );
-    const logoutButton = document.querySelector("[data-logout]");
 
-    let user;
+    const logoutButton = document.querySelector(
+        "[data-logout]"
+    );
+
+    let user = null;
 
     try {
         user = await getVerifiedUser();
     } catch (error) {
-        logSafeError("Dashboard identity verification failed", error);
+        logSafeError(
+            "Dashboard identity verification failed",
+            error
+        );
     }
 
     if (!user) {
@@ -575,13 +675,18 @@ async function handleDashboard() {
     let profile = null;
 
     try {
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
             .from("profiles")
             .select("full_name, phone, created_at")
             .eq("id", user.id)
             .maybeSingle();
 
-        if (error) throw error;
+        if (error) {
+            throw error;
+        }
 
         profile = data;
 
@@ -628,6 +733,10 @@ async function handleDashboard() {
         const phoneInput =
             profileForm.elements.namedItem("phone");
 
+        const saveButton = profileForm.querySelector(
+            '[type="submit"]'
+        );
+
         if (nameInput) {
             nameInput.value = profile?.full_name || "";
         }
@@ -636,8 +745,6 @@ async function handleDashboard() {
             phoneInput.value = profile?.phone || "";
         }
 
-        let savingProfile = false;
-
         profileForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
@@ -645,8 +752,13 @@ async function handleDashboard() {
 
             clearAuthMessage(dashboardMessage);
 
-            const fullName = String(nameInput?.value || "").trim();
-            const phone = String(phoneInput?.value || "").trim();
+            const fullName = String(
+                nameInput?.value || ""
+            ).trim();
+
+            const phone = String(
+                phoneInput?.value || ""
+            ).trim();
 
             if (!validName(fullName)) {
                 setAuthMessage(
@@ -668,22 +780,28 @@ async function handleDashboard() {
 
             savingProfile = true;
 
-            const saveButton = profileForm.querySelector(
-                '[type="submit"]'
-            );
+            const wasDisabled = saveButton?.disabled;
 
-            if (saveButton) saveButton.disabled = true;
+            if (saveButton) {
+                saveButton.disabled = true;
+            }
 
             try {
                 const currentUser = await getVerifiedUser();
 
-                if (!currentUser || currentUser.id !== user.id) {
-                    throw new Error(
+                if (
+                    !currentUser ||
+                    currentUser.id !== user.id
+                ) {
+                    throw new globalThis.Error(
                         "Authenticated identity changed during profile update."
                     );
                 }
 
-                const { data: updated, error } = await supabase
+                const {
+                    data: updated,
+                    error
+                } = await supabase
                     .from("profiles")
                     .update({
                         full_name: fullName,
@@ -693,10 +811,12 @@ async function handleDashboard() {
                     .select("id, full_name, phone")
                     .maybeSingle();
 
-                if (error) throw error;
+                if (error) {
+                    throw error;
+                }
 
                 if (!updated) {
-                    throw new Error(
+                    throw new globalThis.Error(
                         "No profile row was updated. Check profile creation and RLS."
                     );
                 }
@@ -706,14 +826,17 @@ async function handleDashboard() {
                         updated.full_name || fullName;
                 }
 
-                showDashboardMessage(
+                setAuthMessage(
                     dashboardMessage,
                     "Your profile has been saved.",
                     "success"
                 );
 
             } catch (error) {
-                logSafeError("Profile update failed", error);
+                logSafeError(
+                    "Profile update failed",
+                    error
+                );
 
                 setAuthMessage(
                     dashboardMessage,
@@ -725,7 +848,8 @@ async function handleDashboard() {
                 savingProfile = false;
 
                 if (saveButton) {
-                    saveButton.disabled = false;
+                    saveButton.disabled =
+                        Boolean(wasDisabled);
                 }
             }
         });
@@ -741,11 +865,15 @@ async function handleDashboard() {
         logoutButton.disabled = true;
 
         try {
-            const { error } = await supabase.auth.signOut({
+            const {
+                error
+            } = await supabase.auth.signOut({
                 scope: "local"
             });
 
-            if (error) throw error;
+            if (error) {
+                throw error;
+            }
 
             window.location.replace("login.html");
 
@@ -763,25 +891,24 @@ async function handleDashboard() {
     });
 }
 
-function showDashboardMessage(target, text, type) {
-    setAuthMessage(target, text, type);
-}
-
-// ------------------------------------------------------------
-// INITIALIZATION
-// ------------------------------------------------------------
+// ============================================================
+// PAGE INITIALIZATION
+// ============================================================
 
 async function initializeAuthPage() {
     if (!page) {
-        console.warn(
+        console.error(
             "[Travel Qila] Missing data-auth-page attribute."
         );
         return;
     }
 
-    if (["login", "register", "forgot", "reset"].includes(page) && !form) {
+    if (
+        ["login", "register", "forgot", "reset"].includes(page) &&
+        !form
+    ) {
         console.error(
-            `[Travel Qila] Missing authentication form on ${page} page.`
+            `[Travel Qila] Authentication form not found on ${page}.`
         );
         return;
     }
@@ -804,6 +931,25 @@ async function initializeAuthPage() {
             break;
 
         case "reset":
+            /*
+             * Force Auth URL/session initialization before deciding
+             * whether the recovery form should be available.
+             */
+            try {
+                const {
+                    error
+                } = await supabase.auth.getSession();
+
+                if (error) {
+                    throw error;
+                }
+            } catch (error) {
+                logSafeError(
+                    "Recovery session initialization failed",
+                    error
+                );
+            }
+
             handlePasswordReset();
             break;
 
@@ -821,12 +967,17 @@ async function initializeAuthPage() {
 try {
     await initializeAuthPage();
 } catch (error) {
-    logSafeError("Authentication page initialization failed", error);
+    logSafeError(
+        "Authentication page initialization failed",
+        error
+    );
 
     if (message) {
-        showError();
+        showError(
+            "This page could not initialize correctly. Please refresh and try again."
+        );
     }
 }
 
-// Retain the subscription for the lifetime of this page.
+// Keep the auth subscription active for this page's lifetime.
 void subscription;
