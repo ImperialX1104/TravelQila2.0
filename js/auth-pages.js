@@ -191,17 +191,24 @@ const {
 // ------------------------------------------------------------
 
 async function getVerifiedUser() {
+    const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+    if (sessionError) {
+        throw sessionError;
+    }
+
+    if (!sessionData?.session) {
+        return null;
+    }
+
     const { data, error } = await supabase.auth.getUser();
 
     if (error) {
         throw error;
     }
 
-    if (!data?.user) {
-        return null;
-    }
-
-    return data.user;
+    return data?.user || null;
 }
 
 async function redirectIfAuthenticated() {
