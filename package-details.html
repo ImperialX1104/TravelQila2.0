@@ -471,7 +471,7 @@
                         Loading package...
                     </h2>
 
-                    <p id="packageDescription" class="text-muted">
+                    <p id="packageDeion" class="text-muted">
                         Please wait while the package information loads.
                     </p>
 
@@ -1222,6 +1222,328 @@
 
             const fallbackImage = "img/carousel-2.jpg";
 
+            
+// =====================================================
+// OPENTRIPMAP LIVE ATTRACTIONS INTEGRATION
+// =====================================================
+
+const ATTRACTIONS_API =
+    "https://stjhubpzshzyjqkscjty.supabase.co/functions/v1/travel-attractions";
+
+// Search coordinates for each package.
+// These are search centres, not exact hotel or attraction locations.
+
+const destinationCoordinates = {
+    "kashmir-escape": {
+        lat: 34.0837,
+        lon: 74.7973,
+        name: "Srinagar"
+    },
+
+    "bali-discovery": {
+        lat: -8.5069,
+        lon: 115.2625,
+        name: "Ubud, Bali"
+    },
+
+    "dubai-highlights": {
+        lat: 25.2048,
+        lon: 55.2708,
+        name: "Dubai"
+    },
+
+    "kerala-backwaters": {
+        lat: 9.4981,
+        lon: 76.3388,
+        name: "Alleppey"
+    },
+
+    "swiss-alpine": {
+        lat: 46.6863,
+        lon: 7.8632,
+        name: "Interlaken"
+    },
+
+    "thailand-explorer": {
+        lat: 7.8804,
+        lon: 98.3923,
+        name: "Phuket"
+    }
+};
+
+const attractionCache = new Map();
+
+function formatDistance(metres) {
+
+    if (!Number.isFinite(Number(metres))) {
+        return "Distance unavailable";
+    }
+
+    const distance = Number(metres);
+
+    if (distance < 1000) {
+        return Math.round(distance) + " m away";
+    }
+
+    return (distance / 1000).toFixed(1) + " km away";
+}
+
+function formatCategory(kinds) {
+
+    if (!kinds) {
+        return "Attraction";
+    }
+
+    return kinds
+        .split(",")
+        .slice(0, 3)
+        .map(function (item) {
+            return item
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, function (letter) {
+                    return letter.toUpperCase();
+                });
+        })
+        .join(" · ");
+}
+
+function showAttractionStatus(message, icon = "info-circle") {
+
+    const status = document.getElementById("attractionsStatus");
+
+    status.replaceChildren();
+
+    const iconElement = document.createElement("i");
+    iconElement.className = "fas fa-" + icon + " me-2";
+
+    status.appendChild(iconElement);
+    status.appendChild(document.createTextNode(message));
+
+    status.style.display = "block";
+}
+
+async function loadAttractions(packageId) {
+
+    const destination = destinationCoordinates[packageId];
+
+    const list = document.getElementById("attractionsList");
+    const subtitle = document.getElementById("attractionsSubtitle");
+
+    list.replaceChildren();
+
+    if (!destination) {
+        showAttractionStatus(
+            "Attraction information is not available for this destination."
+        );
+        return;
+    }
+
+    subtitle.textContent =
+        "Popular places around " + destination.name + ".";
+
+    showAttractionStatus(
+        "Discovering nearby attractions...",
+        "spinner fa-spin"
+    );
+
+    const cacheKey = packageId;
+
+    try {
+
+        let places = attractionCache.get(cacheKey);
+
+        // Reuse results during the current page session.
+        if (!places) {
+
+            const requestUrl = new URL(ATTRACTIONS_API);
+
+            requestUrl.searchParams.set("action", "search");
+            requestUrl.searchParams.set("lat", destination.lat);
+            requestUrl.searchParams.set("lon", destination.lon);
+            requestUrl.searchParams.set("radius", "15000");
+            requestUrl.searchParams.set("limit", "10");
+
+            const response = await fetch(requestUrl.toString());
+
+            if (!response.ok) {
+                throw new Error("Attraction service returned an error.");
+            }
+
+            const result = await response.json();
+
+            if (!result.success || !Array.isArray(result.places)) {
+                throw new Error("Invalid attraction response.");
+            }
+
+            places = result.places;
+
+            attractionCache.set(cacheKey, places);
+        }
+
+        if (places.length === 0) {
+
+            showAttractionStatus(
+                "No attractions were found nearby. Please check again later."
+            );
+
+            return;
+        }
+
+        document.getElementById("attractionsStatus").style.display = "none";
+
+        places.slice(0, 10).forEach(function (place) {
+
+            const column = document.createElement("div");
+            column.className = "col-md-6";
+
+            const card = document.createElement("div");
+            card.className = "attraction-card";
+
+            const icon = document.createElement("i");
+            icon.className = "fas fa-map-marker-alt text-primary mb-3";
+            icon.style.fontSize = "23px";
+
+            const heading = document.createElement("h5");
+            heading.textContent = place.name || "Unnamed attraction";
+
+            const category = document.createElement("div");
+            category.className = "attraction-category mb-2";
+            category.textContent = formatCategory(place.kinds);
+
+            const distance = document.createElement("div");
+            distance.className = "attraction-distance mb-3";
+
+            const distanceIcon = document.createElement("i");
+            distanceIcon.className = "fas fa-location-arrow me-2 text-primary";
+
+            distance.appendChild(distanceIcon);
+            distance.appendChild(
+                document.createTextNode(formatDistance(place.dist))
+            );
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn btn-outline-primary btn-sm rounded-pill";
+            button.textContent = "View Details";
+            button.dataset.xid = place.xid;
+            button.setAttribute("aria-expanded", "false");
+
+            const details = document.createElement("div");
+            details.className = "attraction-details";
+            details.hidden = true;
+
+            card.appendChild(icon);
+            card.appendChild(heading);
+            card.appendChild(category);
+            card.appendChild(distance);
+            card.appendChild(button);
+            card.appendChild(details);
+
+            column.appendChild(card);
+            list.appendChild(column);
+
+        });
+
+    } catch (error) {
+
+        console.error("[Travel Qila] Attractions error:", error);
+
+        showAttractionStatus(
+            "We couldn't load attractions right now. Please try again later.",
+            "exclamation-circle"
+        );
+    }
+}
+
+
+// Fetch detailed information when a visitor selects an attraction.
+document.getElementById("attractionsList").addEventListener(
+    "click",
+    async function (event) {
+
+        const button = event.target.closest("button[data-xid]");
+
+        if (!button) {
+            return;
+        }
+
+        const xid = button.dataset.xid;
+        const card = button.closest(".attraction-card");
+        const details = card.querySelector(".attraction-details");
+
+        // Toggle an already-open details panel.
+        if (!details.hidden) {
+
+            details.hidden = true;
+            button.textContent = "View Details";
+            button.setAttribute("aria-expanded", "false");
+
+            return;
+        }
+
+        details.hidden = false;
+        button.setAttribute("aria-expanded", "true");
+
+        if (details.dataset.loaded === "true") {
+            button.textContent = "Hide Details";
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        details.textContent = "Loading attraction information...";
+
+        try {
+
+            const requestUrl = new URL(ATTRACTIONS_API);
+
+            requestUrl.searchParams.set("action", "details");
+            requestUrl.searchParams.set("xid", xid);
+
+            const response = await fetch(requestUrl.toString());
+
+            if (!response.ok) {
+                throw new Error("Could not retrieve attraction details.");
+            }
+
+            const result = await response.json();
+
+            if (!result.success || !result.place) {
+                throw new Error("Invalid attraction details.");
+            }
+
+            const place = result.place;
+
+            const description =
+                place.wikipedia_extracts?.text ||
+                place.info?.descr ||
+                place.description ||
+                "Additional description is not available for this attraction.";
+
+            details.textContent = description;
+
+            details.dataset.loaded = "true";
+
+            button.textContent = "Hide Details";
+
+        } catch (error) {
+
+            console.error("[Travel Qila] Attraction details error:", error);
+
+            details.textContent =
+                "Unable to retrieve additional information right now.";
+
+            button.textContent = "Retry Details";
+
+        } finally {
+
+            button.disabled = false;
+        }
+    }
+);
+
+
             const params = new URLSearchParams(window.location.search);
             const packageId = params.get("id");
 
@@ -1406,9 +1728,11 @@
                     "fas fa-times-circle text-danger"
                 );
 
-                enquiryButton.href =
-                    "trip-enquiry.html?package=" +
-                    encodeURIComponent(id);
+               enquiryButton.href =
+    "trip-enquiry.html?package=" +
+    encodeURIComponent(id);
+
+loadAttractions(id);
 
             }
 
