@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Holiday Packages | Explore India & Worldwide | Travel Qila</title>
@@ -67,6 +67,8 @@
             border-color: #0d275e;
         }
 
+        /* Navigation */
+
         .topbar {
             background: var(--tq-primary);
         }
@@ -97,14 +99,15 @@
             color: var(--tq-primary);
         }
 
+        /* Hero */
+
         .page-hero {
             position: relative;
             min-height: 340px;
             display: flex;
             align-items: center;
             background:
-                linear-gradient(rgba(10, 25, 60, .72), rgba(10, 25, 60, .72)),
-                url('img/carousel-2.jpg') center/cover no-repeat;
+                linear-gradient(135deg, #102653, #13357B, #526caa);
         }
 
         .page-hero h1 {
@@ -122,10 +125,14 @@
             color: #dce5fa;
         }
 
+        /* Section headings */
+
         .section-heading {
             color: var(--tq-primary);
             font-weight: 700;
         }
+
+        /* Filters */
 
         .filter-panel {
             background: #fff;
@@ -147,6 +154,8 @@
             border-radius: 8px;
         }
 
+        /* Package cards */
+
         .package-card {
             height: 100%;
             border: 1px solid #edf0f7;
@@ -162,24 +171,111 @@
             box-shadow: 0 12px 30px rgba(19, 53, 123, .13);
         }
 
+        /* Image replacement placeholders */
+
         .package-image {
             height: 225px;
             position: relative;
             overflow: hidden;
-            background: #e9edf5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
         }
 
-        .package-image img {
-            height: 100%;
+        .package-placeholder {
             width: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
             transition: transform .4s ease;
         }
 
-        .package-card:hover .package-image img {
-            transform: scale(1.05);
+        .package-card:hover .package-placeholder {
+            transform: scale(1.04);
+        }
+
+        .package-placeholder::before,
+        .package-placeholder::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .package-placeholder::before {
+            width: 230px;
+            height: 230px;
+            right: -65px;
+            top: -95px;
+        }
+
+        .package-placeholder::after {
+            width: 180px;
+            height: 180px;
+            left: -65px;
+            bottom: -95px;
+        }
+
+        .package-placeholder i {
+            font-size: 57px;
+            margin-bottom: 17px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 4px 12px rgba(0,0,0,.15);
+        }
+
+        .package-placeholder h3 {
+            color: #fff;
+            font-size: 25px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .package-placeholder p {
+            color: rgba(255,255,255,.85);
+            font-size: 13px;
+            margin: 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Individual destination themes */
+
+        .placeholder-kashmir {
+            background: linear-gradient(135deg, #173c65, #397c91, #8bb6c1);
+        }
+
+        .placeholder-bali {
+            background: linear-gradient(135deg, #155d4b, #398d69, #a3b77b);
+        }
+
+        .placeholder-dubai {
+            background: linear-gradient(135deg, #422b66, #9c5977, #e3a66c);
+        }
+
+        .placeholder-kerala {
+            background: linear-gradient(135deg, #164e3c, #368a63, #9bbd81);
+        }
+
+        .placeholder-switzerland {
+            background: linear-gradient(135deg, #254b78, #6598bc, #c0d8e9);
+        }
+
+        .placeholder-thailand {
+            background: linear-gradient(135deg, #07566c, #168b9a, #77c6c0);
         }
 
         .demo-label {
@@ -232,6 +328,8 @@
             font-weight: 400;
         }
 
+        /* Disclaimer */
+
         .demo-disclaimer {
             background: #fff8e7;
             border: 1px solid #f2dfae;
@@ -240,6 +338,8 @@
             border-radius: 9px;
             font-size: 13px;
         }
+
+        /* Empty results */
 
         .empty-state {
             display: none;
@@ -254,12 +354,16 @@
             color: var(--tq-secondary);
         }
 
+        /* CTA */
+
         .cta-section {
             background: var(--tq-primary);
             color: #fff;
             border-radius: 15px;
             padding: 45px;
         }
+
+        /* Footer */
 
         .footer {
             background: var(--tq-dark);
@@ -274,6 +378,8 @@
         .footer a:hover {
             color: #fff;
         }
+
+        /* Responsive */
 
         @media (max-width: 767px) {
             .page-hero {
@@ -290,6 +396,16 @@
 
             .package-image {
                 height: 210px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                scroll-behavior: auto !important;
             }
         }
     </style>
@@ -311,9 +427,11 @@
                 <a href="register.html" class="text-white small me-3">
                     <i class="fas fa-user me-1"></i> Register
                 </a>
+
                 <a href="login.html" class="text-white small me-3">
                     <i class="fas fa-sign-in-alt me-1"></i> Login
                 </a>
+
                 <a href="dashboard.html" class="text-white small">
                     <i class="fas fa-home me-1"></i> My Dashboard
                 </a>
@@ -329,16 +447,19 @@
                 <i class="fas fa-map-marker-alt"></i>Travel Qila
             </a>
 
-            <button class="navbar-toggler" type="button"
+            <button class="navbar-toggler"
+                    type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#mainNavbar"
                     aria-controls="mainNavbar"
                     aria-expanded="false"
                     aria-label="Toggle navigation">
+
                 <span class="fas fa-bars"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
+
                 <div class="navbar-nav ms-auto">
                     <a href="index.html" class="nav-link">Home</a>
                     <a href="about.html" class="nav-link">About</a>
@@ -352,6 +473,7 @@
                    class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">
                     Plan My Trip
                 </a>
+
             </div>
         </div>
     </nav>
@@ -359,6 +481,7 @@
     <!-- Hero -->
     <section class="page-hero">
         <div class="container text-center text-white">
+
             <h1 class="mb-3">Explore Holiday Packages</h1>
 
             <p class="fs-5 mb-3">
@@ -367,14 +490,18 @@
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center mb-0">
+
                     <li class="breadcrumb-item">
                         <a href="index.html">Home</a>
                     </li>
+
                     <li class="breadcrumb-item active" aria-current="page">
                         Packages
                     </li>
+
                 </ol>
             </nav>
+
         </div>
     </section>
 
@@ -382,25 +509,38 @@
     <section class="container py-5">
 
         <div class="text-center mb-4">
-            <h6 class="text-primary text-uppercase fw-bold">Find your journey</h6>
-            <h2 class="section-heading">Explore Our Holiday Ideas</h2>
+
+            <h6 class="text-primary text-uppercase fw-bold">
+                Find your journey
+            </h6>
+
+            <h2 class="section-heading">
+                Explore Our Holiday Ideas
+            </h2>
+
             <p class="text-muted">
                 Search destinations and discover trips that match your interests.
             </p>
+
         </div>
 
+        <!-- Filters -->
         <div class="filter-panel mb-4">
+
             <div class="row g-3 align-items-end">
 
                 <div class="col-lg-4 col-md-6">
                     <label for="packageSearch">Search destination</label>
-                    <input type="search" id="packageSearch"
+
+                    <input type="search"
+                           id="packageSearch"
                            class="form-control"
                            placeholder="e.g. Bali, Kashmir, Dubai">
                 </div>
 
                 <div class="col-lg-3 col-md-6">
                     <label for="destinationFilter">Destination type</label>
+
                     <select id="destinationFilter" class="form-select">
                         <option value="all">All destinations</option>
                         <option value="india">India</option>
@@ -410,6 +550,7 @@
 
                 <div class="col-lg-3 col-md-6">
                     <label for="durationFilter">Duration</label>
+
                     <select id="durationFilter" class="form-select">
                         <option value="all">Any duration</option>
                         <option value="short">1–4 days</option>
@@ -419,8 +560,10 @@
                 </div>
 
                 <div class="col-lg-2 col-md-6">
-                    <button type="button" id="resetFilters"
+                    <button type="button"
+                            id="resetFilters"
                             class="btn btn-outline-primary w-100 py-3">
+
                         <i class="fas fa-redo me-1"></i> Reset
                     </button>
                 </div>
@@ -428,21 +571,29 @@
             </div>
         </div>
 
+        <!-- Development disclaimer -->
         <div class="demo-disclaimer mb-4">
+
             <i class="fas fa-info-circle me-2"></i>
+
             <strong>Development preview:</strong>
+
             Destinations, durations and indicative prices on this page are sample
             content for demonstration. They are not live offers, confirmed
             itineraries or bookable inventory. Actual availability and quotations
             must be confirmed by Travel Qila.
+
         </div>
 
         <!-- Results heading -->
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+
             <h4 class="mb-0">Holiday Inspiration</h4>
+
             <span class="text-muted small" id="resultCount" aria-live="polite">
                 Showing 6 sample packages
             </span>
+
         </div>
 
         <!-- Package Cards -->
@@ -455,17 +606,23 @@
                  data-duration="long">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/DalLake.jpeg"
-                            alt="Dal Lake in Srinagar, Kashmir"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-kashmir">
+                            <i class="fas fa-mountain"></i>
+                            <h3>Kashmir</h3>
+                            <p>Paradise on Earth</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INDIA</span>
+
                         <h3 class="package-title mt-1">Kashmir Escape</h3>
 
                         <p class="text-muted">
@@ -479,6 +636,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹24,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -488,6 +646,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -500,17 +659,23 @@
                  data-duration="long">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/Tegallalang%20Rice%20Terraces%20Bali.jpg"
-                            alt="Tegallalang rice terraces in Ubud, Bali"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-bali">
+                            <i class="fas fa-leaf"></i>
+                            <h3>Bali</h3>
+                            <p>Island of the Gods</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INTERNATIONAL</span>
+
                         <h3 class="package-title mt-1">Bali Discovery</h3>
 
                         <p class="text-muted">
@@ -524,6 +689,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹49,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -533,6 +699,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -545,17 +712,23 @@
                  data-duration="medium">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/Burj%20Khalifa%20Image.jpg"
-                            alt="Burj Khalifa in Dubai, United Arab Emirates"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-dubai">
+                            <i class="fas fa-city"></i>
+                            <h3>Dubai</h3>
+                            <p>Beyond the Ordinary</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INTERNATIONAL</span>
+
                         <h3 class="package-title mt-1">Dubai Highlights</h3>
 
                         <p class="text-muted">
@@ -569,6 +742,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹39,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -578,6 +752,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -590,17 +765,23 @@
                  data-duration="medium">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/Houseboats%20in%20Alleppey%20Backwaters.jpg"
-                            alt="Traditional houseboats in Alleppey backwaters, Kerala"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-kerala">
+                            <i class="fas fa-water"></i>
+                            <h3>Kerala</h3>
+                            <p>God's Own Country</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INDIA</span>
+
                         <h3 class="package-title mt-1">Kerala Backwaters</h3>
 
                         <p class="text-muted">
@@ -614,6 +795,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹19,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -623,6 +805,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -635,17 +818,23 @@
                  data-duration="long">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/Interlaken%20Lake.jpg"
-                            alt="Scenic lake and mountain landscape in Interlaken, Switzerland"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-switzerland">
+                            <i class="fas fa-snowflake"></i>
+                            <h3>Switzerland</h3>
+                            <p>Discover the Alps</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INTERNATIONAL</span>
+
                         <h3 class="package-title mt-1">Swiss Alpine Journey</h3>
 
                         <p class="text-muted">
@@ -659,6 +848,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹1,29,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -668,6 +858,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -680,17 +871,23 @@
                  data-duration="medium">
 
                 <article class="package-card">
+
                     <div class="package-image">
-                        <img
-                            src="https://commons.wikimedia.org/wiki/Special:FilePath/Phi%20Phi%20Island%20Thailand.jpg"
-                            alt="Phi Phi Island in southern Thailand"
-                            loading="eager"
-                            decoding="async">
+
+                        <div class="package-placeholder placeholder-thailand">
+                            <i class="fas fa-umbrella-beach"></i>
+                            <h3>Thailand</h3>
+                            <p>Escape to Paradise</p>
+                        </div>
+
                         <span class="demo-label">SAMPLE PACKAGE</span>
+
                     </div>
 
                     <div class="package-body">
+
                         <span class="text-primary small fw-bold">INTERNATIONAL</span>
+
                         <h3 class="package-title mt-1">Thailand Explorer</h3>
 
                         <p class="text-muted">
@@ -704,6 +901,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center">
+
                             <div>
                                 <div class="package-price">₹34,999*</div>
                                 <small class="text-muted">Illustrative / person</small>
@@ -713,6 +911,7 @@
                                class="btn btn-outline-primary rounded-pill px-3">
                                 Explore
                             </a>
+
                         </div>
                     </div>
                 </article>
@@ -722,46 +921,40 @@
 
         <!-- No results -->
         <div class="empty-state mt-4" id="emptyState">
+
             <i class="fas fa-search mb-3"></i>
+
             <h4>No matching packages found</h4>
+
             <p class="text-muted">
                 Try changing your search or resetting the filters.
             </p>
-            <button type="button" class="btn btn-primary rounded-pill px-4"
+
+            <button type="button"
+                    class="btn btn-primary rounded-pill px-4"
                     id="emptyReset">
                 Reset Filters
             </button>
+
         </div>
 
+        <!-- Price disclaimer -->
         <p class="text-muted small mt-4">
             *All displayed prices are fictional development examples, not
             supplier quotations. Final prices depend on travel dates,
             availability, inclusions and supplier confirmation.
         </p>
 
-        <!-- Image credits -->
-        <details class="mt-4 small text-muted">
-            <summary class="fw-bold">Photography credits and licences</summary>
-            <ul class="mt-3">
-                <li>Kashmir: Dal Lake photograph, CC0.</li>
-                <li>Bali: Tegallalang Rice Terraces, Philip Nalangan, CC BY 4.0.</li>
-                <li>Dubai: Burj Khalifa photograph, CC0.</li>
-                <li>Kerala: Alleppey houseboats, Ishan Mittal, CC BY-SA 4.0.</li>
-                <li>Switzerland: Interlaken photograph, André Schakkal, CC BY-SA 4.0.</li>
-                <li>Thailand: Phi Phi Island photograph, Joshua Doubek, CC BY-SA 4.0.</li>
-            </ul>
-            <p>
-                Verify the original file pages and their current licence terms
-                before commercial production.
-            </p>
-        </details>
-
     </section>
 
     <!-- Custom Trip CTA -->
     <section class="container pb-5">
+
         <div class="cta-section text-center">
-            <h2 class="text-white mb-3">Can't Find Your Perfect Holiday?</h2>
+
+            <h2 class="text-white mb-3">
+                Can't Find Your Perfect Holiday?
+            </h2>
 
             <p class="mb-4">
                 Tell us your destination, travel dates, group size and budget.
@@ -770,18 +963,24 @@
 
             <a href="trip-planner.html"
                class="btn btn-light text-primary rounded-pill py-3 px-5 fw-bold">
+
                 <i class="fas fa-route me-2"></i>
                 Plan a Custom Trip
+
             </a>
+
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer pt-5 pb-4">
+
         <div class="container">
+
             <div class="row g-4">
 
                 <div class="col-lg-4 col-md-6">
+
                     <h3 class="text-white mb-3">
                         <i class="fas fa-map-marker-alt me-2"></i>Travel Qila
                     </h3>
@@ -792,30 +991,40 @@
                     </p>
 
                     <a href="about.html">Learn more about Travel Qila</a>
+
                 </div>
 
                 <div class="col-lg-2 col-md-6">
+
                     <h5 class="text-white mb-3">Quick Links</h5>
+
                     <p><a href="index.html">Home</a></p>
                     <p><a href="about.html">About Us</a></p>
                     <p><a href="services.html">Services</a></p>
                     <p><a href="packages.html">Packages</a></p>
                     <p><a href="contact.html">Contact</a></p>
+
                 </div>
 
                 <div class="col-lg-3 col-md-6">
+
                     <h5 class="text-white mb-3">Plan Your Trip</h5>
+
                     <p><a href="flights.html">Flights</a></p>
                     <p><a href="hotels.html">Hotels</a></p>
                     <p><a href="trip-planner.html">Custom Trips</a></p>
                     <p><a href="dashboard.html">My Account</a></p>
+
                 </div>
 
                 <div class="col-lg-3 col-md-6">
+
                     <h5 class="text-white mb-3">Customer Support</h5>
+
                     <p><a href="contact.html">Contact Us</a></p>
                     <p><a href="help-centre.html">Help Centre</a></p>
                     <p><a href="enquiries.html">My Enquiries</a></p>
+
                 </div>
 
             </div>
@@ -823,28 +1032,36 @@
             <hr class="border-secondary my-4">
 
             <div class="text-center small">
+
                 &copy; <span id="currentYear"></span>
                 Travel Qila. All Rights Reserved.
+
                 <br>
+
                 <span class="mt-2 d-inline-block">
                     Operated by Imperial Technologies.
                 </span>
+
             </div>
+
         </div>
     </footer>
 
     <!-- Back to top -->
-    <a href="#" id="backToTop"
+    <a href="#"
+       id="backToTop"
        class="btn btn-primary btn-lg-square rounded-circle position-fixed"
        style="right:25px; bottom:25px; display:none; z-index:999;"
        aria-label="Back to top">
+
         <i class="fa fa-arrow-up"></i>
+
     </a>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- Owl Carousel plugin, if used by main.js -->
+    <!-- Owl Carousel plugin -->
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- Bootstrap -->
@@ -909,6 +1126,7 @@
                     if (isVisible) {
                         visibleCount++;
                     }
+
                 });
 
                 resultCount.textContent =
@@ -916,41 +1134,28 @@
 
                 emptyState.style.display =
                     visibleCount === 0 ? "block" : "none";
+
             }
 
             // Reset filters
             function resetFilters() {
+
                 searchInput.value = "";
                 destinationFilter.value = "all";
                 durationFilter.value = "all";
+
                 filterPackages();
+
             }
 
+            // Filter events
             searchInput.addEventListener("input", filterPackages);
             destinationFilter.addEventListener("change", filterPackages);
             durationFilter.addEventListener("change", filterPackages);
 
+            // Reset events
             resetButton.addEventListener("click", resetFilters);
             emptyResetButton.addEventListener("click", resetFilters);
-
-            // Image fallback
-document.querySelectorAll(".package-image img").forEach(function (image) {
-
-    image.addEventListener("error", function () {
-
-        image.onerror = null;
-        image.style.display = "none";
-
-        console.warn(
-            "[Travel Qila] Destination image failed to load:",
-            image.src
-        );
-
-    });
-
-});
-
-            });
 
             // Back to top
             window.addEventListener("scroll", function () {
@@ -978,7 +1183,7 @@ document.querySelectorAll(".package-image img").forEach(function (image) {
             // Initial results
             filterPackages();
 
-        );
+        });
     </script>
 
 </body>
