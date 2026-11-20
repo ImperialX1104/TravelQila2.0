@@ -1,82 +1,874 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Manage your Travel Qila account.">
+    <meta name="description" content="Manage your Travel Qila account and travel profile.">
     <meta name="theme-color" content="#13357B">
-    <title>My Travel Dashboard | Travel Qila</title>
+
+    <title>My Dashboard | Travel Qila</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/auth.css" rel="stylesheet">
-    <script src="js/auth-config.js"></script>
-<meta name="robots" content="noindex, follow"><meta property="og:type" content="website"><meta property="og:site_name" content="Travel Qila"><meta property="og:title" content="My Travel Dashboard | Travel Qila"><meta property="og:description" content="Manage your Travel Qila account."><meta property="og:url" content="https://travelqila.com/dashboard.html"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="My Travel Dashboard | Travel Qila"><meta name="twitter:description" content="Manage your Travel Qila account.">
 
-</head><body class="auth-page" data-auth-page="dashboard">
-<header class="bg-white border-bottom">
+    <script src="js/auth-config.js"></script>
+
+    <meta name="robots" content="noindex, follow">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Travel Qila">
+    <meta property="og:title" content="My Dashboard | Travel Qila">
+    <meta property="og:description" content="Manage your Travel Qila account.">
+    <meta property="og:url" content="https://travelqila.com/dashboard.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style>
+        :root {
+            --tq-primary: #13357B;
+            --tq-primary-light: #1d4b9c;
+            --tq-accent: #e9ad48;
+            --tq-bg: #f4f7fc;
+            --tq-text: #192b49;
+            --tq-muted: #718096;
+            --tq-border: #e7edf5;
+        }
+
+        body.dashboard-page {
+            background: var(--tq-bg);
+            color: var(--tq-text);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+        }
+
+        .dashboard-page h1,
+        .dashboard-page h2,
+        .dashboard-page h3,
+        .dashboard-page h4,
+        .dashboard-page .dashboard-brand {
+            font-family: 'Jost', sans-serif;
+        }
+
+        .dashboard-header {
+            background: #fff;
+            border-bottom: 1px solid var(--tq-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .dashboard-brand {
+            color: var(--tq-primary);
+            font-size: 25px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .dashboard-brand i {
+            margin-right: 7px;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            align-items: center;
+            gap: 27px;
+        }
+
+        .dashboard-nav a {
+            color: #53627a;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .dashboard-nav a:hover,
+        .dashboard-nav a.active {
+            color: var(--tq-primary);
+        }
+
+        .dashboard-logout {
+            border-radius: 30px;
+            padding: 9px 19px;
+            font-size: 14px;
+        }
+
+        .dashboard-main {
+            padding: 38px 0 65px;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 235px minmax(0, 1fr);
+            gap: 26px;
+            align-items: start;
+        }
+
+        .dashboard-sidebar {
+            background: #fff;
+            border: 1px solid var(--tq-border);
+            border-radius: 16px;
+            padding: 22px 14px;
+            position: sticky;
+            top: 95px;
+        }
+
+        .sidebar-label {
+            color: #9aa7ba;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            margin: 5px 12px 13px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-link {
+            align-items: center;
+            border-radius: 9px;
+            color: #64738a;
+            display: flex;
+            font-size: 14px;
+            gap: 12px;
+            margin-bottom: 5px;
+            padding: 12px;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        .sidebar-link i {
+            font-size: 16px;
+            width: 19px;
+            text-align: center;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: #edf3ff;
+            color: var(--tq-primary);
+        }
+
+        .sidebar-link.active {
+            font-weight: 700;
+        }
+
+        .sidebar-divider {
+            border-top: 1px solid var(--tq-border);
+            margin: 20px 10px;
+        }
+
+        .dashboard-content {
+            min-width: 0;
+        }
+
+        .dashboard-welcome {
+            background: linear-gradient(115deg, #102d6b 0%, #17458e 65%, #2860a8 100%);
+            border-radius: 18px;
+            color: #fff;
+            min-height: 220px;
+            overflow: hidden;
+            padding: 32px 35px;
+            position: relative;
+        }
+
+        .dashboard-welcome::after {
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 50%;
+            content: "";
+            height: 330px;
+            position: absolute;
+            right: -70px;
+            top: -105px;
+            width: 330px;
+        }
+
+        .dashboard-welcome::before {
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 50%;
+            content: "";
+            height: 240px;
+            position: absolute;
+            right: -20px;
+            top: -60px;
+            width: 240px;
+        }
+
+        .welcome-content {
+            max-width: 570px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-eyebrow {
+            color: #d8e5ff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-welcome h1 {
+            font-size: clamp(27px, 4vw, 36px);
+            font-weight: 700;
+            margin: 12px 0 9px;
+        }
+
+        .dashboard-welcome p {
+            color: rgba(255,255,255,.78);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            max-width: 450px;
+        }
+
+        .welcome-button {
+            background: #fff;
+            border: 0;
+            border-radius: 30px;
+            color: var(--tq-primary);
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 11px 21px;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        .welcome-button:hover {
+            background: #f1f5ff;
+            color: var(--tq-primary);
+            transform: translateY(-2px);
+        }
+
+        .dashboard-section-heading {
+            align-items: end;
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0 16px;
+        }
+
+        .dashboard-section-heading h2 {
+            color: var(--tq-text);
+            font-size: 21px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .dashboard-section-heading p {
+            color: var(--tq-muted);
+            font-size: 13px;
+            margin: 5px 0 0;
+        }
+
+        .dashboard-info-card {
+            background: #fff;
+            border: 1px solid var(--tq-border);
+            border-radius: 14px;
+            height: 100%;
+            padding: 21px;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .dashboard-info-card:hover {
+            box-shadow: 0 9px 25px rgba(19,53,123,.06);
+            transform: translateY(-3px);
+        }
+
+        .dashboard-card-icon {
+            align-items: center;
+            background: #edf3ff;
+            border-radius: 11px;
+            color: var(--tq-primary);
+            display: inline-flex;
+            font-size: 18px;
+            height: 43px;
+            justify-content: center;
+            margin-bottom: 18px;
+            width: 43px;
+        }
+
+        .dashboard-card-label {
+            color: var(--tq-muted);
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .dashboard-card-value {
+            color: var(--tq-text);
+            font-family: 'Jost', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .dashboard-panel {
+            background: #fff;
+            border: 1px solid var(--tq-border);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .panel-heading {
+            align-items: center;
+            display: flex;
+            gap: 13px;
+            margin-bottom: 24px;
+        }
+
+        .panel-heading .dashboard-card-icon {
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .panel-heading h2 {
+            color: var(--tq-text);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 3px;
+        }
+
+        .panel-heading p {
+            color: var(--tq-muted);
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .dashboard-form .form-label {
+            color: #34445d;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-form .form-control {
+            border: 1px solid #dfe6f0;
+            border-radius: 9px;
+            font-size: 14px;
+            min-height: 46px;
+            padding: 11px 13px;
+        }
+
+        .dashboard-form .form-control:focus {
+            border-color: var(--tq-primary-light);
+            box-shadow: 0 0 0 3px rgba(19,53,123,.09);
+        }
+
+        .dashboard-save {
+            background: var(--tq-primary);
+            border: 0;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 12px 25px;
+        }
+
+        .dashboard-save:hover {
+            background: var(--tq-primary-light);
+        }
+
+        .dashboard-feature-card {
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--tq-border);
+            border-radius: 13px;
+            display: flex;
+            gap: 15px;
+            height: 100%;
+            padding: 17px;
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+
+        .dashboard-feature-card:hover {
+            border-color: #cbd9f0;
+            box-shadow: 0 7px 20px rgba(19,53,123,.05);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            align-items: center;
+            background: #edf3ff;
+            border-radius: 10px;
+            color: var(--tq-primary);
+            display: flex;
+            flex-shrink: 0;
+            font-size: 17px;
+            height: 42px;
+            justify-content: center;
+            width: 42px;
+        }
+
+        .feature-text strong {
+            color: var(--tq-text);
+            display: block;
+            font-family: 'Jost', sans-serif;
+            font-size: 15px;
+        }
+
+        .feature-text span {
+            color: var(--tq-muted);
+            display: block;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .feature-arrow {
+            color: #9aa7ba;
+            margin-left: auto;
+        }
+
+        .dashboard-coming-soon {
+            background: #f7f9fd;
+            border: 1px dashed #d9e2f0;
+            border-radius: 13px;
+            padding: 17px;
+        }
+
+        .dashboard-coming-soon .coming-soon-label {
+            color: var(--tq-primary);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-coming-soon h3 {
+            color: var(--tq-text);
+            font-size: 16px;
+            font-weight: 700;
+            margin: 8px 0 4px;
+        }
+
+        .dashboard-coming-soon p {
+            color: var(--tq-muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .dashboard-footer {
+            background: #fff;
+            border-top: 1px solid var(--tq-border);
+            color: var(--tq-muted);
+            font-size: 12px;
+            padding: 22px 0;
+        }
+
+        @media (max-width: 991px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-sidebar {
+                display: flex;
+                gap: 5px;
+                overflow-x: auto;
+                padding: 10px;
+                position: static;
+            }
+
+            .sidebar-label,
+            .sidebar-divider {
+                display: none;
+            }
+
+            .sidebar-link {
+                flex-shrink: 0;
+                margin: 0;
+                padding: 11px 13px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .dashboard-main {
+                padding: 22px 0 45px;
+            }
+
+            .dashboard-header .container {
+                flex-wrap: wrap;
+                gap: 13px;
+            }
+
+            .dashboard-nav {
+                gap: 15px;
+                order: 3;
+                overflow-x: auto;
+                padding: 3px 0;
+                width: 100%;
+            }
+
+            .dashboard-nav a {
+                flex-shrink: 0;
+                font-size: 12px;
+            }
+
+            .dashboard-brand {
+                font-size: 22px;
+            }
+
+            .dashboard-welcome {
+                min-height: 210px;
+                padding: 25px 22px;
+            }
+
+            .dashboard-panel {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .dashboard-logout {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .dashboard-section-heading h2 {
+                font-size: 19px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-page" data-auth-page="dashboard">
+
+<header class="dashboard-header">
     <div class="container d-flex align-items-center justify-content-between py-3">
-        <a class="auth-brand" href="index.html"><i class="fas fa-map-marker-alt"></i>Travel Qila</a>
-        <nav class="auth-site-nav" aria-label="Main navigation">
+
+        <a class="dashboard-brand" href="index.html">
+            <i class="fas fa-map-marker-alt"></i>Travel Qila
+        </a>
+
+        <nav class="dashboard-nav" aria-label="Main navigation">
             <a href="index.html">Home</a>
             <a href="packages.html">Packages</a>
             <a href="booking.html">Booking</a>
             <a href="contact.html">Contact</a>
         </nav>
+
+        <button class="btn btn-outline-primary dashboard-logout"
+                type="button" data-logout>
+            <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+        </button>
+
     </div>
 </header>
-<main class="auth-main"><div class="container"><div class="container" style="max-width:960px"><div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-    <div>
-        <span class="auth-eyebrow">Your account</span>
-        <h1 class="auth-title h2 mb-1">My Dashboard</h1>
-        <p class="text-secondary mb-0">Welcome back, <strong data-profile-name>Traveller</strong>.</p>
-    </div>
-    <button class="btn btn-outline-primary rounded-pill px-4" type="button" data-logout><i class="fas fa-sign-out-alt me-2"></i>Sign Out</button>
-</div>
-<div class="auth-message" data-dashboard-message></div>
-<div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="auth-dashboard-card">
-            <span class="auth-account-icon mb-3"><i class="fas fa-envelope"></i></span>
-            <h3>Registered email</h3>
-            <div class="auth-dashboard-value" data-profile-email>Loading…</div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="auth-dashboard-card">
-            <span class="auth-account-icon mb-3"><i class="fas fa-calendar-check"></i></span>
-            <h3>Member since</h3>
-            <div class="auth-dashboard-value" data-profile-created>Loading…</div>
-        </div>
-    </div>
-</div>
-<section class="auth-card p-4 p-lg-5" id="profile">
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <span class="auth-account-icon"><i class="fas fa-user-edit"></i></span>
-        <div><h2 class="auth-title h4 mb-1">Personal information</h2><p class="text-secondary mb-0">Update the details saved to your account.</p></div>
-    </div>
-    <form class="auth-form" data-profile-form>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label" for="profile-name">Full name</label>
-                <input class="form-control" id="profile-name" name="full_name" type="text" minlength="2" maxlength="100" autocomplete="name" required>
+
+<main class="dashboard-main">
+    <div class="container">
+
+        <div class="dashboard-layout">
+
+            <!-- SIDEBAR -->
+            <aside class="dashboard-sidebar" aria-label="Dashboard navigation">
+
+                <div class="sidebar-label">Workspace</div>
+
+                <a href="#overview" class="sidebar-link active">
+                    <i class="fas fa-th-large"></i>
+                    Overview
+                </a>
+
+                <a href="#profile" class="sidebar-link">
+                    <i class="fas fa-user-circle"></i>
+                    My Profile
+                </a>
+
+                <a href="packages.html" class="sidebar-link">
+                    <i class="fas fa-globe-asia"></i>
+                    Explore Packages
+                </a>
+
+                <a href="booking.html" class="sidebar-link">
+                    <i class="fas fa-suitcase-rolling"></i>
+                    Book a Trip
+                </a>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="sidebar-label">Account</div>
+
+                <a href="#account-details" class="sidebar-link">
+                    <i class="fas fa-id-card"></i>
+                    Account Details
+                </a>
+
+                <a href="contact.html" class="sidebar-link">
+                    <i class="fas fa-headset"></i>
+                    Help & Support
+                </a>
+
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <div class="dashboard-content">
+
+                <div class="auth-message" data-dashboard-message></div>
+
+                <!-- WELCOME -->
+                <section class="dashboard-welcome" id="overview">
+
+                    <div class="welcome-content">
+                        <span class="welcome-eyebrow">
+                            YOUR TRAVEL SPACE
+                        </span>
+
+                        <h1>
+                            Welcome back, <span data-profile-name>Traveller</span>!
+                        </h1>
+
+                        <p>
+                            Your next adventure is waiting.
+                            Explore destinations, discover experiences
+                            and start planning your next journey with Travel Qila.
+                        </p>
+
+                        <a href="packages.html" class="welcome-button">
+                            Explore Destinations
+                            <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+
+                </section>
+
+                <!-- ACCOUNT OVERVIEW -->
+                <div class="dashboard-section-heading" id="account-details">
+                    <div>
+                        <h2>Account Overview</h2>
+                        <p>Your Travel Qila account at a glance.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="dashboard-info-card">
+                            <span class="dashboard-card-icon">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+
+                            <div class="dashboard-card-label">
+                                Registered Email
+                            </div>
+
+                            <div class="dashboard-card-value"
+                                 data-profile-email>
+                                Loading…
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dashboard-info-card">
+                            <span class="dashboard-card-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </span>
+
+                            <div class="dashboard-card-label">
+                                Member Since
+                            </div>
+
+                            <div class="dashboard-card-value"
+                                 data-profile-created>
+                                Loading…
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- QUICK ACTIONS -->
+                <div class="dashboard-section-heading">
+                    <div>
+                        <h2>Quick Actions</h2>
+                        <p>Everything you need for your next journey.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <a href="packages.html" class="dashboard-feature-card">
+                            <span class="feature-icon">
+                                <i class="fas fa-map-marked-alt"></i>
+                            </span>
+
+                            <span class="feature-text">
+                                <strong>Explore Packages</strong>
+                                <span>Find your next destination</span>
+                            </span>
+
+                            <i class="fas fa-chevron-right feature-arrow"></i>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6">
+                        <a href="booking.html" class="dashboard-feature-card">
+                            <span class="feature-icon">
+                                <i class="fas fa-plane-departure"></i>
+                            </span>
+
+                            <span class="feature-text">
+                                <strong>Plan a Journey</strong>
+                                <span>Start planning your trip</span>
+                            </span>
+
+                            <i class="fas fa-chevron-right feature-arrow"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- FUTURE FEATURES -->
+                <div class="dashboard-section-heading">
+                    <div>
+                        <h2>Your Travel Activity</h2>
+                        <p>More ways to manage your travel experience.</p>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="dashboard-coming-soon">
+                            <span class="coming-soon-label">
+                                Coming Soon
+                            </span>
+
+                            <h3>
+                                <i class="fas fa-suitcase me-2"></i>
+                                My Bookings
+                            </h3>
+
+                            <p>
+                                View upcoming trips, booking details
+                                and your travel history in one place.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dashboard-coming-soon">
+                            <span class="coming-soon-label">
+                                Coming Soon
+                            </span>
+
+                            <h3>
+                                <i class="fas fa-heart me-2"></i>
+                                Saved Destinations
+                            </h3>
+
+                            <p>
+                                Keep your favourite destinations together
+                                and revisit them whenever you like.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- PROFILE -->
+                <div class="dashboard-section-heading" id="profile">
+                    <div>
+                        <h2>Personal Information</h2>
+                        <p>Keep your account details up to date.</p>
+                    </div>
+                </div>
+
+                <section class="dashboard-panel">
+
+                    <div class="panel-heading">
+                        <span class="dashboard-card-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </span>
+
+                        <div>
+                            <h2>Edit Your Profile</h2>
+                            <p>Update the information saved to your account.</p>
+                        </div>
+                    </div>
+
+                    <form class="auth-form dashboard-form" data-profile-form>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profile-name">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    class="form-control"
+                                    id="profile-name"
+                                    name="full_name"
+                                    type="text"
+                                    minlength="2"
+                                    maxlength="100"
+                                    autocomplete="name"
+                                    required
+                                >
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label" for="profile-phone">
+                                    Mobile Number
+                                </label>
+
+                                <input
+                                    class="form-control"
+                                    id="profile-phone"
+                                    name="phone"
+                                    type="tel"
+                                    maxlength="30"
+                                    autocomplete="tel"
+                                >
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary dashboard-save mt-4"
+                                type="submit">
+                            <i class="fas fa-save me-2"></i>
+                            Save Changes
+                        </button>
+
+                    </form>
+
+                </section>
+
+                <p class="small text-secondary mt-4 mb-0">
+                    Your Travel Qila dashboard is evolving.
+                    Booking history, payments, saved destinations
+                    and notifications will become available as those
+                    features are developed.
+                </p>
+
             </div>
-            <div class="col-md-6">
-                <label class="form-label" for="profile-phone">Mobile number</label>
-                <input class="form-control" id="profile-phone" name="phone" type="tel" maxlength="30" autocomplete="tel">
-            </div>
         </div>
-        <button class="btn btn-primary px-5 mt-4" type="submit">Save Changes</button>
-    </form>
-</section>
-<p class="small text-secondary mt-4 mb-0">Booking history, payments and notifications are not connected to this starter dashboard yet. They require their own backend workflows and access policies.</p>
-</div></div></main><footer class="auth-footer">
-    <div class="container">© <span id="auth-year"></span> Travel Qila. All rights reserved.</div>
+    </div>
+</main>
+
+<footer class="dashboard-footer">
+    <div class="container d-flex flex-wrap justify-content-between gap-2">
+        <span>
+            © <span id="auth-year"></span> Travel Qila. All rights reserved.
+        </span>
+
+        <span>Explore more. Travel better.</span>
+    </div>
 </footer>
-<script>document.getElementById("auth-year").textContent = new Date().getFullYear();</script>
+
+<script>
+    document.getElementById("auth-year").textContent =
+        new Date().getFullYear();
+</script>
+
 <script type="module" src="js/auth-pages.js"></script>
+
 </body>
 </html>
