@@ -833,923 +833,600 @@
     <script type="module" src="js/auth-nav.js"></script>
 
     <!-- Dynamic package data -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-            /*
-             * DEVELOPMENT DATA
-             * These records are sample data, not live supplier inventory.
-             * Later, replace this data source with the Travel Qila backend/API.
-             */
+    // =========================================
+    // 1. PACKAGE DEVELOPMENT DATA
+    // =========================================
 
-            const packages = {
+    const packages = {
+        "kashmir-escape": {
+            name: "Kashmir Escape",
+            destination: "Kashmir, India",
+            category: "Domestic",
+            duration: "6 Nights / 7 Days",
+            price: "₹24,999",
+            image: "img/destination-1.jpg",
+            description: "Discover the natural beauty of Kashmir through an illustrative journey covering Srinagar, Gulmarg and Pahalgam. Enjoy mountain scenery, local culture and peaceful landscapes.",
+            highlights: ["Explore Srinagar and Dal Lake", "Discover Gulmarg landscapes", "Visit scenic Pahalgam", "Customisable sightseeing plans"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Srinagar", description: "Arrive in Srinagar, transfer to your accommodation and enjoy a relaxed introduction to the destination." },
+                { day: "Day 2", title: "Srinagar Exploration", description: "Explore Dal Lake, local markets and selected city attractions." },
+                { day: "Day 3", title: "Gulmarg Excursion", description: "Discover Gulmarg and its mountain scenery. Activities depend on season and availability." },
+                { day: "Day 4", title: "Travel to Pahalgam", description: "Explore the beautiful landscapes and surroundings of Pahalgam." },
+                { day: "Day 5", title: "Pahalgam Experiences", description: "Enjoy a flexible day for local sightseeing and relaxation." },
+                { day: "Day 6", title: "Return to Srinagar", description: "Return to Srinagar and enjoy time at leisure." },
+                { day: "Day 7", title: "Departure", description: "Complete your journey and depart from Srinagar." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Custom itinerary planning", "Travel assistance"],
+            exclusions: ["Flights unless specified", "Personal expenses", "Optional activities", "Travel insurance", "Unspecified meals"]
+        },
 
-                "kashmir-escape": {
-                    name: "Kashmir Escape",
-                    destination: "Kashmir, India",
-                    category: "Domestic",
-                    duration: "6 Nights / 7 Days",
-                    price: "₹24,999",
-                    image: "img/destination-1.jpg",
-                    description:
-                        "Discover the natural beauty of Kashmir through an illustrative journey covering Srinagar, Gulmarg and Pahalgam. Enjoy mountain scenery, local culture and peaceful landscapes.",
-                    highlights: [
-                        "Explore Srinagar and Dal Lake",
-                        "Discover Gulmarg landscapes",
-                        "Visit scenic Pahalgam",
-                        "Customisable sightseeing plans"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Srinagar",
-                            description: "Arrive in Srinagar, transfer to your accommodation and enjoy a relaxed introduction to the destination."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Srinagar Exploration",
-                            description: "Explore Dal Lake, local markets and selected city attractions."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Gulmarg Excursion",
-                            description: "Discover Gulmarg and its mountain scenery. Activities depend on season and availability."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "Travel to Pahalgam",
-                            description: "Explore the beautiful landscapes and surroundings of Pahalgam."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Pahalgam Experiences",
-                            description: "Enjoy a flexible day for local sightseeing and relaxation."
-                        },
-                        {
-                            day: "Day 6",
-                            title: "Return to Srinagar",
-                            description: "Return to Srinagar and enjoy time at leisure."
-                        },
-                        {
-                            day: "Day 7",
-                            title: "Departure",
-                            description: "Complete your journey and depart from Srinagar."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested sightseeing",
-                        "Custom itinerary planning",
-                        "Travel assistance"
-                    ],
-                    exclusions: [
-                        "Flights unless specified",
-                        "Personal expenses",
-                        "Optional activities",
-                        "Travel insurance",
-                        "Unspecified meals"
-                    ]
-                },
+        "bali-discovery": {
+            name: "Bali Discovery",
+            destination: "Bali, Indonesia",
+            category: "International",
+            duration: "5 Nights / 6 Days",
+            price: "₹49,999",
+            image: "img/destination-2.jpg",
+            description: "Experience Bali through an illustrative holiday concept featuring tropical landscapes, cultural attractions, relaxing surroundings and island experiences.",
+            highlights: ["Discover Ubud", "Explore tropical landscapes", "Experience local culture", "Flexible island sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Bali", description: "Arrive in Bali and transfer to your planned accommodation." },
+                { day: "Day 2", title: "Explore Ubud", description: "Discover Ubud's cultural attractions and scenic surroundings." },
+                { day: "Day 3", title: "Bali Nature Experiences", description: "Explore selected natural attractions and local experiences." },
+                { day: "Day 4", title: "Island Exploration", description: "Enjoy a flexible day for beaches, sightseeing or optional activities." },
+                { day: "Day 5", title: "Leisure Day", description: "Enjoy free time and explore Bali at your own pace." },
+                { day: "Day 6", title: "Departure", description: "Transfer for your onward journey." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Travel itinerary planning", "Destination assistance"],
+            exclusions: ["International flights", "Visa fees where applicable", "Personal expenses", "Optional activities", "Travel insurance"]
+        },
 
-                "bali-discovery": {
-                    name: "Bali Discovery",
-                    destination: "Bali, Indonesia",
-                    category: "International",
-                    duration: "5 Nights / 6 Days",
-                    price: "₹49,999",
-                    image: "img/destination-2.jpg",
-                    description:
-                        "Experience Bali through an illustrative holiday concept featuring tropical landscapes, cultural attractions, relaxing surroundings and island experiences.",
-                    highlights: [
-                        "Discover Ubud",
-                        "Explore tropical landscapes",
-                        "Experience local culture",
-                        "Flexible island sightseeing"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Bali",
-                            description: "Arrive in Bali and transfer to your planned accommodation."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Explore Ubud",
-                            description: "Discover Ubud's cultural attractions and scenic surroundings."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Bali Nature Experiences",
-                            description: "Explore selected natural attractions and local experiences."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "Island Exploration",
-                            description: "Enjoy a flexible day for beaches, sightseeing or optional activities."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Leisure Day",
-                            description: "Enjoy free time and explore Bali at your own pace."
-                        },
-                        {
-                            day: "Day 6",
-                            title: "Departure",
-                            description: "Transfer for your onward journey."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested sightseeing",
-                        "Travel itinerary planning",
-                        "Destination assistance"
-                    ],
-                    exclusions: [
-                        "International flights",
-                        "Visa fees where applicable",
-                        "Personal expenses",
-                        "Optional activities",
-                        "Travel insurance"
-                    ]
-                },
+        "dubai-highlights": {
+            name: "Dubai Highlights",
+            destination: "Dubai, UAE",
+            category: "International",
+            duration: "4 Nights / 5 Days",
+            price: "₹39,999",
+            image: "img/destination-3.jpg",
+            description: "Explore Dubai through a sample city holiday concept featuring modern architecture, cultural attractions and optional desert experiences.",
+            highlights: ["Explore Downtown Dubai", "Discover city attractions", "Optional desert experiences", "Flexible sightseeing schedule"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Dubai", description: "Arrive in Dubai and transfer to your planned accommodation." },
+                { day: "Day 2", title: "Downtown Dubai", description: "Explore Downtown Dubai and its iconic attractions." },
+                { day: "Day 3", title: "Desert Experience", description: "Consider an optional desert experience, subject to availability." },
+                { day: "Day 4", title: "City Exploration", description: "Enjoy a flexible day for shopping and local attractions." },
+                { day: "Day 5", title: "Departure", description: "Complete your trip and depart from Dubai." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested city itinerary", "Travel planning assistance", "Customisation support"],
+            exclusions: ["Flights unless specified", "Visa fees", "Optional excursions", "Personal expenses", "Travel insurance"]
+        },
 
-                "dubai-highlights": {
-                    name: "Dubai Highlights",
-                    destination: "Dubai, UAE",
-                    category: "International",
-                    duration: "4 Nights / 5 Days",
-                    price: "₹39,999",
-                    image: "img/destination-3.jpg",
-                    description:
-                        "Explore Dubai through a sample city holiday concept featuring modern architecture, cultural attractions and optional desert experiences.",
-                    highlights: [
-                        "Explore Downtown Dubai",
-                        "Discover city attractions",
-                        "Optional desert experiences",
-                        "Flexible sightseeing schedule"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Dubai",
-                            description: "Arrive in Dubai and transfer to your planned accommodation."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Downtown Dubai",
-                            description: "Explore Downtown Dubai and its iconic attractions."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Desert Experience",
-                            description: "Consider an optional desert experience, subject to availability."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "City Exploration",
-                            description: "Enjoy a flexible day for shopping and local attractions."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Departure",
-                            description: "Complete your trip and depart from Dubai."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested city itinerary",
-                        "Travel planning assistance",
-                        "Customisation support"
-                    ],
-                    exclusions: [
-                        "Flights unless specified",
-                        "Visa fees",
-                        "Optional excursions",
-                        "Personal expenses",
-                        "Travel insurance"
-                    ]
-                },
+        "kerala-backwaters": {
+            name: "Kerala Backwaters",
+            destination: "Kerala, India",
+            category: "Domestic",
+            duration: "4 Nights / 5 Days",
+            price: "₹19,999",
+            image: "img/destination-4.jpg",
+            description: "Discover Kerala's natural landscapes, peaceful backwaters and scenic destinations through a flexible sample itinerary.",
+            highlights: ["Explore Munnar", "Discover Alleppey", "Experience Kerala landscapes", "Flexible local sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Kochi", description: "Arrive in Kochi and begin your Kerala journey." },
+                { day: "Day 2", title: "Journey to Munnar", description: "Travel through scenic landscapes towards Munnar." },
+                { day: "Day 3", title: "Munnar Exploration", description: "Explore selected local attractions and nature experiences." },
+                { day: "Day 4", title: "Alleppey Backwaters", description: "Discover the backwater region and optional local experiences." },
+                { day: "Day 5", title: "Departure", description: "Complete your journey and depart." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Itinerary planning", "Travel assistance"],
+            exclusions: ["Flights", "Personal expenses", "Optional boat activities", "Travel insurance", "Unspecified meals"]
+        },
 
-                "kerala-backwaters": {
-                    name: "Kerala Backwaters",
-                    destination: "Kerala, India",
-                    category: "Domestic",
-                    duration: "4 Nights / 5 Days",
-                    price: "₹19,999",
-                    image: "img/destination-4.jpg",
-                    description:
-                        "Discover Kerala's natural landscapes, peaceful backwaters and scenic destinations through a flexible sample itinerary.",
-                    highlights: [
-                        "Explore Munnar",
-                        "Discover Alleppey",
-                        "Experience Kerala landscapes",
-                        "Flexible local sightseeing"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Kochi",
-                            description: "Arrive in Kochi and begin your Kerala journey."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Journey to Munnar",
-                            description: "Travel through scenic landscapes towards Munnar."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Munnar Exploration",
-                            description: "Explore selected local attractions and nature experiences."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "Alleppey Backwaters",
-                            description: "Discover the backwater region and optional local experiences."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Departure",
-                            description: "Complete your journey and depart."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested sightseeing",
-                        "Itinerary planning",
-                        "Travel assistance"
-                    ],
-                    exclusions: [
-                        "Flights",
-                        "Personal expenses",
-                        "Optional boat activities",
-                        "Travel insurance",
-                        "Unspecified meals"
-                    ]
-                },
+        "swiss-alpine": {
+            name: "Swiss Alpine Journey",
+            destination: "Switzerland",
+            category: "International",
+            duration: "7 Nights / 8 Days",
+            price: "₹1,29,999",
+            image: "img/destination-5.jpg",
+            description: "Explore Switzerland through a sample European holiday concept featuring alpine scenery, lakeside towns and scenic travel experiences.",
+            highlights: ["Discover Zurich", "Explore Lucerne", "Experience alpine scenery", "Flexible Swiss sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Zurich", description: "Arrive in Zurich and settle into your accommodation." },
+                { day: "Day 2", title: "Zurich Exploration", description: "Discover the city and its cultural attractions." },
+                { day: "Day 3", title: "Lucerne", description: "Explore Lucerne and its scenic surroundings." },
+                { day: "Day 4", title: "Alpine Experiences", description: "Enjoy an optional mountain excursion, subject to availability." },
+                { day: "Day 5", title: "Interlaken", description: "Discover Interlaken and its beautiful landscapes." },
+                { day: "Day 6", title: "Scenic Exploration", description: "Enjoy a flexible day for sightseeing." },
+                { day: "Day 7", title: "Leisure Day", description: "Explore at your own pace." },
+                { day: "Day 8", title: "Departure", description: "Depart from Switzerland." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested itinerary", "Travel planning assistance", "Destination guidance"],
+            exclusions: ["International flights", "Schengen visa fees", "Rail passes unless specified", "Personal expenses", "Travel insurance"]
+        },
 
-                "swiss-alpine": {
-                    name: "Swiss Alpine Journey",
-                    destination: "Switzerland",
-                    category: "International",
-                    duration: "7 Nights / 8 Days",
-                    price: "₹1,29,999",
-                    image: "img/destination-5.jpg",
-                    description:
-                        "Explore Switzerland through a sample European holiday concept featuring alpine scenery, lakeside towns and scenic travel experiences.",
-                    highlights: [
-                        "Discover Zurich",
-                        "Explore Lucerne",
-                        "Experience alpine scenery",
-                        "Flexible Swiss sightseeing"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Zurich",
-                            description: "Arrive in Zurich and settle into your accommodation."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Zurich Exploration",
-                            description: "Discover the city and its cultural attractions."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Lucerne",
-                            description: "Explore Lucerne and its scenic surroundings."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "Alpine Experiences",
-                            description: "Enjoy an optional mountain excursion, subject to availability."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Interlaken",
-                            description: "Discover Interlaken and its beautiful landscapes."
-                        },
-                        {
-                            day: "Day 6",
-                            title: "Scenic Exploration",
-                            description: "Enjoy a flexible day for sightseeing."
-                        },
-                        {
-                            day: "Day 7",
-                            title: "Leisure Day",
-                            description: "Explore at your own pace."
-                        },
-                        {
-                            day: "Day 8",
-                            title: "Departure",
-                            description: "Depart from Switzerland."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested itinerary",
-                        "Travel planning assistance",
-                        "Destination guidance"
-                    ],
-                    exclusions: [
-                        "International flights",
-                        "Schengen visa fees",
-                        "Rail passes unless specified",
-                        "Personal expenses",
-                        "Travel insurance"
-                    ]
-                },
-
-                "thailand-explorer": {
-                    name: "Thailand Explorer",
-                    destination: "Thailand",
-                    category: "International",
-                    duration: "5 Nights / 6 Days",
-                    price: "₹34,999",
-                    image: "img/destination-6.jpg",
-                    description:
-                        "Discover Thailand through a sample itinerary combining city experiences, tropical beaches and optional island activities.",
-                    highlights: [
-                        "Explore Bangkok",
-                        "Discover Phuket",
-                        "Enjoy tropical landscapes",
-                        "Optional island experiences"
-                    ],
-                    itinerary: [
-                        {
-                            day: "Day 1",
-                            title: "Arrival in Bangkok",
-                            description: "Arrive in Bangkok and transfer to your accommodation."
-                        },
-                        {
-                            day: "Day 2",
-                            title: "Bangkok Exploration",
-                            description: "Explore selected city attractions and local experiences."
-                        },
-                        {
-                            day: "Day 3",
-                            title: "Travel to Phuket",
-                            description: "Continue your journey towards Phuket, subject to the final travel arrangements."
-                        },
-                        {
-                            day: "Day 4",
-                            title: "Island Experiences",
-                            description: "Enjoy optional island activities depending on weather and availability."
-                        },
-                        {
-                            day: "Day 5",
-                            title: "Leisure and Exploration",
-                            description: "Enjoy a flexible day to explore the destination."
-                        },
-                        {
-                            day: "Day 6",
-                            title: "Departure",
-                            description: "Complete your Thailand journey."
-                        }
-                    ],
-                    inclusions: [
-                        "Accommodation concept",
-                        "Suggested sightseeing",
-                        "Travel planning assistance",
-                        "Custom itinerary"
-                    ],
-                    exclusions: [
-                        "International flights",
-                        "Visa fees where applicable",
-                        "Optional island activities",
-                        "Personal expenses",
-                        "Travel insurance"
-                    ]
-                }
-
-            };
-
-            const fallbackImage = "img/carousel-2.jpg";
-
-            
-// =====================================================
-// OPENTRIPMAP LIVE ATTRACTIONS INTEGRATION
-// =====================================================
-
-const ATTRACTIONS_API =
-    "https://stjhubpzshzyjqkscjty.supabase.co/functions/v1/travel-attractions";
-
-// Search coordinates for each package.
-// These are search centres, not exact hotel or attraction locations.
-
-const destinationCoordinates = {
-    "kashmir-escape": {
-        lat: 34.0837,
-        lon: 74.7973,
-        name: "Srinagar"
-    },
-
-    "bali-discovery": {
-        lat: -8.5069,
-        lon: 115.2625,
-        name: "Ubud, Bali"
-    },
-
-    "dubai-highlights": {
-        lat: 25.2048,
-        lon: 55.2708,
-        name: "Dubai"
-    },
-
-    "kerala-backwaters": {
-        lat: 9.4981,
-        lon: 76.3388,
-        name: "Alleppey"
-    },
-
-    "swiss-alpine": {
-        lat: 46.6863,
-        lon: 7.8632,
-        name: "Interlaken"
-    },
-
-    "thailand-explorer": {
-        lat: 7.8804,
-        lon: 98.3923,
-        name: "Phuket"
-    }
-};
-
-const attractionCache = new Map();
-
-function formatDistance(metres) {
-
-    if (!Number.isFinite(Number(metres))) {
-        return "Distance unavailable";
-    }
-
-    const distance = Number(metres);
-
-    if (distance < 1000) {
-        return Math.round(distance) + " m away";
-    }
-
-    return (distance / 1000).toFixed(1) + " km away";
-}
-
-function formatCategory(kinds) {
-
-    if (!kinds) {
-        return "Attraction";
-    }
-
-    return kinds
-        .split(",")
-        .slice(0, 3)
-        .map(function (item) {
-            return item
-                .replace(/_/g, " ")
-                .replace(/\b\w/g, function (letter) {
-                    return letter.toUpperCase();
-                });
-        })
-        .join(" · ");
-}
-
-function showAttractionStatus(message, icon = "info-circle") {
-
-    const status = document.getElementById("attractionsStatus");
-
-    status.replaceChildren();
-
-    const iconElement = document.createElement("i");
-    iconElement.className = "fas fa-" + icon + " me-2";
-
-    status.appendChild(iconElement);
-    status.appendChild(document.createTextNode(message));
-
-    status.style.display = "block";
-}
-
-async function loadAttractions(packageId) {
-
-    const destination = destinationCoordinates[packageId];
-
-    const list = document.getElementById("attractionsList");
-    const subtitle = document.getElementById("attractionsSubtitle");
-
-    list.replaceChildren();
-
-    if (!destination) {
-        showAttractionStatus(
-            "Attraction information is not available for this destination."
-        );
-        return;
-    }
-
-    subtitle.textContent =
-        "Popular places around " + destination.name + ".";
-
-    showAttractionStatus(
-        "Discovering nearby attractions...",
-        "spinner fa-spin"
-    );
-
-    const cacheKey = packageId;
-
-    try {
-
-        let places = attractionCache.get(cacheKey);
-
-        // Reuse results during the current page session.
-        if (!places) {
-
-            const requestUrl = new URL(ATTRACTIONS_API);
-
-            requestUrl.searchParams.set("action", "search");
-            requestUrl.searchParams.set("lat", destination.lat);
-            requestUrl.searchParams.set("lon", destination.lon);
-            requestUrl.searchParams.set("radius", "15000");
-            requestUrl.searchParams.set("limit", "10");
-
-            const response = await fetch(requestUrl.toString());
-
-            if (!response.ok) {
-                throw new Error("Attraction service returned an error.");
-            }
-
-            const result = await response.json();
-
-            if (!result.success || !Array.isArray(result.places)) {
-                throw new Error("Invalid attraction response.");
-            }
-
-            places = result.places;
-
-            attractionCache.set(cacheKey, places);
+        "thailand-explorer": {
+            name: "Thailand Explorer",
+            destination: "Thailand",
+            category: "International",
+            duration: "5 Nights / 6 Days",
+            price: "₹34,999",
+            image: "img/destination-6.jpg",
+            description: "Discover Thailand through a sample itinerary combining city experiences, tropical beaches and optional island activities.",
+            highlights: ["Explore Bangkok", "Discover Phuket", "Enjoy tropical landscapes", "Optional island experiences"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Bangkok", description: "Arrive in Bangkok and transfer to your accommodation." },
+                { day: "Day 2", title: "Bangkok Exploration", description: "Explore selected city attractions and local experiences." },
+                { day: "Day 3", title: "Travel to Phuket", description: "Continue your journey towards Phuket, subject to the final travel arrangements." },
+                { day: "Day 4", title: "Island Experiences", description: "Enjoy optional island activities depending on weather and availability." },
+                { day: "Day 5", title: "Leisure and Exploration", description: "Enjoy a flexible day to explore the destination." },
+                { day: "Day 6", title: "Departure", description: "Complete your Thailand journey." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Travel planning assistance", "Custom itinerary"],
+            exclusions: ["International flights", "Visa fees where applicable", "Optional island activities", "Personal expenses", "Travel insurance"]
         }
+    };
 
-        if (places.length === 0) {
+    // =========================================
+    // 2. CONFIGURATION
+    // =========================================
 
-            showAttractionStatus(
-                "No attractions were found nearby. Please check again later."
-            );
+    const fallbackImage = "img/carousel-2.jpg";
 
-            return;
+    const ATTRACTIONS_API =
+        "https://stjhubpzshzyjqkscjty.supabase.co/functions/v1/travel-attractions";
+
+    const destinationCoordinates = {
+        "kashmir-escape": { lat: 34.0837, lon: 74.7973, name: "Srinagar" },
+        "bali-discovery": { lat: -8.5069, lon: 115.2625, name: "Ubud, Bali" },
+        "dubai-highlights": { lat: 25.2048, lon: 55.2708, name: "Dubai" },
+        "kerala-backwaters": { lat: 9.4981, lon: 76.3388, name: "Alleppey" },
+        "swiss-alpine": { lat: 46.6863, lon: 7.8632, name: "Interlaken" },
+        "thailand-explorer": { lat: 7.8804, lon: 98.3923, name: "Phuket" }
+    };
+
+    const attractionCache = new Map();
+
+    // =========================================
+    // 3. SAFE HTML HELPERS
+    // =========================================
+
+    function setText(id, value) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = value ?? "";
+        } else {
+            console.warn("[Travel Qila] Missing HTML element:", id);
         }
+    }
 
-        document.getElementById("attractionsStatus").style.display = "none";
+    function createList(items, elementId, iconClass, iconColor) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
 
-        places.slice(0, 10).forEach(function (place) {
+        container.replaceChildren();
 
-            const column = document.createElement("div");
-            column.className = "col-md-6";
-
-            const card = document.createElement("div");
-            card.className = "attraction-card";
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "col-md-6";
 
             const icon = document.createElement("i");
-            icon.className = "fas fa-map-marker-alt text-primary mb-3";
-            icon.style.fontSize = "23px";
+            icon.className = `${iconClass} ${iconColor} me-2`;
+
+            div.append(icon, document.createTextNode(item));
+            container.appendChild(div);
+        });
+    }
+
+    function createSimpleList(items, elementId, iconClass) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+
+        container.replaceChildren();
+
+        items.forEach(item => {
+            const li = document.createElement("li");
+            const icon = document.createElement("i");
+
+            icon.className = iconClass;
+            li.append(icon, document.createTextNode(" " + item));
+            container.appendChild(li);
+        });
+    }
+
+    function createItinerary(items) {
+        const container = document.getElementById("itineraryList");
+        if (!container) return;
+
+        container.replaceChildren();
+
+        items.forEach(item => {
+            const day = document.createElement("div");
+            day.className = "itinerary-day";
+
+            const label = document.createElement("span");
+            label.className = "day-label";
+            label.textContent = item.day;
 
             const heading = document.createElement("h5");
-            heading.textContent = place.name || "Unnamed attraction";
+            heading.textContent = item.title;
 
-            const category = document.createElement("div");
-            category.className = "attraction-category mb-2";
-            category.textContent = formatCategory(place.kinds);
+            const description = document.createElement("p");
+            description.className = "mb-0";
+            description.textContent = item.description;
 
-            const distance = document.createElement("div");
-            distance.className = "attraction-distance mb-3";
-
-            const distanceIcon = document.createElement("i");
-            distanceIcon.className = "fas fa-location-arrow me-2 text-primary";
-
-            distance.appendChild(distanceIcon);
-            distance.appendChild(
-                document.createTextNode(formatDistance(place.dist))
-            );
-
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "btn btn-outline-primary btn-sm rounded-pill";
-            button.textContent = "View Details";
-            button.dataset.xid = place.xid;
-            button.setAttribute("aria-expanded", "false");
-
-            const details = document.createElement("div");
-            details.className = "attraction-details";
-            details.hidden = true;
-
-            card.appendChild(icon);
-            card.appendChild(heading);
-            card.appendChild(category);
-            card.appendChild(distance);
-            card.appendChild(button);
-            card.appendChild(details);
-
-            column.appendChild(card);
-            list.appendChild(column);
-
+            day.append(label, heading, description);
+            container.appendChild(day);
         });
-
-    } catch (error) {
-
-        console.error("[Travel Qila] Attractions error:", error);
-
-        showAttractionStatus(
-            "We couldn't load attractions right now. Please try again later.",
-            "exclamation-circle"
-        );
     }
-}
 
+    // =========================================
+    // 4. ATTRACTION DISPLAY HELPERS
+    // =========================================
 
-// Fetch detailed information when a visitor selects an attraction.
-document.getElementById("attractionsList").addEventListener(
-    "click",
-    async function (event) {
+    function showAttractionStatus(message, icon = "info-circle") {
+        const status = document.getElementById("attractionsStatus");
+        if (!status) return;
 
-        const button = event.target.closest("button[data-xid]");
+        status.replaceChildren();
 
-        if (!button) {
+        const iconElement = document.createElement("i");
+        iconElement.className = "fas fa-" + icon + " me-2";
+
+        status.append(iconElement, document.createTextNode(message));
+        status.style.display = "block";
+    }
+
+    function formatDistance(metres) {
+        if (!Number.isFinite(Number(metres))) {
+            return "Distance unavailable";
+        }
+
+        const distance = Number(metres);
+
+        return distance < 1000
+            ? Math.round(distance) + " m away"
+            : (distance / 1000).toFixed(1) + " km away";
+    }
+
+    function formatCategory(kinds) {
+        if (!kinds) return "Attraction";
+
+        return kinds.split(",").slice(0, 3).map(item =>
+            item.replace(/_/g, " ").replace(/\b\w/g, letter =>
+                letter.toUpperCase()
+            )
+        ).join(" · ");
+    }
+
+    // =========================================
+    // 5. LOAD NEARBY ATTRACTIONS
+    // =========================================
+
+    async function loadAttractions(packageId) {
+        const destination = destinationCoordinates[packageId];
+        const list = document.getElementById("attractionsList");
+        const subtitle = document.getElementById("attractionsSubtitle");
+
+        if (!list || !document.getElementById("attractionsStatus")) {
+            console.warn("[Travel Qila] Attractions HTML section is missing.");
             return;
         }
 
-        const xid = button.dataset.xid;
-        const card = button.closest(".attraction-card");
-        const details = card.querySelector(".attraction-details");
+        list.replaceChildren();
 
-        // Toggle an already-open details panel.
-        if (!details.hidden) {
-
-            details.hidden = true;
-            button.textContent = "View Details";
-            button.setAttribute("aria-expanded", "false");
-
+        if (!destination) {
+            showAttractionStatus("Attraction information is unavailable.");
             return;
         }
 
-        details.hidden = false;
-        button.setAttribute("aria-expanded", "true");
-
-        if (details.dataset.loaded === "true") {
-            button.textContent = "Hide Details";
-            return;
+        if (subtitle) {
+            subtitle.textContent = "Popular places around " + destination.name + ".";
         }
 
-        button.disabled = true;
-        button.textContent = "Loading...";
-
-        details.textContent = "Loading attraction information...";
+        showAttractionStatus("Discovering nearby attractions...", "spinner fa-spin");
 
         try {
+            let places = attractionCache.get(packageId);
 
-            const requestUrl = new URL(ATTRACTIONS_API);
+            if (!places) {
+                const url = new URL(ATTRACTIONS_API);
 
-            requestUrl.searchParams.set("action", "details");
-            requestUrl.searchParams.set("xid", xid);
+                url.searchParams.set("action", "search");
+                url.searchParams.set("lat", destination.lat);
+                url.searchParams.set("lon", destination.lon);
+                url.searchParams.set("radius", "15000");
+                url.searchParams.set("limit", "10");
 
-            const response = await fetch(requestUrl.toString());
+                const response = await fetch(url.toString());
 
-            if (!response.ok) {
-                throw new Error("Could not retrieve attraction details.");
+                if (!response.ok) {
+                    throw new Error("Attraction service returned HTTP " + response.status);
+                }
+
+                const result = await response.json();
+
+                if (!result.success || !Array.isArray(result.places)) {
+                    throw new Error("Invalid attraction response.");
+                }
+
+                places = result.places;
+                attractionCache.set(packageId, places);
             }
 
-            const result = await response.json();
-
-            if (!result.success || !result.place) {
-                throw new Error("Invalid attraction details.");
+            if (places.length === 0) {
+                showAttractionStatus("No nearby attractions were found.");
+                return;
             }
 
-            const place = result.place;
+            document.getElementById("attractionsStatus").style.display = "none";
 
-            const description =
-                place.wikipedia_extracts?.text ||
-                place.info?.descr ||
-                place.description ||
-                "Additional description is not available for this attraction.";
+            places.slice(0, 10).forEach(place => {
+                const column = document.createElement("div");
+                column.className = "col-md-6";
 
-            details.textContent = description;
+                const card = document.createElement("div");
+                card.className = "attraction-card";
 
-            details.dataset.loaded = "true";
+                const icon = document.createElement("i");
+                icon.className = "fas fa-map-marker-alt text-primary mb-3";
+                icon.style.fontSize = "23px";
 
-            button.textContent = "Hide Details";
+                const heading = document.createElement("h5");
+                heading.textContent = place.name || "Unnamed attraction";
+
+                const category = document.createElement("div");
+                category.className = "attraction-category mb-2";
+                category.textContent = formatCategory(place.kinds);
+
+                const distance = document.createElement("div");
+                distance.className = "attraction-distance mb-3";
+
+                const distanceIcon = document.createElement("i");
+                distanceIcon.className = "fas fa-location-arrow me-2 text-primary";
+
+                distance.append(
+                    distanceIcon,
+                    document.createTextNode(formatDistance(place.dist))
+                );
+
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-outline-primary btn-sm rounded-pill";
+                button.textContent = "View Details";
+                button.dataset.xid = place.xid;
+                button.setAttribute("aria-expanded", "false");
+
+                const details = document.createElement("div");
+                details.className = "attraction-details";
+                details.hidden = true;
+
+                card.append(icon, heading, category, distance, button, details);
+                column.appendChild(card);
+                list.appendChild(column);
+            });
 
         } catch (error) {
+            console.error("[Travel Qila] Attractions error:", error);
 
-            console.error("[Travel Qila] Attraction details error:", error);
-
-            details.textContent =
-                "Unable to retrieve additional information right now.";
-
-            button.textContent = "Retry Details";
-
-        } finally {
-
-            button.disabled = false;
+            showAttractionStatus(
+                "We couldn't load attractions right now. Please try again later.",
+                "exclamation-circle"
+            );
         }
     }
-);
 
+    // =========================================
+    // 6. ATTRACTION DETAILS CLICK HANDLER
+    // =========================================
 
-            const params = new URLSearchParams(window.location.search);
-            const packageId = params.get("id");
+    const attractionsList = document.getElementById("attractionsList");
 
-            const selectedPackage = packageId
-                ? packages[packageId]
-                : null;
+    if (attractionsList) {
+        attractionsList.addEventListener("click", async function (event) {
+            const button = event.target.closest("button[data-xid]");
+            if (!button) return;
 
-            const packageTitle = document.getElementById("packageTitle");
-            const enquiryButton = document.getElementById("enquiryButton");
+            const xid = button.dataset.xid;
+            const card = button.closest(".attraction-card");
+            const details = card.querySelector(".attraction-details");
 
-            function createList(items, elementId, iconClass, iconColor) {
-
-                const container = document.getElementById(elementId);
-                container.replaceChildren();
-
-                items.forEach(function (item) {
-
-                    const div = document.createElement("div");
-                    div.className = "col-md-6";
-
-                    const icon = document.createElement("i");
-                    icon.className = iconClass + " " + iconColor + " me-2";
-
-                    div.appendChild(icon);
-                    div.appendChild(document.createTextNode(item));
-
-                    container.appendChild(div);
-                });
+            if (!details.hidden) {
+                details.hidden = true;
+                button.textContent = "View Details";
+                button.setAttribute("aria-expanded", "false");
+                return;
             }
 
-            function createSimpleList(items, elementId, iconClass) {
+            details.hidden = false;
+            button.setAttribute("aria-expanded", "true");
 
-                const container = document.getElementById(elementId);
-                container.replaceChildren();
-
-                items.forEach(function (item) {
-
-                    const li = document.createElement("li");
-
-                    const icon = document.createElement("i");
-                    icon.className = iconClass;
-
-                    li.appendChild(icon);
-                    li.appendChild(document.createTextNode(" " + item));
-
-                    container.appendChild(li);
-                });
+            if (details.dataset.loaded === "true") {
+                button.textContent = "Hide Details";
+                return;
             }
 
-            function createItinerary(items) {
+            button.disabled = true;
+            button.textContent = "Loading...";
+            details.textContent = "Loading attraction information...";
 
-                const container = document.getElementById("itineraryList");
-                container.replaceChildren();
+            try {
+                const url = new URL(ATTRACTIONS_API);
+                url.searchParams.set("action", "details");
+                url.searchParams.set("xid", xid);
 
-                items.forEach(function (item) {
+                const response = await fetch(url.toString());
 
-                    const day = document.createElement("div");
-                    day.className = "itinerary-day";
+                if (!response.ok) {
+                    throw new Error("Details request failed.");
+                }
 
-                    const label = document.createElement("span");
-                    label.className = "day-label";
-                    label.textContent = item.day;
+                const result = await response.json();
 
-                    const heading = document.createElement("h5");
-                    heading.textContent = item.title;
+                if (!result.success || !result.place) {
+                    throw new Error("Invalid details response.");
+                }
 
-                    const description = document.createElement("p");
-                    description.className = "mb-0";
-                    description.textContent = item.description;
+                const place = result.place;
 
-                    day.appendChild(label);
-                    day.appendChild(heading);
-                    day.appendChild(description);
+                details.textContent =
+                    place.wikipedia_extracts?.text ||
+                    place.info?.descr ||
+                    place.description ||
+                    "Additional description is unavailable.";
 
-                    container.appendChild(day);
-                });
+                details.dataset.loaded = "true";
+                button.textContent = "Hide Details";
+
+            } catch (error) {
+                console.error("[Travel Qila] Attraction details error:", error);
+                details.textContent = "Unable to load details. Please try again.";
+                button.textContent = "Retry Details";
+
+            } finally {
+                button.disabled = false;
             }
-
-            function showUnavailablePackage() {
-
-                document.title = "Package Not Found | Travel Qila";
-
-                packageTitle.textContent = "Package Not Available";
-
-                document.getElementById("heroTitle").textContent =
-                    "Let's Find Your Perfect Holiday";
-
-                document.getElementById("heroSubtitle").textContent =
-                    "The requested package could not be found.";
-
-                document.getElementById("packageDescription").textContent =
-                    "This package may have been removed or the link may be incorrect. Explore our other holiday ideas or contact our team for assistance.";
-
-                document.getElementById("packageImage").src = fallbackImage;
-
-                document.getElementById("packageImage").alt =
-                    "Travel Qila holiday inspiration";
-
-                document.getElementById("packagePrice").textContent = "—";
-
-                document.getElementById("packageDestination").textContent = "Not available";
-                document.getElementById("packageDuration").textContent = "—";
-                document.getElementById("packageCategory").textContent = "—";
-
-                document.getElementById("sidebarDestination").textContent = "—";
-                document.getElementById("sidebarDuration").textContent = "—";
-
-                document.getElementById("highlightsList").replaceChildren();
-                document.getElementById("itineraryList").replaceChildren();
-                document.getElementById("inclusionsList").replaceChildren();
-                document.getElementById("exclusionsList").replaceChildren();
-
-                enquiryButton.textContent = "Browse Packages";
-                enquiryButton.href = "packages.html";
-                enquiryButton.classList.remove("btn-primary");
-                enquiryButton.classList.add("btn-outline-primary");
-
-                document.querySelector(".booking-card .notice").textContent =
-                    "This package is currently unavailable in the development catalogue.";
-
-                document.querySelector(".booking-card .notice").nextElementSibling.style.display =
-                    "none";
-
-                document.querySelector(".booking-card hr").style.display = "none";
-            }
-
-            function renderPackage(data, id) {
-
-                document.title =
-                    data.name + " | Holiday Package | Travel Qila";
-
-                document.getElementById("heroTitle").textContent = data.name;
-
-                document.getElementById("heroSubtitle").textContent =
-                    "Explore your next journey with Travel Qila.";
-
-                packageTitle.textContent = data.name;
-
-                document.getElementById("packageDescription").textContent =
-                    data.description;
-
-                document.getElementById("packageDestination").textContent =
-                    data.destination;
-
-                document.getElementById("packageDuration").textContent =
-                    data.duration;
-
-                document.getElementById("packageCategory").textContent =
-                    data.category;
-
-                const image = document.getElementById("packageImage");
-                image.src = data.image;
-                image.alt = data.name + " holiday destination";
-
-                document.getElementById("packagePrice").textContent =
-                    data.price + "*";
-
-                document.getElementById("sidebarDestination").textContent =
-                    data.destination;
-
-                document.getElementById("sidebarDuration").textContent =
-                    data.duration;
-
-                createList(
-                    data.highlights,
-                    "highlightsList",
-                    "fas fa-check-circle",
-                    "text-primary"
-                );
-
-                createItinerary(data.itinerary);
-
-                createSimpleList(
-                    data.inclusions,
-                    "inclusionsList",
-                    "fas fa-check-circle text-success"
-                );
-
-                createSimpleList(
-                    data.exclusions,
-                    "exclusionsList",
-                    "fas fa-times-circle text-danger"
-                );
-
-               enquiryButton.href =
-    "trip-enquiry.html?package=" +
-    encodeURIComponent(id);
-
-loadAttractions(id);
-
-            }
-
-            if (selectedPackage) {
-                renderPackage(selectedPackage, packageId);
-            } else {
-                showUnavailablePackage();
-            }
-
-            document.getElementById("currentYear").textContent =
-                new Date().getFullYear();
-
         });
-    </script>
+    }
+
+    // =========================================
+    // 7. PACKAGE PAGE RENDERING
+    // =========================================
+
+    const params = new URLSearchParams(window.location.search);
+    const packageId = params.get("id");
+    const selectedPackage = packageId ? packages[packageId] : null;
+    const enquiryButton = document.getElementById("enquiryButton");
+
+    function renderPackage(data, id) {
+        document.title = data.name + " | Holiday Package | Travel Qila";
+
+        setText("heroTitle", data.name);
+        setText("heroSubtitle", "Explore your next journey with Travel Qila.");
+        setText("packageTitle", data.name);
+        setText("packageDescription", data.description);
+        setText("packageDestination", data.destination);
+        setText("packageDuration", data.duration);
+        setText("packageCategory", data.category);
+        setText("packagePrice", data.price + "*");
+        setText("sidebarDestination", data.destination);
+        setText("sidebarDuration", data.duration);
+
+        const image = document.getElementById("packageImage");
+
+        if (image) {
+            image.src = data.image || fallbackImage;
+            image.alt = data.name + " holiday destination";
+        }
+
+        createList(
+            data.highlights,
+            "highlightsList",
+            "fas fa-check-circle",
+            "text-primary"
+        );
+
+        createItinerary(data.itinerary);
+
+        createSimpleList(
+            data.inclusions,
+            "inclusionsList",
+            "fas fa-check-circle text-success"
+        );
+
+        createSimpleList(
+            data.exclusions,
+            "exclusionsList",
+            "fas fa-times-circle text-danger"
+        );
+
+        if (enquiryButton) {
+            enquiryButton.href =
+                "trip-enquiry.html?package=" + encodeURIComponent(id);
+        }
+
+        loadAttractions(id);
+    }
+
+    // =========================================
+    // 8. INVALID PACKAGE HANDLING
+    // =========================================
+
+    function showUnavailablePackage() {
+        document.title = "Package Not Found | Travel Qila";
+
+        setText("heroTitle", "Let's Find Your Perfect Holiday");
+        setText("heroSubtitle", "The requested package could not be found.");
+        setText("packageTitle", "Package Not Available");
+
+        setText(
+            "packageDescription",
+            "This package may have been removed or the link may be incorrect. Explore our other holiday ideas or contact our team for assistance."
+        );
+
+        setText("packageDestination", "Not available");
+        setText("packageDuration", "—");
+        setText("packageCategory", "—");
+        setText("packagePrice", "—");
+        setText("sidebarDestination", "—");
+        setText("sidebarDuration", "—");
+
+        const image = document.getElementById("packageImage");
+
+        if (image) {
+            image.src = fallbackImage;
+            image.alt = "Travel Qila holiday inspiration";
+        }
+
+        [
+            "highlightsList",
+            "itineraryList",
+            "inclusionsList",
+            "exclusionsList"
+        ].forEach(id => {
+            document.getElementById(id)?.replaceChildren();
+        });
+
+        if (enquiryButton) {
+            enquiryButton.textContent = "Browse Packages";
+            enquiryButton.href = "packages.html";
+            enquiryButton.classList.remove("btn-primary");
+            enquiryButton.classList.add("btn-outline-primary");
+        }
+
+        const notice = document.querySelector(".booking-card .notice");
+
+        if (notice) {
+            notice.textContent =
+                "This package is currently unavailable in the development catalogue.";
+
+            if (notice.nextElementSibling) {
+                notice.nextElementSibling.style.display = "none";
+            }
+        }
+
+        document.querySelector(".booking-card hr")?.style.setProperty("display", "none");
+    }
+
+    // =========================================
+    // 9. INITIALISE PAGE
+    // =========================================
+
+    if (selectedPackage) {
+        renderPackage(selectedPackage, packageId);
+    } else {
+        showUnavailablePackage();
+    }
+
+    setText("currentYear", new Date().getFullYear());
+
+});
+</script>
+
 
 </body>
 </html>
