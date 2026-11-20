@@ -934,19 +934,21 @@
             emptyResetButton.addEventListener("click", resetFilters);
 
             // Image fallback
-            document.querySelectorAll(".package-image img").forEach(function (image) {
+document.querySelectorAll(".package-image img").forEach(function (image) {
 
-                image.addEventListener("error", function () {
+    image.addEventListener("error", function () {
 
-                    if (image.dataset.fallbackApplied) {
-                        return;
-                    }
+        image.onerror = null;
+        image.style.display = "none";
 
-                    image.dataset.fallbackApplied = "true";
+        console.warn(
+            "[Travel Qila] Destination image failed to load:",
+            image.src
+        );
 
-                    image.src = "img/destination-placeholder.jpg";
-                    image.alt = "Travel destination image unavailable";
-                });
+    });
+
+});
 
             });
 
