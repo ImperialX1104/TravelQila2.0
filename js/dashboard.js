@@ -267,11 +267,7 @@ async function handleProfileUpdate(event) {
 // =====================================================
 
 async function handleLogout() {
-    if (isSigningOut) return;
-
-    clearMessage();
-
-    isSigningOut = true;
+    const logoutButton = document.querySelector("[data-logout]");
 
     if (logoutButton) {
         logoutButton.disabled = true;
@@ -281,32 +277,21 @@ async function handleLogout() {
     try {
         const { error } = await supabase.auth.signOut();
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
-        window.location.replace(
-            authPageUrl("login.html")
-        );
+        window.location.replace(authPageUrl("login.html"));
 
     } catch (error) {
-        console.error("[Travel Qila] Sign-out failed.");
+        console.error("[Travel Qila] Logout failed:", error);
 
-        showMessage(
-            "Unable to sign out. Please try again.",
-            "error"
-        );
-
-        isSigningOut = false;
+        showMessage("Unable to sign out. Please try again.", "error");
 
         if (logoutButton) {
             logoutButton.disabled = false;
-            logoutButton.innerHTML =
-                '<i class="fas fa-sign-out-alt me-2"></i>Sign Out';
+            logoutButton.textContent = "Sign Out";
         }
     }
 }
-
 // =====================================================
 // 8. AUTHENTICATION STATE MONITOR
 // =====================================================
