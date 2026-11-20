@@ -61,7 +61,7 @@ function validatePassword(password) {
 
 function getSafeError(error) {
     const code = error?.code;
-    const message = error?.message || "";
+    const errorMessage = error?.message || "";
 
     const knownErrors = {
         invalid_credentials:
@@ -87,15 +87,15 @@ function getSafeError(error) {
         return knownErrors[code];
     }
 
-    if (/invalid login credentials/i.test(message)) {
+    if (/invalid login credentials/i.test(errorMessage)) {
         return "Incorrect email or password.";
     }
 
-    if (/email not confirmed/i.test(message)) {
+    if (/email not confirmed/i.test(errorMessage)) {
         return "Please verify your email address before signing in.";
     }
 
-    return message || "Something went wrong. Please try again.";
+    return errorMessage || "Something went wrong. Please try again.";
 }
 
 function setSubmitting(isSubmitting) {
@@ -170,7 +170,60 @@ async function handleLogin(event) {
 }
 
 // =====================================================
-// 3. REGISTRATION
+// 3. SOCIAL LOGIN — GOOGLE & APPLE
+// =====================================================
+
+const SOCIAL_PROVIDERS = new Set([
+    "google",
+    "apple"
+]);
+
+async function handleSocialLogin(event) {
+    const button = event.currentTarget;
+    const provider = button.dataset.socialLogin;
+
+    if (!SOCIAL_PROVIDERS.has(provider)) {
+        return;
+    }
+
+    clearAuthMessage(message);
+
+    const originalContent = button.innerHTML;
+
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+
+    button.textContent =
+        provider === "google"
+            ? "Connecting to Google..."
+            : "Connecting to Apple...";
+
+    try {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider,
+            options: {
+                redirectTo: authPageUrl("dashboard.html")
+            }
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // Supabase handles the OAuth browser redirect.
+        // Do not manually redirect before OAuth completes.
+
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+        button.innerHTML = originalContent;
+    }
+}
+
+// =====================================================
+// 4. REGISTRATION
 // =====================================================
 
 async function handleRegistration(event) {
@@ -219,7 +272,6 @@ async function handleRegistration(event) {
     setSubmitting(true);
 
     try {
-        // Build the approved redirect first.
         const verificationUrl = new URL(
             authPageUrl("login.html")
         );
@@ -270,7 +322,7 @@ async function handleRegistration(event) {
 }
 
 // =====================================================
-// 4. EMAIL VERIFICATION MESSAGE
+// 5. EMAIL VERIFICATION MESSAGE
 // =====================================================
 
 function handleVerificationMessage() {
@@ -299,7 +351,7 @@ function handleVerificationMessage() {
 }
 
 // =====================================================
-// 5. EVENT REGISTRATION
+// 6. EVENT REGISTRATION
 // =====================================================
 
 if (form && page === "login") {
@@ -308,6 +360,18 @@ if (form && page === "login") {
 
 if (form && page === "register") {
     form.addEventListener("submit", handleRegistration);
+}
+
+// Register social login buttons on the login page.
+if (page === "login") {
+    document
+        .querySelectorAll("[data-social-login]")
+        .forEach((button) => {
+            button.addEventListener(
+                "click",
+                handleSocialLogin
+            );
+        });
 }
 
 handleVerificationMessage();
