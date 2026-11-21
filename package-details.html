@@ -1,0 +1,1519 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Package Details | Travel Qila</title>
+
+    <meta name="description" content="Explore holiday package details, itineraries, inclusions and exclusions with Travel Qila. Request a customised travel quotation.">
+    <meta name="theme-color" content="#13357B">
+
+    <link rel="canonical" href="https://travelqila.com/package-details.html">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+
+    <!-- Project styles -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --tq-primary: #13357B;
+            --tq-secondary: #B8C2DB;
+            --tq-dark: #14141F;
+            --tq-light: #F5F7FC;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #555;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Jost', sans-serif;
+        }
+
+        .text-primary {
+            color: var(--tq-primary) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--tq-primary) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--tq-primary);
+            border-color: var(--tq-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: #0d275e;
+            border-color: #0d275e;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: var(--tq-primary);
+        }
+
+        .page-hero {
+            min-height: 330px;
+            display: flex;
+            align-items: center;
+            background:
+                linear-gradient(rgba(10,25,60,.7), rgba(10,25,60,.7)),
+                url('img/carousel-2.jpg') center/cover no-repeat;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(34px, 5vw, 55px);
+            font-weight: 700;
+        }
+
+        .breadcrumb-item a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active,
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: #dce5fa;
+        }
+
+        .package-cover-wrap {
+            position: relative;
+            min-height: 250px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #13357B, #397c91, #8bb6c1);
+        }
+
+        .package-cover {
+            display: block;
+            width: 100%;
+            height: 430px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .package-cover-fallback {
+            min-height: 430px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 30px;
+            color: #fff;
+            text-align: center;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 32%),
+                linear-gradient(135deg, #102653, #13357B 55%, #4d7898);
+        }
+
+        .package-cover-fallback[hidden] {
+            display: none !important;
+        }
+
+        .package-cover-fallback i {
+            font-size: 54px;
+            opacity: .9;
+        }
+
+        .package-cover-fallback strong {
+            font: 700 clamp(25px, 4vw, 38px) 'Jost', sans-serif;
+        }
+
+        .package-cover-fallback span {
+            color: rgba(255,255,255,.82);
+            font-size: 13px;
+        }
+
+        .demo-label {
+            display: inline-block;
+            padding: 7px 14px;
+            background: #fff4d8;
+            color: #795b17;
+            border: 1px solid #f1dfad;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .4px;
+        }
+
+        .package-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            margin: 20px 0;
+        }
+
+        .package-meta span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .package-meta i {
+            color: var(--tq-primary);
+            margin-right: 7px;
+        }
+
+        .content-card {
+            background: #fff;
+            border: 1px solid #edf0f7;
+            border-radius: 13px;
+            padding: 27px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.035);
+        }
+
+        .content-card h3 {
+            color: var(--tq-primary);
+            font-weight: 700;
+        }
+
+        .section-heading {
+            color: var(--tq-primary);
+            font-weight: 700;
+        }
+
+        .itinerary-day {
+            position: relative;
+            padding: 0 0 27px 28px;
+            border-left: 2px solid #dce4f4;
+        }
+
+        .itinerary-day:last-child {
+            border-left-color: transparent;
+            padding-bottom: 0;
+        }
+
+        .itinerary-day::before {
+            content: "";
+            position: absolute;
+            left: -7px;
+            top: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--tq-primary);
+        }
+
+        .day-label {
+            color: var(--tq-primary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .itinerary-day h5 {
+            color: var(--tq-dark);
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .check-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .check-list li {
+            margin-bottom: 13px;
+        }
+
+        .check-list i {
+            margin-right: 9px;
+        }
+
+        .included i {
+            color: #198754;
+        }
+
+        .excluded i {
+            color: #dc3545;
+        }
+
+        .booking-card {
+            position: sticky;
+            top: 95px;
+            border: 1px solid #e9edf5;
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 8px 30px rgba(19,53,123,.09);
+            background: #fff;
+        }
+
+        .price-display {
+            font-family: 'Jost', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tq-primary);
+        }
+
+        .notice {
+            background: #fff8e7;
+            border: 1px solid #f2dfae;
+            color: #755a18;
+            border-radius: 9px;
+            padding: 14px;
+            font-size: 13px;
+        }
+
+        .feature-icon {
+            color: var(--tq-primary);
+            font-size: 25px;
+        }
+
+        .cta-section {
+            background: var(--tq-primary);
+            color: white;
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .footer a {
+            color: #c6c6d0;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        
+/* Live destination attractions */
+.attractions-section {
+    background: #fff;
+    border: 1px solid #edf0f7;
+    border-radius: 13px;
+    padding: 27px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.035);
+}
+
+.attraction-card {
+    height: 100%;
+    padding: 18px;
+    border: 1px solid #edf0f7;
+    border-radius: 11px;
+    background: #fff;
+    transition: .2s ease;
+}
+
+.attraction-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 20px rgba(19,53,123,.08);
+}
+
+.attraction-card h5 {
+    color: var(--tq-primary);
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.attraction-category {
+    color: #777;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.attraction-distance {
+    color: #555;
+    font-size: 13px;
+}
+
+.attraction-details {
+    border-top: 1px solid #edf0f7;
+    margin-top: 14px;
+    padding-top: 12px;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.attraction-status {
+    background: var(--tq-light);
+    border-radius: 9px;
+    padding: 16px;
+    font-size: 14px;
+    color: #555;
+}
+
+.attraction-card .btn {
+    font-size: 13px;
+}
+
+
+        @media(max-width: 991px) {
+            .booking-card {
+                position: static;
+            }
+
+            .package-cover {
+                height: 330px;
+            }
+
+            .package-cover-fallback {
+                min-height: 330px;
+            }
+        }
+
+        @media(max-width: 576px) {
+            .package-cover {
+                height: 250px;
+            }
+
+            .package-cover-fallback {
+                min-height: 250px;
+            }
+
+            .content-card {
+                padding: 19px;
+            }
+
+            .cta-section {
+                padding: 27px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<!-- Topbar Start -->
+        <div class="container-fluid bg-primary px-5 d-none d-lg-block">
+            <div class="row gx-0">
+                <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-twitter fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-instagram fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href=""><i class="fab fa-youtube fw-normal"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a href="register.html"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
+                        <a href="login.html"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
+                            <div class="dropdown-menu rounded">
+                                <a href="#" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-comment-alt me-2"></i> Inbox</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-bell me-2"></i> Notifications</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-cog me-2"></i> Account Settings</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Topbar End -->
+<div class="container-fluid position-relative p-0">
+<nav class="navbar navbar-expand-lg navbar-light px-3 px-lg-5 py-3"><div class="container-fluid"><a class="navbar-brand fw-semibold" href="index.html"><i class="fas fa-map-marker-alt me-2"></i>Travel Qila</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="primaryNav"><div class="navbar-nav ms-auto align-items-lg-center"><a class="nav-link" href="flights.html">Flights</a><a class="nav-link" href="hotels.html">Hotels</a><a class="nav-link" href="packages.html">Packages</a><a class="nav-link" href="visas.html">Visa assistance</a><a class="nav-link" href="services.html">Services</a><a class="nav-link" href="contact.html">Contact</a></div><a class="btn btn-primary rounded-pill px-4 ms-lg-3 mt-3 mt-lg-0" href="trip-enquiry.html?type=custom">Plan a trip</a></div></div></nav>
+</div>
+<!-- Hero -->
+    <section class="page-hero">
+        <div class="container text-center text-white">
+
+            <h1 id="heroTitle" class="mb-3">
+                Explore Your Next Journey
+            </h1>
+
+            <p id="heroSubtitle" class="fs-5 mb-3">
+                Discover a holiday designed around your travel dreams.
+            </p>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="packages.html">Packages</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Package Details
+                    </li>
+                </ol>
+            </nav>
+
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="container py-5">
+
+        <div class="row g-4">
+
+            <!-- Main package content -->
+            <div class="col-lg-8">
+
+                <!-- Overview -->
+                <div class="mb-4">
+
+                    <span class="demo-label mb-3">
+                        DEVELOPMENT PREVIEW · SAMPLE PACKAGE
+                    </span>
+
+                    <h2 id="packageTitle" class="section-heading mt-3">
+                        Loading package...
+                    </h2>
+
+                    <p id="packageDescription" class="text-muted">
+                        Please wait while the package information loads.
+                    </p>
+
+                    <div class="package-meta">
+                        <span>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <strong id="packageDestination">Destination</strong>
+                        </span>
+
+                        <span>
+                            <i class="far fa-clock"></i>
+                            <strong id="packageDuration">Duration</strong>
+                        </span>
+
+                        <span>
+                            <i class="fas fa-globe"></i>
+                            <strong id="packageCategory">Category</strong>
+                        </span>
+                    </div>
+
+                    <div class="package-cover-wrap">
+                        <img id="packageImage"
+                             class="package-cover"
+                             alt="Holiday destination"
+                             fetchpriority="high"
+                             hidden>
+                        <div id="packageImageFallback" class="package-cover-fallback" aria-live="polite">
+                            <i class="fas fa-globe-asia" aria-hidden="true"></i>
+                            <strong id="packageImageFallbackTitle">Explore the world</strong>
+                            <span id="packageImageFallbackMessage">Loading destination photo...</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Highlights -->
+                <div class="content-card mb-4">
+
+                    <h3 class="mb-4">
+                        <i class="fas fa-star me-2"></i>
+                        Package Highlights
+                    </h3>
+
+                    <div class="row g-3" id="highlightsList">
+
+                        <div class="col-md-6">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            Destination exploration
+                        </div>
+
+                        <div class="col-md-6">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            Sightseeing experiences
+                        </div>
+
+                        <div class="col-md-6">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            Flexible travel planning
+                        </div>
+
+                        <div class="col-md-6">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            Customisation options
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+<!-- Live destination attractions -->
+<div class="attractions-section mb-4" id="attractionsSection">
+
+    <h3 class="section-heading mb-2">
+        <i class="fas fa-map-marked-alt me-2"></i>
+        Explore Attractions Nearby
+    </h3>
+
+    <p class="text-muted small mb-4" id="attractionsSubtitle">
+        Discover interesting places around your destination.
+    </p>
+
+    <div id="attractionsStatus" class="attraction-status mb-3">
+        <i class="fas fa-spinner fa-spin me-2"></i>
+        Loading nearby attractions...
+    </div>
+
+    <div class="row g-3" id="attractionsList"></div>
+
+    <p class="text-muted small mt-3 mb-0">
+        <i class="fas fa-info-circle me-1"></i>
+        Attraction information is provided by OpenTripMap.
+        Distances are approximate and measured from the destination search centre.
+    </p>
+
+</div>
+
+                
+                <!-- Itinerary -->
+                <div class="content-card mb-4">
+
+                    <h3 class="mb-4">
+                        <i class="fas fa-route me-2"></i>
+                        Day-by-Day Itinerary
+                    </h3>
+
+                    <p class="text-muted small">
+                        The following itinerary is an illustrative planning
+                        example. Final activities and timings require confirmation.
+                    </p>
+
+                    <div id="itineraryList">
+
+                        <div class="itinerary-day">
+                            <span class="day-label">Day 1</span>
+                            <h5>Arrival and Welcome</h5>
+                            <p class="mb-0">
+                                Arrive at your destination and settle into
+                                your accommodation.
+                            </p>
+                        </div>
+
+                        <div class="itinerary-day">
+                            <span class="day-label">Day 2</span>
+                            <h5>Explore the Destination</h5>
+                            <p class="mb-0">
+                                Discover popular attractions and local experiences.
+                            </p>
+                        </div>
+
+                        <div class="itinerary-day">
+                            <span class="day-label">Final Day</span>
+                            <h5>Departure</h5>
+                            <p class="mb-0">
+                                Complete your holiday and prepare for departure.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Inclusions and exclusions -->
+                <div class="row g-4 mb-4">
+
+                    <div class="col-md-6">
+                        <div class="content-card h-100">
+
+                            <h3 class="mb-4">
+                                What's Included
+                            </h3>
+
+                            <ul class="check-list included" id="inclusionsList">
+                                <li><i class="fas fa-check-circle"></i> Sample accommodation concept</li>
+                                <li><i class="fas fa-check-circle"></i> Suggested sightseeing</li>
+                                <li><i class="fas fa-check-circle"></i> Custom travel planning</li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="content-card h-100">
+
+                            <h3 class="mb-4">
+                                What's Not Included
+                            </h3>
+
+                            <ul class="check-list excluded" id="exclusionsList">
+                                <li><i class="fas fa-times-circle"></i> Flights unless specified</li>
+                                <li><i class="fas fa-times-circle"></i> Personal expenses</li>
+                                <li><i class="fas fa-times-circle"></i> Optional activities</li>
+                                <li><i class="fas fa-times-circle"></i> Travel insurance</li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Important information -->
+                <div class="content-card mb-4">
+
+                    <h3 class="mb-3">
+                        Important Information
+                    </h3>
+
+                    <ul class="text-muted mb-0">
+                        <li class="mb-2">
+                            All sample prices are for development demonstration only.
+                        </li>
+                        <li class="mb-2">
+                            Final prices depend on travel dates, number of
+                            travellers and supplier availability.
+                        </li>
+                        <li class="mb-2">
+                            Flights, accommodation and activities are not
+                            confirmed by viewing this page.
+                        </li>
+                        <li>
+                            Your final itinerary and quotation will be
+                            shared after your enquiry is reviewed.
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- Booking / enquiry sidebar -->
+            <div class="col-lg-4">
+
+                <aside class="booking-card">
+
+                    <span class="text-muted small fw-bold">
+                        SAMPLE INDICATIVE PRICE
+                    </span>
+
+                    <div class="price-display mt-2" id="packagePrice">
+                        ₹24,999*
+                    </div>
+
+                    <p class="text-muted small">
+                        Per person · Illustrative only
+                    </p>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Destination</span>
+                            <strong id="sidebarDestination">Kashmir</strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Duration</span>
+                            <strong id="sidebarDuration">7 Days</strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <span>Package type</span>
+                            <strong>Customisable</strong>
+                        </div>
+                    </div>
+
+                    <div class="notice mb-4">
+                        <i class="fas fa-info-circle me-1"></i>
+                        This is not a confirmed offer. Request a quotation
+                        to receive actual pricing and availability.
+                    </div>
+
+                    <a id="enquiryButton"
+                       href="trip-enquiry.html"
+                       class="btn btn-primary w-100 rounded-pill py-3 mb-3">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Request a Quotation
+                    </a>
+
+                    <a href="trip-enquiry.html?type=custom"
+                       class="btn btn-outline-primary w-100 rounded-pill py-3">
+                        <i class="fas fa-route me-2"></i>
+                        Customise This Trip
+                    </a>
+
+                    <hr>
+
+                    <div class="text-center small text-muted">
+                        <i class="fas fa-headset text-primary me-2"></i>
+                        Need assistance? Contact our travel team.
+                        <a href="contact.html" class="text-primary fw-bold">
+                            Contact Us
+                        </a>
+                    </div>
+
+                </aside>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- CTA -->
+    <section class="container pb-5">
+        <div class="cta-section text-center">
+
+            <h2 class="text-white mb-3">
+                Want Something Different?
+            </h2>
+
+            <p class="mb-4">
+                Every journey can be customised around your dates,
+                budget and preferences.
+            </p>
+
+            <a href="trip-enquiry.html?type=custom"
+               class="btn btn-light text-primary rounded-pill py-3 px-5 fw-bold">
+                Start Planning Your Trip
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Footer Start -->
+        <div class="container-fluid footer py-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Get In Touch</h4>
+                            <a href="contact.html"><i class="fas fa-home me-2"></i> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
+                            <a href=""><i class="fas fa-envelope me-2"></i> info@travelqila.com</a>
+                            <a href=""><i class="fas fa-phone me-2"></i> +91 9871101345</a>
+                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +91 9871101345</a>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-share fa-2x text-white me-2"></i>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Company</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Support</h4>
+                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item">
+                            <div class="row gy-3 gx-2 mb-4">
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="selectLanguage">
+                                                <option value="1">Arabic</option>
+                                                <option value="2">German</option>
+                                                <option value="3">Greek</option>
+                                                <option value="3">New York</option>
+                                            </select>
+                                            <label for="selectLanguage">English</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="selectCurrency">
+                                                <option value="1">USD</option>
+                                                <option value="2">EUR</option>
+                                                <option value="3">INR</option>
+                                                <option value="3">GBP</option>
+                                            </select>
+                                            <label for="selectCurrency">$</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4 class="text-white mb-3">Payments</h4>
+                            <div class="footer-bank-card">
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright text-body py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-end mb-md-0">
+                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Qila </a>, All right reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-start">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                        <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
+                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a> </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+
+<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+<!-- jQuery must load before main.js -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Project scripts -->
+<script src="js/main.js"></script>
+    <script src="js/auth-config.js"></script>
+    <script type="module" src="js/auth-nav.js"></script>
+
+    <!-- Dynamic package data -->
+    
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =========================================
+    // 1. PACKAGE DEVELOPMENT DATA
+    // =========================================
+
+    const packages = {
+        "kashmir-escape": {
+            name: "Kashmir Escape",
+            destination: "Kashmir, India",
+            category: "Domestic",
+            duration: "6 Nights / 7 Days",
+            price: "₹24,999",
+            image: "img/destination-1.jpg",
+            description: "Discover the natural beauty of Kashmir through an illustrative journey covering Srinagar, Gulmarg and Pahalgam. Enjoy mountain scenery, local culture and peaceful landscapes.",
+            highlights: ["Explore Srinagar and Dal Lake", "Discover Gulmarg landscapes", "Visit scenic Pahalgam", "Customisable sightseeing plans"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Srinagar", description: "Arrive in Srinagar, transfer to your accommodation and enjoy a relaxed introduction to the destination." },
+                { day: "Day 2", title: "Srinagar Exploration", description: "Explore Dal Lake, local markets and selected city attractions." },
+                { day: "Day 3", title: "Gulmarg Excursion", description: "Discover Gulmarg and its mountain scenery. Activities depend on season and availability." },
+                { day: "Day 4", title: "Travel to Pahalgam", description: "Explore the beautiful landscapes and surroundings of Pahalgam." },
+                { day: "Day 5", title: "Pahalgam Experiences", description: "Enjoy a flexible day for local sightseeing and relaxation." },
+                { day: "Day 6", title: "Return to Srinagar", description: "Return to Srinagar and enjoy time at leisure." },
+                { day: "Day 7", title: "Departure", description: "Complete your journey and depart from Srinagar." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Custom itinerary planning", "Travel assistance"],
+            exclusions: ["Flights unless specified", "Personal expenses", "Optional activities", "Travel insurance", "Unspecified meals"]
+        },
+
+        "bali-discovery": {
+            name: "Bali Discovery",
+            destination: "Bali, Indonesia",
+            category: "International",
+            duration: "5 Nights / 6 Days",
+            price: "₹49,999",
+            image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=88",
+            description: "Experience Bali through an illustrative holiday concept featuring tropical landscapes, cultural attractions, relaxing surroundings and island experiences.",
+            highlights: ["Discover Ubud", "Explore tropical landscapes", "Experience local culture", "Flexible island sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Bali", description: "Arrive in Bali and transfer to your planned accommodation." },
+                { day: "Day 2", title: "Explore Ubud", description: "Discover Ubud's cultural attractions and scenic surroundings." },
+                { day: "Day 3", title: "Bali Nature Experiences", description: "Explore selected natural attractions and local experiences." },
+                { day: "Day 4", title: "Island Exploration", description: "Enjoy a flexible day for beaches, sightseeing or optional activities." },
+                { day: "Day 5", title: "Leisure Day", description: "Enjoy free time and explore Bali at your own pace." },
+                { day: "Day 6", title: "Departure", description: "Transfer for your onward journey." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Travel itinerary planning", "Destination assistance"],
+            exclusions: ["International flights", "Visa fees where applicable", "Personal expenses", "Optional activities", "Travel insurance"]
+        },
+
+        "dubai-highlights": {
+            name: "Dubai Highlights",
+            destination: "Dubai, UAE",
+            category: "International",
+            duration: "4 Nights / 5 Days",
+            price: "₹39,999",
+            image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=88",
+            description: "Explore Dubai through a sample city holiday concept featuring modern architecture, cultural attractions and optional desert experiences.",
+            highlights: ["Explore Downtown Dubai", "Discover city attractions", "Optional desert experiences", "Flexible sightseeing schedule"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Dubai", description: "Arrive in Dubai and transfer to your planned accommodation." },
+                { day: "Day 2", title: "Downtown Dubai", description: "Explore Downtown Dubai and its iconic attractions." },
+                { day: "Day 3", title: "Desert Experience", description: "Consider an optional desert experience, subject to availability." },
+                { day: "Day 4", title: "City Exploration", description: "Enjoy a flexible day for shopping and local attractions." },
+                { day: "Day 5", title: "Departure", description: "Complete your trip and depart from Dubai." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested city itinerary", "Travel planning assistance", "Customisation support"],
+            exclusions: ["Flights unless specified", "Visa fees", "Optional excursions", "Personal expenses", "Travel insurance"]
+        },
+
+        "kerala-backwaters": {
+            name: "Kerala Backwaters",
+            destination: "Kerala, India",
+            category: "Domestic",
+            duration: "4 Nights / 5 Days",
+            price: "₹19,999",
+            image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=88",
+            description: "Discover Kerala's natural landscapes, peaceful backwaters and scenic destinations through a flexible sample itinerary.",
+            highlights: ["Explore Munnar", "Discover Alleppey", "Experience Kerala landscapes", "Flexible local sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Kochi", description: "Arrive in Kochi and begin your Kerala journey." },
+                { day: "Day 2", title: "Journey to Munnar", description: "Travel through scenic landscapes towards Munnar." },
+                { day: "Day 3", title: "Munnar Exploration", description: "Explore selected local attractions and nature experiences." },
+                { day: "Day 4", title: "Alleppey Backwaters", description: "Discover the backwater region and optional local experiences." },
+                { day: "Day 5", title: "Departure", description: "Complete your journey and depart." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Itinerary planning", "Travel assistance"],
+            exclusions: ["Flights", "Personal expenses", "Optional boat activities", "Travel insurance", "Unspecified meals"]
+        },
+
+        "swiss-alpine": {
+            name: "Swiss Alpine Journey",
+            destination: "Switzerland",
+            category: "International",
+            duration: "7 Nights / 8 Days",
+            price: "₹1,29,999",
+            image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=88",
+            description: "Explore Switzerland through a sample European holiday concept featuring alpine scenery, lakeside towns and scenic travel experiences.",
+            highlights: ["Discover Zurich", "Explore Lucerne", "Experience alpine scenery", "Flexible Swiss sightseeing"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Zurich", description: "Arrive in Zurich and settle into your accommodation." },
+                { day: "Day 2", title: "Zurich Exploration", description: "Discover the city and its cultural attractions." },
+                { day: "Day 3", title: "Lucerne", description: "Explore Lucerne and its scenic surroundings." },
+                { day: "Day 4", title: "Alpine Experiences", description: "Enjoy an optional mountain excursion, subject to availability." },
+                { day: "Day 5", title: "Interlaken", description: "Discover Interlaken and its beautiful landscapes." },
+                { day: "Day 6", title: "Scenic Exploration", description: "Enjoy a flexible day for sightseeing." },
+                { day: "Day 7", title: "Leisure Day", description: "Explore at your own pace." },
+                { day: "Day 8", title: "Departure", description: "Depart from Switzerland." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested itinerary", "Travel planning assistance", "Destination guidance"],
+            exclusions: ["International flights", "Schengen visa fees", "Rail passes unless specified", "Personal expenses", "Travel insurance"]
+        },
+
+        "thailand-explorer": {
+            name: "Thailand Explorer",
+            destination: "Thailand",
+            category: "International",
+            duration: "5 Nights / 6 Days",
+            price: "₹34,999",
+            image: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1600&q=88",
+            description: "Discover Thailand through a sample itinerary combining city experiences, tropical beaches and optional island activities.",
+            highlights: ["Explore Bangkok", "Discover Phuket", "Enjoy tropical landscapes", "Optional island experiences"],
+            itinerary: [
+                { day: "Day 1", title: "Arrival in Bangkok", description: "Arrive in Bangkok and transfer to your accommodation." },
+                { day: "Day 2", title: "Bangkok Exploration", description: "Explore selected city attractions and local experiences." },
+                { day: "Day 3", title: "Travel to Phuket", description: "Continue your journey towards Phuket, subject to the final travel arrangements." },
+                { day: "Day 4", title: "Island Experiences", description: "Enjoy optional island activities depending on weather and availability." },
+                { day: "Day 5", title: "Leisure and Exploration", description: "Enjoy a flexible day to explore the destination." },
+                { day: "Day 6", title: "Departure", description: "Complete your Thailand journey." }
+            ],
+            inclusions: ["Accommodation concept", "Suggested sightseeing", "Travel planning assistance", "Custom itinerary"],
+            exclusions: ["International flights", "Visa fees where applicable", "Optional island activities", "Personal expenses", "Travel insurance"]
+        }
+    };
+
+    // =========================================
+    // 2. CONFIGURATION
+    // =========================================
+
+    const fallbackImage = "img/carousel-2.jpg";
+
+    const ATTRACTIONS_API =
+        "https://stjhubpzshzyjqkscjty.supabase.co/functions/v1/travel-attractions";
+
+    const destinationCoordinates = {
+        "kashmir-escape": { lat: 34.0837, lon: 74.7973, name: "Srinagar" },
+        "bali-discovery": { lat: -8.5069, lon: 115.2625, name: "Ubud, Bali" },
+        "dubai-highlights": { lat: 25.2048, lon: 55.2708, name: "Dubai" },
+        "kerala-backwaters": { lat: 9.4981, lon: 76.3388, name: "Alleppey" },
+        "swiss-alpine": { lat: 46.6863, lon: 7.8632, name: "Interlaken" },
+        "thailand-explorer": { lat: 7.8804, lon: 98.3923, name: "Phuket" }
+    };
+
+    const attractionCache = new Map();
+
+    // =========================================
+    // 3. SAFE HTML HELPERS
+    // =========================================
+
+    function setText(id, value) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = value ?? "";
+        } else {
+            console.warn("[Travel Qila] Missing HTML element:", id);
+        }
+    }
+
+    function createList(items, elementId, iconClass, iconColor) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+
+        container.replaceChildren();
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "col-md-6";
+
+            const icon = document.createElement("i");
+            icon.className = `${iconClass} ${iconColor} me-2`;
+
+            div.append(icon, document.createTextNode(item));
+            container.appendChild(div);
+        });
+    }
+
+    function createSimpleList(items, elementId, iconClass) {
+        const container = document.getElementById(elementId);
+        if (!container) return;
+
+        container.replaceChildren();
+
+        items.forEach(item => {
+            const li = document.createElement("li");
+            const icon = document.createElement("i");
+
+            icon.className = iconClass;
+            li.append(icon, document.createTextNode(" " + item));
+            container.appendChild(li);
+        });
+    }
+
+    function createItinerary(items) {
+        const container = document.getElementById("itineraryList");
+        if (!container) return;
+
+        container.replaceChildren();
+
+        items.forEach(item => {
+            const day = document.createElement("div");
+            day.className = "itinerary-day";
+
+            const label = document.createElement("span");
+            label.className = "day-label";
+            label.textContent = item.day;
+
+            const heading = document.createElement("h5");
+            heading.textContent = item.title;
+
+            const description = document.createElement("p");
+            description.className = "mb-0";
+            description.textContent = item.description;
+
+            day.append(label, heading, description);
+            container.appendChild(day);
+        });
+    }
+
+    // =========================================
+    // 4. ATTRACTION DISPLAY HELPERS
+    // =========================================
+
+    function showAttractionStatus(message, icon = "info-circle") {
+        const status = document.getElementById("attractionsStatus");
+        if (!status) return;
+
+        status.replaceChildren();
+
+        const iconElement = document.createElement("i");
+        iconElement.className = "fas fa-" + icon + " me-2";
+
+        status.append(iconElement, document.createTextNode(message));
+        status.style.display = "block";
+    }
+
+    function formatDistance(metres) {
+        if (!Number.isFinite(Number(metres))) {
+            return "Distance unavailable";
+        }
+
+        const distance = Number(metres);
+
+        return distance < 1000
+            ? Math.round(distance) + " m away"
+            : (distance / 1000).toFixed(1) + " km away";
+    }
+
+    function formatCategory(kinds) {
+        if (!kinds) return "Attraction";
+
+        return kinds.split(",").slice(0, 3).map(item =>
+            item.replace(/_/g, " ").replace(/\b\w/g, letter =>
+                letter.toUpperCase()
+            )
+        ).join(" · ");
+    }
+
+    // =========================================
+    // 5. LOAD NEARBY ATTRACTIONS
+    // =========================================
+
+    async function loadAttractions(packageId) {
+        const destination = destinationCoordinates[packageId];
+        const list = document.getElementById("attractionsList");
+        const subtitle = document.getElementById("attractionsSubtitle");
+
+        if (!list || !document.getElementById("attractionsStatus")) {
+            console.warn("[Travel Qila] Attractions HTML section is missing.");
+            return;
+        }
+
+        list.replaceChildren();
+
+        if (!destination) {
+            showAttractionStatus("Attraction information is unavailable.");
+            return;
+        }
+
+        if (subtitle) {
+            subtitle.textContent = "Popular places around " + destination.name + ".";
+        }
+
+        showAttractionStatus("Discovering nearby attractions...", "spinner fa-spin");
+
+        try {
+            let places = attractionCache.get(packageId);
+
+            if (!places) {
+                const url = new URL(ATTRACTIONS_API);
+
+                url.searchParams.set("action", "search");
+                url.searchParams.set("lat", destination.lat);
+                url.searchParams.set("lon", destination.lon);
+                url.searchParams.set("radius", "15000");
+                url.searchParams.set("limit", "10");
+
+                const response = await fetch(url.toString());
+
+                if (!response.ok) {
+                    throw new Error("Attraction service returned HTTP " + response.status);
+                }
+
+                const result = await response.json();
+
+                if (!result.success || !Array.isArray(result.places)) {
+                    throw new Error("Invalid attraction response.");
+                }
+
+                places = result.places;
+                attractionCache.set(packageId, places);
+            }
+
+            if (places.length === 0) {
+                showAttractionStatus("No nearby attractions were found.");
+                return;
+            }
+
+            document.getElementById("attractionsStatus").style.display = "none";
+
+            places.slice(0, 10).forEach(place => {
+                const column = document.createElement("div");
+                column.className = "col-md-6";
+
+                const card = document.createElement("div");
+                card.className = "attraction-card";
+
+                const icon = document.createElement("i");
+                icon.className = "fas fa-map-marker-alt text-primary mb-3";
+                icon.style.fontSize = "23px";
+
+                const heading = document.createElement("h5");
+                heading.textContent = place.name || "Unnamed attraction";
+
+                const category = document.createElement("div");
+                category.className = "attraction-category mb-2";
+                category.textContent = formatCategory(place.kinds);
+
+                const distance = document.createElement("div");
+                distance.className = "attraction-distance mb-3";
+
+                const distanceIcon = document.createElement("i");
+                distanceIcon.className = "fas fa-location-arrow me-2 text-primary";
+
+                distance.append(
+                    distanceIcon,
+                    document.createTextNode(formatDistance(place.dist))
+                );
+
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "btn btn-outline-primary btn-sm rounded-pill";
+                button.textContent = "View Details";
+                button.dataset.xid = place.xid;
+                button.setAttribute("aria-expanded", "false");
+
+                const details = document.createElement("div");
+                details.className = "attraction-details";
+                details.hidden = true;
+
+                card.append(icon, heading, category, distance, button, details);
+                column.appendChild(card);
+                list.appendChild(column);
+            });
+
+        } catch (error) {
+            console.error("[Travel Qila] Attractions error:", error);
+
+            showAttractionStatus(
+                "We couldn't load attractions right now. Please try again later.",
+                "exclamation-circle"
+            );
+        }
+    }
+
+    // =========================================
+    // 6. ATTRACTION DETAILS CLICK HANDLER
+    // =========================================
+
+    const attractionsList = document.getElementById("attractionsList");
+
+    if (attractionsList) {
+        attractionsList.addEventListener("click", async function (event) {
+            const button = event.target.closest("button[data-xid]");
+            if (!button) return;
+
+            const xid = button.dataset.xid;
+            const card = button.closest(".attraction-card");
+            const details = card.querySelector(".attraction-details");
+
+            if (!details.hidden) {
+                details.hidden = true;
+                button.textContent = "View Details";
+                button.setAttribute("aria-expanded", "false");
+                return;
+            }
+
+            details.hidden = false;
+            button.setAttribute("aria-expanded", "true");
+
+            if (details.dataset.loaded === "true") {
+                button.textContent = "Hide Details";
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Loading...";
+            details.textContent = "Loading attraction information...";
+
+            try {
+                const url = new URL(ATTRACTIONS_API);
+                url.searchParams.set("action", "details");
+                url.searchParams.set("xid", xid);
+
+                const response = await fetch(url.toString());
+
+                if (!response.ok) {
+                    throw new Error("Details request failed.");
+                }
+
+                const result = await response.json();
+
+                if (!result.success || !result.place) {
+                    throw new Error("Invalid details response.");
+                }
+
+                const place = result.place;
+
+                details.textContent =
+                    place.wikipedia_extracts?.text ||
+                    place.info?.descr ||
+                    place.description ||
+                    "Additional description is unavailable.";
+
+                details.dataset.loaded = "true";
+                button.textContent = "Hide Details";
+
+            } catch (error) {
+                console.error("[Travel Qila] Attraction details error:", error);
+                details.textContent = "Unable to load details. Please try again.";
+                button.textContent = "Retry Details";
+
+            } finally {
+                button.disabled = false;
+            }
+        });
+    }
+
+    // =========================================
+    // 7. PACKAGE PAGE RENDERING
+    // =========================================
+
+    const params = new URLSearchParams(window.location.search);
+    const packageId = params.get("id");
+    const selectedPackage = packageId ? packages[packageId] : null;
+    const enquiryButton = document.getElementById("enquiryButton");
+
+    function renderPackage(data, id) {
+        document.title = data.name + " | Holiday Package | Travel Qila";
+
+        setText("heroTitle", data.name);
+        setText("heroSubtitle", "Explore your next journey with Travel Qila.");
+        setText("packageTitle", data.name);
+        setText("packageDescription", data.description);
+        setText("packageDestination", data.destination);
+        setText("packageDuration", data.duration);
+        setText("packageCategory", data.category);
+        setText("packagePrice", data.price + "*");
+        setText("sidebarDestination", data.destination);
+        setText("sidebarDuration", data.duration);
+
+        const image = document.getElementById("packageImage");
+        const imageFallback = document.getElementById("packageImageFallback");
+        const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
+
+        if (image) {
+            image.hidden = true;
+            image.alt = data.name + " holiday destination";
+            const imageFallbackMessage = document.getElementById("packageImageFallbackMessage");
+            if (imageFallbackTitle) imageFallbackTitle.textContent = data.destination || data.name;
+            if (imageFallbackMessage) imageFallbackMessage.textContent = "Loading destination photo...";
+            if (imageFallback) imageFallback.hidden = false;
+            image.onload = function () {
+                image.hidden = false;
+                if (imageFallback) imageFallback.hidden = true;
+            };
+            image.onerror = function () {
+                image.hidden = true;
+                if (imageFallback) imageFallback.hidden = false;
+                if (imageFallbackMessage) imageFallbackMessage.textContent = "Destination photo is temporarily unavailable";
+            };
+            image.src = data.image || fallbackImage;
+            if (image.complete) {
+                if (image.naturalWidth > 0) {
+                    image.hidden = false;
+                    if (imageFallback) imageFallback.hidden = true;
+                } else {
+                    image.onerror();
+                }
+            }
+        }
+
+        createList(
+            data.highlights,
+            "highlightsList",
+            "fas fa-check-circle",
+            "text-primary"
+        );
+
+        createItinerary(data.itinerary);
+
+        createSimpleList(
+            data.inclusions,
+            "inclusionsList",
+            "fas fa-check-circle text-success"
+        );
+
+        createSimpleList(
+            data.exclusions,
+            "exclusionsList",
+            "fas fa-times-circle text-danger"
+        );
+
+        if (enquiryButton) {
+            enquiryButton.href =
+                "trip-enquiry.html?package=" + encodeURIComponent(id);
+        }
+
+        loadAttractions(id);
+    }
+
+    // =========================================
+    // 8. INVALID PACKAGE HANDLING
+    // =========================================
+
+    function showUnavailablePackage() {
+        document.title = "Package Not Found | Travel Qila";
+
+        setText("heroTitle", "Let's Find Your Perfect Holiday");
+        setText("heroSubtitle", "The requested package could not be found.");
+        setText("packageTitle", "Package Not Available");
+
+        setText(
+            "packageDescription",
+            "This package may have been removed or the link may be incorrect. Explore our other holiday ideas or contact our team for assistance."
+        );
+
+        setText("packageDestination", "Not available");
+        setText("packageDuration", "—");
+        setText("packageCategory", "—");
+        setText("packagePrice", "—");
+        setText("sidebarDestination", "—");
+        setText("sidebarDuration", "—");
+
+        const image = document.getElementById("packageImage");
+
+        if (image) {
+            image.hidden = true;
+            image.alt = "Travel Qila holiday inspiration";
+            const imageFallback = document.getElementById("packageImageFallback");
+            const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
+            if (imageFallbackTitle) imageFallbackTitle.textContent = "Package not available";
+            const imageFallbackMessage = document.getElementById("packageImageFallbackMessage");
+            if (imageFallbackMessage) imageFallbackMessage.textContent = "Choose another holiday from our packages";
+            if (imageFallback) imageFallback.hidden = false;
+        }
+
+        [
+            "highlightsList",
+            "itineraryList",
+            "inclusionsList",
+            "exclusionsList"
+        ].forEach(id => {
+            document.getElementById(id)?.replaceChildren();
+        });
+
+        if (enquiryButton) {
+            enquiryButton.textContent = "Browse Packages";
+            enquiryButton.href = "packages.html";
+            enquiryButton.classList.remove("btn-primary");
+            enquiryButton.classList.add("btn-outline-primary");
+        }
+
+        const notice = document.querySelector(".booking-card .notice");
+
+        if (notice) {
+            notice.textContent =
+                "This package is currently unavailable in the development catalogue.";
+
+            if (notice.nextElementSibling) {
+                notice.nextElementSibling.style.display = "none";
+            }
+        }
+
+        document.querySelector(".booking-card hr")?.style.setProperty("display", "none");
+    }
+
+    // =========================================
+    // 9. INITIALISE PAGE
+    // =========================================
+
+    if (selectedPackage) {
+        renderPackage(selectedPackage, packageId);
+    } else {
+        showUnavailablePackage();
+    }
+
+    setText("currentYear", new Date().getFullYear());
+
+});
+</script>
+
+
+</body>
+</html>

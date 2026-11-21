@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Account pages carry noindex directives in their HTML.
+# Do not block crawling of these URLs; crawlers must be able to read noindex.
+Sitemap: https://travelqila.com/sitemap.xml
