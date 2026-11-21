@@ -202,42 +202,22 @@
                     <div class="col-lg-8">
                         <h3 class="mb-2">Send us a message</h3>
                         <p class="mb-4">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://github.com/ImperialX1104/contact-form">Download Now</a>.</p>
-                        <form>
+                        <form id="contactEnquiryForm">
                             <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control border-0" id="name" placeholder="Your Name">
-                                        <label for="name">Your Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control border-0" id="email" placeholder="Your Email">
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control border-0" id="subject" placeholder="Subject">
-                                        <label for="subject">Subject</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control border-0" placeholder="Leave a message here" id="message" style="height: 160px"></textarea>
-                                        <label for="message">Message</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
-                                </div>
+                                <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control border-0" id="name" name="Name" placeholder="Your Name" autocomplete="name" required maxlength="100"><label for="name">Your Name *</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input type="email" class="form-control border-0" id="email" name="Email" placeholder="Your Email" autocomplete="email" required maxlength="150"><label for="email">Your Email *</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input type="tel" class="form-control border-0" id="phone" name="Phone / WhatsApp" placeholder="Phone / WhatsApp" autocomplete="tel" pattern="[0-9+() .-]{7,20}"><label for="phone">Phone / WhatsApp</label></div></div>
+                                <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control border-0" id="subject" name="Subject" placeholder="Subject" required maxlength="150"><label for="subject">Subject *</label></div></div>
+                                <div class="col-12"><div class="form-floating"><textarea class="form-control border-0" placeholder="Leave a message here" id="message" name="Message" style="height:160px" required maxlength="2000"></textarea><label for="message">Message *</label></div></div>
+                                <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-success py-3 px-4" type="submit" name="channel" value="whatsapp"><i class="fab fa-whatsapp me-2"></i>Send via WhatsApp</button><button class="btn btn-primary py-3 px-4" type="submit" name="channel" value="email"><i class="fas fa-envelope me-2"></i>Send by email</button></div>
+                                <div class="col-12"><p id="contactFormStatus" class="small text-muted mb-0" role="status" aria-live="polite">Choose WhatsApp or email. Your message will be pre-filled; press Send in the app to submit it.</p></div>
                             </div>
                         </form>
                     </div>
                     <div class="col-12">
                         <div class="rounded">
                             <iframe class="rounded w-100" 
-                            style="height: 450px;" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387191.33750346623!2d-73.97968099999999!3d40.6974881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1694259649153!5m2!1sen!2sbd" 
+                            style="height: 450px;" src="https://www.google.com/maps?q=80-D%2C%203rd%20Floor%2C%20Block-ED%2C%20Madhuban%20Chowk%2C%20Pitampura%2C%20New%20Delhi%20110034&output=embed" 
                             loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </div>
@@ -385,6 +365,27 @@
         <script src="js/main.js"></script>
         <script src="js/auth-config.js"></script>
 <script type="module" src="js/auth-nav.js"></script>
-    </body>
+    <script>
+document.addEventListener("DOMContentLoaded",function(){
+ const form=document.getElementById("contactEnquiryForm");
+ if(!form)return;
+ form.addEventListener("submit",function(event){
+  event.preventDefault();
+  if(!form.reportValidity())return;
+  const data=new FormData(form);
+  const message="Hello Travel Qila, I have a query.\n\n"+Array.from(data.entries()).filter(([k,v])=>k!=="channel"&&String(v).trim()).map(([k,v])=>k+": "+v).join("\n");
+  const channel=event.submitter&&event.submitter.value==="email"?"email":"whatsapp";
+  const status=document.getElementById("contactFormStatus");
+  if(channel==="email"){
+   window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila website enquiry: "+data.get("Subject"))+"&body="+encodeURIComponent(message);
+   status.textContent="Your email app should open with the enquiry pre-filled. Please press Send to submit it.";
+  }else{
+   window.open("https://wa.me/919871101345?text="+encodeURIComponent(message),"_blank","noopener,noreferrer");
+   status.textContent="WhatsApp should open with the enquiry pre-filled. Please press Send in WhatsApp to submit it.";
+  }
+ });
+});
+</script>
+</body>
 
 </html>
