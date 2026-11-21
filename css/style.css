@@ -1245,3 +1245,34 @@
     background: var(--bs-dark) !important;
 }
 /*** copyright end ***/
+
+/* Travel Qila shared contrast and floating-control fixes */
+.navbar-light .navbar-brand,
+.navbar-light .navbar-brand span,
+.navbar-light .navbar-brand i,
+.sticky-top.navbar-light .navbar-brand,
+.sticky-top.navbar-light .navbar-brand span,
+.sticky-top.navbar-light .navbar-brand i {
+    color: var(--bs-white) !important;
+}
+
+.page-hero h1,
+.enquiry-hero h1 {
+    color: var(--bs-white) !important;
+}
+
+.back-to-top {
+    right: 24px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    display: none;
+    border-radius: 50%;
+}
+
+@media (max-width: 575.98px) {
+    .back-to-top {
+        right: 16px;
+        bottom: 16px;
+    }
+}
