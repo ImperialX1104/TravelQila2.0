@@ -59,11 +59,6 @@
             border-color: #0d275e;
         }
 
-        .navbar .nav-link:hover,
-        .navbar .nav-link.active {
-            color: var(--tq-primary);
-        }
-
         .page-hero {
             min-height: 330px;
             display: flex;
@@ -279,15 +274,6 @@
             padding: 40px;
         }
 
-        .footer a {
-            color: #c6c6d0;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #fff;
-        }
-
         
 /* Live destination attractions */
 .attractions-section {
@@ -382,6 +368,8 @@
             }
         }
     </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -417,7 +405,38 @@
         </div>
         <!-- Topbar End -->
 <div class="container-fluid position-relative p-0">
-<nav class="navbar navbar-expand-lg navbar-light px-3 px-lg-5 py-3"><div class="container-fluid"><a class="navbar-brand fw-semibold" href="index.html"><i class="fas fa-map-marker-alt me-2"></i>Travel Qila</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav" aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="primaryNav"><div class="navbar-nav ms-auto align-items-lg-center"><a class="nav-link" href="flights.html">Flights</a><a class="nav-link" href="hotels.html">Hotels</a><a class="nav-link" href="packages.html">Packages</a><a class="nav-link" href="visas.html">Visa assistance</a><a class="nav-link" href="services.html">Services</a><a class="nav-link" href="contact.html">Contact</a></div><a class="btn btn-primary rounded-pill px-4 ms-lg-3 mt-3 mt-lg-0" href="trip-enquiry.html?type=custom">Plan a trip</a></div></div></nav>
+<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila </h1>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="services.html" class="nav-item nav-link">Services</a>
+                        <a href="packages.html" class="nav-item nav-link">Packages</a>
+                        <a href="blog.html" class="nav-item nav-link">Blog</a>
+                        <!-- <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="destination.html" class="dropdown-item">Destination</a>
+                                <a href="tour.html" class="dropdown-item">Explore Tour</a>
+                                <a href="booking.html" class="dropdown-item">Travel Booking</a>
+                                <a href="gallery.html" class="dropdown-item">Our Gallery</a>
+                                <a href="guides.html" class="dropdown-item">Travel Guides</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
+                            </div> -->
+                        <!-- </div> -->
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+                </div>
+            </nav>
 </div>
 <!-- Hero -->
     <section class="page-hero">
@@ -769,114 +788,9 @@
         </div>
     </section>
 
-    <!-- Footer Start -->
-        <div class="container-fluid footer py-5">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Get In Touch</h4>
-                            <a href="contact.html"><i class="fas fa-home me-2"></i> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
-                            <a href=""><i class="fas fa-envelope me-2"></i> info@travelqila.com</a>
-                            <a href=""><i class="fas fa-phone me-2"></i> +91 9871101345</a>
-                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +91 9871101345</a>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-share fa-2x text-white me-2"></i>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
-                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Company</h4>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item d-flex flex-column">
-                            <h4 class="mb-4 text-white">Support</h4>
-                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
-                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
-                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-3">
-                        <div class="footer-item">
-                            <div class="row gy-3 gx-2 mb-4">
-                                <div class="col-xl-6">
-                                    <form>
-                                        <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="selectLanguage">
-                                                <option value="1">Arabic</option>
-                                                <option value="2">German</option>
-                                                <option value="3">Greek</option>
-                                                <option value="3">New York</option>
-                                            </select>
-                                            <label for="selectLanguage">English</label>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-xl-6">
-                                    <form>
-                                        <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="selectCurrency">
-                                                <option value="1">USD</option>
-                                                <option value="2">EUR</option>
-                                                <option value="3">INR</option>
-                                                <option value="3">GBP</option>
-                                            </select>
-                                            <label for="selectCurrency">$</label>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <h4 class="text-white mb-3">Payments</h4>
-                            <div class="footer-bank-card">
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
-                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
-                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
-        
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright text-body py-4">
-            <div class="container">
-                <div class="row g-4 align-items-center">
-                    <div class="col-md-6 text-center text-md-end mb-md-0">
-                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Qila </a>, All right reserved.
-                    </div>
-                    <div class="col-md-6 text-center text-md-start">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
-                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a> </a>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
+    
 
-<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
 
 <!-- jQuery must load before main.js -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -1515,5 +1429,116 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 
+<!-- Footer Start -->
+        <div class="container-fluid footer py-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Get In Touch</h4>
+                            <a href=""><i class="fas fa-home me-2"></i> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
+                            <a href=""><i class="fas fa-envelope me-2"></i> info@travelqila.com</a>
+                            <a href=""><i class="fas fa-phone me-2"></i> +91 9871101345</a>
+                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +91 9871101345</a>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-share fa-2x text-white me-2"></i>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Company</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Support</h4>
+                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item">
+                            <div class="row gy-3 gx-2 mb-4">
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">Arabic</option>
+                                                <option value="2">German</option>
+                                                <option value="3">Greek</option>
+                                                <option value="3">New York</option>
+                                            </select>
+                                            <label for="select1">English</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">USD</option>
+                                                <option value="2">EUR</option>
+                                                <option value="3">INR</option>
+                                                <option value="3">GBP</option>
+                                            </select>
+                                            <label for="select1">$</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4 class="text-white mb-3">Payments</h4>
+                            <div class="footer-bank-card">
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright text-body py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-end mb-md-0">
+                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Qila </a>, All right reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-start">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                        <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
+                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a> </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+<!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
 </body>
 </html>
