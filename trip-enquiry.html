@@ -211,7 +211,7 @@
  const selected=packages[packageId];
  const summary=document.getElementById("packageSummary");
  const destinationInput=document.getElementById("destination");
- document.getElementById("currentYear").textContent=new Date().getFullYear();
+ (()=>{const yearNode=document.getElementById("currentYear");if(yearNode)yearNode.textContent=new Date().getFullYear()})();
  document.getElementById("packageId").value=packageId;
  if(selected){summary.hidden=false;document.getElementById("selectedPackageName").textContent=selected.name;document.getElementById("selectedPackageDestination").textContent=selected.destination;destinationInput.value=selected.destination;document.title="Enquire About "+selected.name+" | Travel Qila";}
  else if(params.get("type")==="custom"){document.title="Plan a Custom Trip | Travel Qila";const requested=params.get("destination");if(requested)destinationInput.value=requested;}
