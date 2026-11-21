@@ -1,0 +1,47 @@
+/* Travel Qila account dashboard refresh */
+.dashboard-page{background:#f5f7fb;color:#17233e}
+.dashboard-main{padding:24px 0 72px}
+.dashboard-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.dashboard-breadcrumb{font-size:12px;color:#7c899e}
+.dashboard-breadcrumb a{color:#13357b;text-decoration:none;font-weight:700}
+.dashboard-layout{grid-template-columns:220px minmax(0,1fr);gap:22px}
+.dashboard-sidebar{border-radius:18px;padding:17px 12px;box-shadow:0 8px 28px rgba(18,44,86,.035);border-color:#e8edf5;top:24px}
+.sidebar-link{font-weight:500}
+.dashboard-content{min-width:0}
+.dashboard-welcome{min-height:190px;border-radius:20px;padding:30px 34px;background:linear-gradient(115deg,#0d2453 0%,#173e83 60%,#3267ad 100%);box-shadow:0 16px 34px rgba(19,53,123,.12)}
+.dashboard-welcome h1{font-family:Jost,Roboto,sans-serif;letter-spacing:-.03em}
+.dashboard-welcome p{max-width:560px}
+.dashboard-section-heading{margin:27px 0 13px}
+.dashboard-section-heading h2{font-family:Jost,Roboto,sans-serif;letter-spacing:-.02em}
+.dashboard-info-card,.dashboard-panel{border-radius:16px;box-shadow:0 6px 22px rgba(18,44,86,.035)}
+.dashboard-info-card{padding:18px 20px}
+.dashboard-card-icon{width:40px;height:40px}
+.dashboard-feature-card{border-radius:15px}
+.dashboard-logout{background:#fff}
+.dashboard-bookings-panel{background:#fff;border:1px solid #e7edf5;border-radius:18px;padding:22px;box-shadow:0 6px 22px rgba(18,44,86,.035)}
+.dashboard-bookings-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.dashboard-bookings-header h2{font:700 20px Jost,Roboto,sans-serif;margin:0;color:#17233e}
+.dashboard-bookings-header p{font-size:12px;color:#718096;margin:4px 0 0}
+.dashboard-booking-card{border:1px solid #e8edf5;border-radius:14px;padding:17px;margin-bottom:12px;background:#fff}
+.dashboard-booking-card:last-child{margin-bottom:0}
+.dashboard-booking-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:15px}
+.dashboard-booking-ref{font-size:11px;font-weight:800;letter-spacing:.06em;color:#718096}
+.dashboard-booking-airline{font-weight:800;color:#17233e;margin-top:4px}
+.dashboard-booking-status{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:30px;padding:6px 10px;white-space:nowrap;background:#fff4db;color:#8b6415}
+.dashboard-booking-status.is-confirmed{background:#e7f7ee;color:#187647}
+.dashboard-booking-status.is-cancelled{background:#fff0f0;color:#a33b3b}
+.dashboard-booking-route{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:12px 0}
+.dashboard-booking-city{font-size:17px;font-weight:800;color:#17233e}
+.dashboard-booking-code{font-size:11px;color:#7c899e;margin-top:2px}
+.dashboard-booking-arrow{color:#9aa8bc}
+.dashboard-booking-meta{display:flex;flex-wrap:wrap;gap:8px 18px;border-top:1px solid #edf1f6;padding-top:13px;color:#69778e;font-size:12px}
+.dashboard-booking-meta span{display:inline-flex;gap:6px;align-items:center}
+.dashboard-booking-meta i{color:#244b8c}
+.dashboard-bookings-empty{text-align:center;padding:35px 18px;background:#f8faff;border:1px dashed #dce5f3;border-radius:14px}
+.dashboard-bookings-empty .empty-icon{width:54px;height:54px;display:grid;place-items:center;margin:0 auto 13px;border-radius:16px;background:#edf3ff;color:#13357b;font-size:21px}
+.dashboard-bookings-empty h3{font:700 17px Jost,Roboto,sans-serif;color:#17233e;margin:0 0 6px}
+.dashboard-bookings-empty p{font-size:12px;color:#718096;margin:0 auto 16px;max-width:380px}
+.dashboard-bookings-note{font-size:11px;color:#7b879b;margin-top:13px;line-height:1.6}
+.dashboard-stat-number{font:700 24px Jost,Roboto,sans-serif;color:#173e83}
+@media(max-width:991px){.dashboard-layout{grid-template-columns:1fr}.dashboard-sidebar{position:static}.dashboard-topline{margin-top:5px}}
+@media(max-width:575px){.dashboard-welcome{padding:24px 22px}.dashboard-bookings-panel{padding:15px}.dashboard-booking-card{padding:14px}.dashboard-booking-city{font-size:15px}.dashboard-booking-top{align-items:flex-start}}
