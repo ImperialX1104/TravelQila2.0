@@ -110,11 +110,53 @@
             color: #dce5fa;
         }
 
+        .package-cover-wrap {
+            position: relative;
+            min-height: 250px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #13357B, #397c91, #8bb6c1);
+        }
+
         .package-cover {
+            display: block;
             width: 100%;
             height: 430px;
             object-fit: cover;
             border-radius: 15px;
+        }
+
+        .package-cover-fallback {
+            min-height: 430px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+            padding: 30px;
+            color: #fff;
+            text-align: center;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,.18), transparent 32%),
+                linear-gradient(135deg, #102653, #13357B 55%, #4d7898);
+        }
+
+        .package-cover-fallback[hidden] {
+            display: none !important;
+        }
+
+        .package-cover-fallback i {
+            font-size: 54px;
+            opacity: .9;
+        }
+
+        .package-cover-fallback strong {
+            font: 700 clamp(25px, 4vw, 38px) 'Jost', sans-serif;
+        }
+
+        .package-cover-fallback span {
+            color: rgba(255,255,255,.82);
+            font-size: 13px;
         }
 
         .demo-label {
@@ -415,7 +457,7 @@
                     <a href="contact.html" class="nav-link">Contact</a>
                 </div>
 
-                <a href="trip-planner.html"
+                <a href="trip-enquiry.html?type=custom"
                    class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">
                     Plan My Trip
                 </a>
@@ -471,7 +513,7 @@
                         Loading package...
                     </h2>
 
-                    <p id="packageDeion" class="text-muted">
+                    <p id="packageDescription" class="text-muted">
                         Please wait while the package information loads.
                     </p>
 
@@ -492,11 +534,18 @@
                         </span>
                     </div>
 
-                    <img id="packageImage"
-                         class="package-cover"
-                         src="img/carousel-2.jpg"
-                         alt="Holiday destination"
-                         fetchpriority="high">
+                    <div class="package-cover-wrap">
+                        <img id="packageImage"
+                             class="package-cover"
+                             src="img/carousel-2.jpg"
+                             alt="Holiday destination"
+                             fetchpriority="high">
+                        <div id="packageImageFallback" class="package-cover-fallback" hidden aria-live="polite">
+                            <i class="fas fa-globe-asia" aria-hidden="true"></i>
+                            <strong id="packageImageFallbackTitle">Explore the world</strong>
+                            <span>Destination photo is temporarily unavailable</span>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -848,7 +897,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "Domestic",
             duration: "6 Nights / 7 Days",
             price: "₹24,999",
-            image: "img/destination-1.jpg",
+            image: "https://images.unsplash.com/photo-1595815771614-ade9dfe0a1ae?auto=format&fit=crop&w=1600&q=88",
             description: "Discover the natural beauty of Kashmir through an illustrative journey covering Srinagar, Gulmarg and Pahalgam. Enjoy mountain scenery, local culture and peaceful landscapes.",
             highlights: ["Explore Srinagar and Dal Lake", "Discover Gulmarg landscapes", "Visit scenic Pahalgam", "Customisable sightseeing plans"],
             itinerary: [
@@ -870,7 +919,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "International",
             duration: "5 Nights / 6 Days",
             price: "₹49,999",
-            image: "img/destination-2.jpg",
+            image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=88",
             description: "Experience Bali through an illustrative holiday concept featuring tropical landscapes, cultural attractions, relaxing surroundings and island experiences.",
             highlights: ["Discover Ubud", "Explore tropical landscapes", "Experience local culture", "Flexible island sightseeing"],
             itinerary: [
@@ -891,7 +940,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "International",
             duration: "4 Nights / 5 Days",
             price: "₹39,999",
-            image: "img/destination-3.jpg",
+            image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=88",
             description: "Explore Dubai through a sample city holiday concept featuring modern architecture, cultural attractions and optional desert experiences.",
             highlights: ["Explore Downtown Dubai", "Discover city attractions", "Optional desert experiences", "Flexible sightseeing schedule"],
             itinerary: [
@@ -911,7 +960,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "Domestic",
             duration: "4 Nights / 5 Days",
             price: "₹19,999",
-            image: "img/destination-4.jpg",
+            image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1600&q=88",
             description: "Discover Kerala's natural landscapes, peaceful backwaters and scenic destinations through a flexible sample itinerary.",
             highlights: ["Explore Munnar", "Discover Alleppey", "Experience Kerala landscapes", "Flexible local sightseeing"],
             itinerary: [
@@ -931,7 +980,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "International",
             duration: "7 Nights / 8 Days",
             price: "₹1,29,999",
-            image: "img/destination-5.jpg",
+            image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=88",
             description: "Explore Switzerland through a sample European holiday concept featuring alpine scenery, lakeside towns and scenic travel experiences.",
             highlights: ["Discover Zurich", "Explore Lucerne", "Experience alpine scenery", "Flexible Swiss sightseeing"],
             itinerary: [
@@ -954,7 +1003,7 @@ document.addEventListener("DOMContentLoaded", function () {
             category: "International",
             duration: "5 Nights / 6 Days",
             price: "₹34,999",
-            image: "img/destination-6.jpg",
+            image: "https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1600&q=88",
             description: "Discover Thailand through a sample itinerary combining city experiences, tropical beaches and optional island activities.",
             highlights: ["Explore Bangkok", "Discover Phuket", "Enjoy tropical landscapes", "Optional island experiences"],
             itinerary: [
@@ -1317,10 +1366,23 @@ document.addEventListener("DOMContentLoaded", function () {
         setText("sidebarDuration", data.duration);
 
         const image = document.getElementById("packageImage");
+        const imageFallback = document.getElementById("packageImageFallback");
+        const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
 
         if (image) {
-            image.src = data.image || fallbackImage;
+            image.hidden = false;
             image.alt = data.name + " holiday destination";
+            image.onload = function () {
+                image.hidden = false;
+                if (imageFallback) imageFallback.hidden = true;
+            };
+            image.onerror = function () {
+                image.hidden = true;
+                if (imageFallback) imageFallback.hidden = false;
+            };
+            if (imageFallbackTitle) imageFallbackTitle.textContent = data.destination || data.name;
+            image.src = data.image || fallbackImage;
+            if (image.complete && image.naturalWidth === 0) image.onerror();
         }
 
         createList(
@@ -1378,8 +1440,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const image = document.getElementById("packageImage");
 
         if (image) {
-            image.src = fallbackImage;
+            image.hidden = true;
             image.alt = "Travel Qila holiday inspiration";
+            const imageFallback = document.getElementById("packageImageFallback");
+            const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
+            if (imageFallbackTitle) imageFallbackTitle.textContent = "Package not available";
+            if (imageFallback) imageFallback.hidden = false;
         }
 
         [
