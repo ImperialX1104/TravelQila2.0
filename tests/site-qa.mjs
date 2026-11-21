@@ -72,6 +72,13 @@ try {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
     if (overflow) failures.push(`${route}: horizontal overflow at 390px viewport`);
 
+    if (route === "/dashboard.html") {
+      const hasBookings = await page.locator("[data-bookings-list]").count();
+      if (hasBookings !== 1) failures.push(`${route}: customer bookings panel is missing`);
+      const hasBookingsNav = await page.locator("a[href=\"#bookings\"]").count();
+      if (hasBookingsNav !== 1) failures.push(`${route}: dashboard bookings navigation is missing`);
+    }
+
     if (route === "/services.html") {
       try {
         await page.setViewportSize({ width:1440, height:900 });
@@ -93,7 +100,7 @@ try {
         const filteredCards = await page.locator(".flight-result-card").count();
         if (filteredCards !== 3) failures.push(`${route}: airline filter expected 3 IndiGo cards, received ${filteredCards}`);
 
-        const enquiryHref = await page.locator(".flight-enquire-wa").first().getAttribute("href");
+        const enquiryHref = await page.locator(".flight-result-actions a[href*=\"wa.me\"]").first().getAttribute("href");
         if (!enquiryHref || !enquiryHref.includes("wa.me/919871101345") || !decodeURIComponent(enquiryHref).includes("DEMO OPTION")) {
           failures.push(`${route}: WhatsApp enquiry link missing or missing demo-fare warning`);
         }
