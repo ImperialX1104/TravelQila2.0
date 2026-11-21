@@ -2,7 +2,7 @@
 
 ## Scope
 
-This branch prepares the SEO foundation for a full-service travel agency targeting India-wide and international customers in English. The main branch remains untouched.
+This branch prepares the SEO foundation for a holiday package and travel planning service targeting India-wide and international customers in English. The main branch remains untouched.
 
 ## Implemented on this branch
 
@@ -13,8 +13,8 @@ This branch prepares the SEO foundation for a full-service travel agency targeti
 - robots.txt allows crawlers to read noindex directives and points to the sitemap.
 - Destination hub links to 11 destination landing pages.
 - Destination landing pages cover Thailand, Dubai, Vietnam, Bali, Singapore, Kashmir, Goa, Kerala, Maldives, Malaysia and Europe.
-- Homepage H1 is aligned to full-service travel intent; primary heading hierarchy has been corrected on the existing section pages.
-- Destination landing pages link to booking/contact paths and include visible itinerary-planning guidance and FAQs.
+- Homepage H1 is aligned to holiday package and travel planning intent; primary heading hierarchy has been corrected on the existing section pages.
+- Destination landing pages link to trip enquiry/contact paths and include visible itinerary-planning guidance and FAQs.
 
 ## Deployment checks required
 
@@ -32,7 +32,7 @@ This branch prepares the SEO foundation for a full-service travel agency targeti
 ## Important content and compliance notes
 
 - Destination pages are editorial/lead-generation landing pages, not proof of live package availability.
-- Prices, inclusions, flight schedules, hotel availability, visa outcomes and entry requirements must be checked before publication.
+- Package prices, inclusions, availability and destination information must be checked before publication.
 - Verify the TravelAgency address, telephone and email against the business's current official details before production.
 - Do not add fake ratings, testimonials, review schema, offer schema or guaranteed claims.
 - The legal pages may remain indexable if they contain complete, current legal text; keep account pages noindex.
