@@ -1,4 +1,3 @@
-
 import {
     supabase,
     authPageUrl,
@@ -7,10 +6,6 @@ import {
 } from "./auth-client.js";
 
 "use strict";
-
-// =====================================================
-// 1. PAGE INITIALIZATION
-// =====================================================
 
 const page = document.body.dataset.authPage;
 const form = document.querySelector("[data-auth-form]");
@@ -35,74 +30,53 @@ function validatePassword(password) {
     if (password.length < MIN_PASSWORD_LENGTH) {
         return "Password must contain at least 12 characters.";
     }
-
     if (getPasswordBytes(password) > MAX_PASSWORD_BYTES) {
         return "Password is too long. Use a shorter password.";
     }
-
     if (!/[A-Z]/.test(password)) {
         return "Include at least one uppercase letter.";
     }
-
     if (!/[a-z]/.test(password)) {
         return "Include at least one lowercase letter.";
     }
-
     if (!/[0-9]/.test(password)) {
         return "Include at least one number.";
     }
-
     if (!/[^A-Za-z0-9]/.test(password)) {
         return "Include at least one special character.";
     }
-
     return null;
 }
 
+// Never display arbitrary provider/server messages to end users.
 function getSafeError(error) {
-    const code = error?.code;
-    const errorMessage = error?.message || "";
+    const code = error?.code || error?.name || "";
+    const messageText = error?.message || "";
 
     const knownErrors = {
-        invalid_credentials:
-            "Incorrect email or password.",
-
-        email_not_confirmed:
-            "Please verify your email address before signing in.",
-
-        user_not_found:
-            "Incorrect email or password.",
-
-        weak_password:
-            "Your password does not meet the security requirements.",
-
-        over_email_send_rate_limit:
-            "Too many email requests. Please try again later.",
-
-        over_request_rate_limit:
-            "Too many attempts. Please wait before trying again."
+        invalid_credentials: "Incorrect email or password.",
+        email_not_confirmed: "Please verify your email address before signing in.",
+        user_not_found: "Incorrect email or password.",
+        weak_password: "Your password does not meet the security requirements.",
+        over_email_send_rate_limit: "Too many email requests. Please try again later.",
+        over_request_rate_limit: "Too many attempts. Please wait before trying again.",
+        otp_expired: "This password reset link has expired. Request a new one.",
+        flow_state_expired: "This password reset link has expired. Request a new one.",
+        validation_failed: "Please check your details and try again."
     };
 
-    if (code && knownErrors[code]) {
-        return knownErrors[code];
+    if (knownErrors[code]) return knownErrors[code];
+    if (/invalid login credentials/i.test(messageText)) return "Incorrect email or password.";
+    if (/email not confirmed/i.test(messageText)) return "Please verify your email address before signing in.";
+    if (/expired|invalid.*(token|code)|token.*(expired|invalid)/i.test(messageText)) {
+        return "This link is invalid or has expired. Please request a new one.";
     }
-
-    if (/invalid login credentials/i.test(errorMessage)) {
-        return "Incorrect email or password.";
-    }
-
-    if (/email not confirmed/i.test(errorMessage)) {
-        return "Please verify your email address before signing in.";
-    }
-
-    return errorMessage || "Something went wrong. Please try again.";
+    return "We couldn't complete your request. Please try again.";
 }
 
 function setSubmitting(isSubmitting) {
     if (!form) return;
-
     const button = form.querySelector('button[type="submit"]');
-
     if (!button) return;
 
     if (isSubmitting) {
@@ -112,56 +86,32 @@ function setSubmitting(isSubmitting) {
         form.setAttribute("aria-busy", "true");
     } else {
         button.disabled = false;
-
         if (button.dataset.originalText) {
             button.innerHTML = button.dataset.originalText;
             delete button.dataset.originalText;
         }
-
         form.removeAttribute("aria-busy");
     }
 }
 
-// =====================================================
-// 2. LOGIN
-// =====================================================
-
 async function handleLogin(event) {
     event.preventDefault();
-
     clearAuthMessage(message);
 
     const email = getField("email")?.value.trim();
     const password = getField("password")?.value;
-
     if (!email || !password) {
         showMessage("Please enter your email and password.", "error");
         return;
     }
 
     setSubmitting(true);
-
     try {
-        const { data, error } =
-            await supabase.auth.signInWithPassword({
-                email,
-                password
-            });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        if (!data.session || !data.user) throw new Error("Authentication could not be completed.");
 
-        if (error) {
-            throw error;
-        }
-
-        if (!data.session || !data.user) {
-            throw new Error(
-                "Login could not be completed. Please try again."
-            );
-        }
-
-        window.location.replace(
-            authPageUrl("dashboard.html")
-        );
-
+        window.location.replace(authPageUrl("dashboard.html"));
     } catch (error) {
         showMessage(getSafeError(error), "error");
     } finally {
@@ -169,113 +119,71 @@ async function handleLogin(event) {
     }
 }
 
-// =====================================================
-// 3. SOCIAL LOGIN — GOOGLE & APPLE
-// =====================================================
-
-const SOCIAL_PROVIDERS = new Set([
-    "google",
-    "apple"
-]);
+const SOCIAL_PROVIDERS = new Set(["google", "apple"]);
 
 async function handleSocialLogin(event) {
     const button = event.currentTarget;
     const provider = button.dataset.socialLogin;
-
-    if (!SOCIAL_PROVIDERS.has(provider)) {
-        return;
-    }
+    if (!SOCIAL_PROVIDERS.has(provider)) return;
 
     clearAuthMessage(message);
-
     const originalContent = button.innerHTML;
-
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
-
-    button.textContent =
-        provider === "google"
-            ? "Connecting to Google..."
-            : "Connecting to Apple...";
+    button.textContent = provider === "google" ? "Connecting to Google..." : "Connecting to Apple...";
 
     try {
         const { error } = await supabase.auth.signInWithOAuth({
             provider,
-            options: {
-                redirectTo: authPageUrl("dashboard.html")
-            }
+            options: { redirectTo: authPageUrl("dashboard.html") }
         });
-
-        if (error) {
-            throw error;
-        }
-
-        // Supabase handles the OAuth browser redirect.
-        // Do not manually redirect before OAuth completes.
-
+        if (error) throw error;
+        // Supabase owns the OAuth redirect.
     } catch (error) {
         showMessage(getSafeError(error), "error");
-
         button.disabled = false;
         button.removeAttribute("aria-busy");
         button.innerHTML = originalContent;
     }
 }
 
-// =====================================================
-// 4. REGISTRATION
-// =====================================================
-
 async function handleRegistration(event) {
     event.preventDefault();
-
     clearAuthMessage(message);
 
     const fullName = getField("full_name")?.value.trim();
     const email = getField("email")?.value.trim();
     const phone = getField("phone")?.value.trim() || "";
     const password = getField("password")?.value;
-    const confirmPassword =
-        getField("confirm_password")?.value;
+    const confirmPassword = getField("confirm_password")?.value;
     const termsAccepted = getField("terms")?.checked;
 
     if (!fullName || fullName.length < 2) {
         showMessage("Please enter your full name.", "error");
         return;
     }
-
     if (!email || !password) {
         showMessage("Please complete all required fields.", "error");
         return;
     }
-
     if (password !== confirmPassword) {
         showMessage("Your passwords do not match.", "error");
         return;
     }
 
     const passwordError = validatePassword(password);
-
     if (passwordError) {
         showMessage(passwordError, "error");
         return;
     }
-
     if (!termsAccepted) {
-        showMessage(
-            "Please accept the Terms and Privacy Policy.",
-            "error"
-        );
+        showMessage("Please accept the Terms and Privacy Policy.", "error");
         return;
     }
 
     setSubmitting(true);
-
     try {
-        const verificationUrl = new URL(
-            authPageUrl("login.html")
-        );
-
+        const verificationUrl = new URL(authPageUrl("login.html"));
         verificationUrl.searchParams.set("verified", "1");
 
         const { data, error } = await supabase.auth.signUp({
@@ -283,37 +191,22 @@ async function handleRegistration(event) {
             password,
             options: {
                 emailRedirectTo: verificationUrl.href,
-                data: {
-                    full_name: fullName,
-                    phone
-                }
+                data: { full_name: fullName, phone }
             }
         });
-
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         if (data.session) {
-            showMessage(
-                "Your account has been created successfully.",
-                "success"
-            );
-
-            window.location.replace(
-                authPageUrl("dashboard.html")
-            );
-
+            showMessage("Your account has been created successfully.", "success");
+            window.location.replace(authPageUrl("dashboard.html"));
             return;
         }
 
         showMessage(
-            "If your registration was successful, a verification email will arrive shortly. Please check your inbox and spam folder.",
+            "If registration was successful, a verification email will arrive shortly. Check your inbox and spam folder.",
             "success"
         );
-
         form.reset();
-
     } catch (error) {
         showMessage(getSafeError(error), "error");
     } finally {
@@ -321,57 +214,128 @@ async function handleRegistration(event) {
     }
 }
 
-// =====================================================
-// 5. EMAIL VERIFICATION MESSAGE
-// =====================================================
+async function handleForgotPassword(event) {
+    event.preventDefault();
+    clearAuthMessage(message);
 
-function handleVerificationMessage() {
-    if (page !== "login") return;
-
-    const currentUrl = new URL(window.location.href);
-
-    if (currentUrl.searchParams.get("verified") !== "1") {
+    const email = getField("email")?.value.trim();
+    if (!email) {
+        showMessage("Enter the email address linked to your account.", "error");
         return;
     }
 
-    showMessage(
-        "Email verification completed. You can now sign in.",
-        "success"
-    );
-
-    currentUrl.searchParams.delete("verified");
-
-    window.history.replaceState(
-        {},
-        document.title,
-        currentUrl.pathname +
-        currentUrl.search +
-        currentUrl.hash
-    );
-}
-
-// =====================================================
-// 6. EVENT REGISTRATION
-// =====================================================
-
-if (form && page === "login") {
-    form.addEventListener("submit", handleLogin);
-}
-
-if (form && page === "register") {
-    form.addEventListener("submit", handleRegistration);
-}
-
-// Register social login buttons on the login page.
-if (page === "login") {
-    document
-        .querySelectorAll("[data-social-login]")
-        .forEach((button) => {
-            button.addEventListener(
-                "click",
-                handleSocialLogin
-            );
+    setSubmitting(true);
+    try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: authPageUrl("reset-password.html")
         });
+        if (error) throw error;
+
+        // Keep the response generic to avoid disclosing whether an account exists.
+        showMessage(
+            "If an account exists for that email, a password reset link will arrive shortly. Check your inbox and spam folder.",
+            "success"
+        );
+        form.reset();
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+    } finally {
+        setSubmitting(false);
+    }
+}
+
+async function initializePasswordReset() {
+    setSubmitting(true);
+    try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
+        if (!data.session) {
+            showMessage(
+                "This reset link is invalid or has expired. Request a new password reset link.",
+                "error"
+            );
+            if (form) {
+                form.querySelectorAll("input, button").forEach((element) => {
+                    element.disabled = true;
+                });
+            }
+            return false;
+        }
+        return true;
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+        return false;
+    } finally {
+        setSubmitting(false);
+    }
+}
+
+async function handlePasswordReset(event) {
+    event.preventDefault();
+    clearAuthMessage(message);
+
+    const password = getField("password")?.value;
+    const confirmPassword = getField("confirm_password")?.value;
+
+    if (!password || password !== confirmPassword) {
+        showMessage("Your passwords do not match.", "error");
+        return;
+    }
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+        showMessage(passwordError, "error");
+        return;
+    }
+
+    setSubmitting(true);
+    try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+        if (!sessionData.session) {
+            throw new Error("The password reset session is missing or expired.");
+        }
+
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+
+        showMessage("Your password has been updated. You can now sign in with your new password.", "success");
+        form.reset();
+
+        // End the recovery session after a successful password change.
+        await supabase.auth.signOut();
+        window.setTimeout(() => {
+            window.location.replace(authPageUrl("login.html"));
+        }, 1200);
+    } catch (error) {
+        showMessage(getSafeError(error), "error");
+    } finally {
+        setSubmitting(false);
+    }
+}
+
+function handleVerificationMessage() {
+    if (page !== "login") return;
+    const currentUrl = new URL(window.location.href);
+    if (currentUrl.searchParams.get("verified") !== "1") return;
+
+    showMessage("Email verification completed. You can now sign in.", "success");
+    currentUrl.searchParams.delete("verified");
+    window.history.replaceState({}, document.title, currentUrl.pathname + currentUrl.search + currentUrl.hash);
+}
+
+if (form && page === "login") form.addEventListener("submit", handleLogin);
+if (form && page === "register") form.addEventListener("submit", handleRegistration);
+if (form && page === "forgot") form.addEventListener("submit", handleForgotPassword);
+if (form && page === "reset") {
+    form.addEventListener("submit", handlePasswordReset);
+    initializePasswordReset();
+}
+
+if (page === "login") {
+    document.querySelectorAll("[data-social-login]").forEach((button) => {
+        button.addEventListener("click", handleSocialLogin);
+    });
 }
 
 handleVerificationMessage();
