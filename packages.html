@@ -988,16 +988,7 @@
         </div>
         <!-- Copyright End -->
 
-<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
-
-<!-- Back to top -->
-    <a href="#"
-       id="backToTop"
-       class="btn btn-primary btn-lg-square rounded-circle position-fixed"
-       style="right:25px; bottom:25px; display:none; z-index:999;"
-       aria-label="Back to top">
-        <i class="fa fa-arrow-up"></i>
-    </a>
+<!-- Shared back-to-top control is managed by js/main.js -->
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -1134,28 +1125,7 @@
 
             resetButton.addEventListener("click", resetFilters);
             emptyResetButton.addEventListener("click", resetFilters);
-
-            /* Back to top */
-
-            window.addEventListener("scroll", function () {
-
-                backToTop.style.display =
-                    window.scrollY > 300 ? "block" : "none";
-
-            });
-
-            backToTop.addEventListener("click", function (event) {
-
-                event.preventDefault();
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-
-            });
-
-            /* Current year */
+/* Current year */
 
             document.getElementById("currentYear").textContent =
                 new Date().getFullYear();
