@@ -97,7 +97,7 @@
       const links=enquiryLinks(offer), stopText=offer.stops===0?"Non-stop":offer.stops+" stop";
       return '<article class="flight-result-card">'+
         '<div class="flight-result-top"><div class="flight-airline"><div class="flight-airline-mark"><i class="fas fa-plane"></i></div><div><div class="flight-airline-name">'+safe(offer.airline)+'</div><div class="flight-flight-number">'+safe(offer.flight)+' · <span class="flight-demo-chip">Demo itinerary</span></div></div></div>'+
-        '<div class="flight-demo-price"><strong>'+money(offer.price)+'</strong><small>illustrative / passenger</small></div></div>'+
+        '<div class="flight-demo-price"><strong>'+money(offer.price)+'</strong><small>outbound demo fare / passenger</small></div></div>'+
         '<div class="flight-route-line"><div><div class="flight-time">'+safe(offer.depart)+'</div><div class="flight-city">'+safe(offer.origin.label)+' ('+safe(offer.origin.code||"—")+')</div></div>'+
         '<div class="flight-route-middle"><div>'+durationText(offer.duration)+'</div><div class="line"></div><div>'+stopText+'</div></div>'+
         '<div class="text-end"><div class="flight-time">'+safe(offer.arrive)+'</div><div class="flight-city">'+safe(offer.destination.label)+' ('+safe(offer.destination.code||"—")+')</div></div></div>'+
