@@ -62,8 +62,19 @@ import { supabase } from "./auth-client.js";
       const shift = routeSeed % 7;
       const duration = offer.duration + (shift * 3) + (index % 2 ? 10 : 0);
       const price = Math.round((offer.price + (routeSeed % 13) * 175 + (index % 3) * 260) / 10) * 10;
-      return {...offer,id:"demo-"+index,depart:addMinutes(offer.depart,shift*4),arrive:addMinutes(offer.depart,duration),duration,price,
-        origin:search.origin,destination:search.destination,departureDate:search.departureDate};
+      const outbound={airline:offer.airline,flight:offer.flight,depart:addMinutes(offer.depart,shift*4),arrive:addMinutes(offer.depart,duration),duration,stops:offer.stops,price,origin:search.origin,destination:search.destination,departureDate:search.departureDate};
+      const returnSource=sampleOffers[(index+3)%sampleOffers.length];
+      const returnShift=(search.destination.code+search.origin.code).split("").reduce((sum,char)=>sum+char.charCodeAt(0),0)%7;
+      const returnDuration=returnSource.duration+(returnShift*3)+(index%2?10:0);
+      const returnPrice=Math.round((returnSource.price+(returnShift%13)*175+((index+1)%3)*260)/10)*10;
+      const returnLeg=search.tripType==="Round trip"?{
+        airline:returnSource.airline,flight:returnSource.flight,
+        depart:addMinutes(returnSource.depart,returnShift*4),
+        arrive:addMinutes(returnSource.depart,returnDuration),duration:returnDuration,
+        stops:returnSource.stops,price:returnPrice,
+        origin:search.destination,destination:search.origin,departureDate:search.returnDate
+      }:null;
+      return {...outbound,id:"demo-"+index,returnLeg,totalPrice:price+(returnLeg?returnLeg.price:0)};
     });
   }
   function enquiryLinks(offer) {
@@ -74,12 +85,15 @@ import { supabase } from "./auth-client.js";
       "",
       "Airline: "+offer.airline+" ("+offer.flight+")",
       "Route: "+s.origin.label+" ("+(s.origin.code||"")+") to "+s.destination.label+" ("+(s.destination.code||"")+")",
-      "Departure: "+formatDate(s.departureDate)+" at "+offer.depart,
+      "Outbound: "+s.origin.label+" ("+(s.origin.code||"")+") to "+s.destination.label+" ("+(s.destination.code||"")+")",
+      "Departure: "+formatDate(s.departureDate)+" at "+offer.depart+" · "+offer.airline+" "+offer.flight,
       "Trip type: "+s.tripType,
-      s.tripType==="Round trip" ? "Return date: "+formatDate(s.returnDate) : "",
+      s.tripType==="Round trip" ? "Return: "+s.destination.label+" ("+(s.destination.code||"")+") to "+s.origin.label+" ("+(s.origin.code||"")+") on "+formatDate(s.returnDate)+" at "+offer.returnLeg.depart+" · "+offer.returnLeg.airline+" "+offer.returnLeg.flight : "",
       "Passengers: "+s.adults+" adult(s), "+s.children+" child(ren), "+s.infants+" infant(s)",
       "Cabin: "+s.cabin,
-      "Illustrative demo fare: "+money(offer.price)+" per passenger (not a live quote)",
+      "Illustrative outbound fare: "+money(offer.price)+" per passenger",
+      offer.returnLeg ? "Illustrative return fare: "+money(offer.returnLeg.price)+" per passenger" : "",
+      "Illustrative total demo fare: "+money(offer.totalPrice)+" per passenger (not a live quote)",
       "",
       "Please check live availability, baggage rules and final fare. I understand this is an enquiry, not a booking."
     ].filter(Boolean).join("\n");
@@ -92,18 +106,22 @@ import { supabase } from "./auth-client.js";
     const list=byId("flightResultsList"), empty=byId("flightResultsEmpty"), count=byId("flightResultsCount");
     const stopFilter=byId("resultStops").value, airlineFilter=byId("resultAirline").value, sort=byId("resultSort").value;
     const budget=Number(byId("maxPrice").value);
-    let filtered=currentOffers.filter(o=>(stopFilter==="any"||(stopFilter==="nonstop"&&o.stops===0)||(stopFilter==="one"&&o.stops<=1))&&(airlineFilter==="all"||o.airline===airlineFilter)&&o.price<=budget);
+    let filtered=currentOffers.filter(o=>(stopFilter==="any"||(stopFilter==="nonstop"&&o.stops===0)||(stopFilter==="one"&&o.stops<=1))&&(airlineFilter==="all"||o.airline===airlineFilter)&&o.totalPrice<=budget);
     filtered.sort((a,b)=>sort==="duration"?a.duration-b.duration:sort==="departure"?a.depart.localeCompare(b.depart):a.price-b.price);
-    count.textContent=filtered.length+" illustrative options · "+currentOffers.length+" generated for this search";
+    count.textContent=filtered.length+" illustrative options · "+currentOffers.length+" generated for this search · budget applies to total per-passenger trip fare";
     list.innerHTML=filtered.map(offer=>{
       const links=enquiryLinks(offer), stopText=offer.stops===0?"Non-stop":offer.stops+" stop";
+      const legMarkup=(leg,title)=>'<div class="flight-leg-heading">'+title+' · '+formatDate(leg.departureDate)+'</div>'+
+        '<div class="flight-leg-airline">'+safe(leg.airline)+' · '+safe(leg.flight)+' · '+(leg.stops===0?"Non-stop":leg.stops+" stop")+'</div>'+
+        '<div class="flight-route-line"><div><div class="flight-time">'+safe(leg.depart)+'</div><div class="flight-city">'+safe(leg.origin.label)+' ('+safe(leg.origin.code||"—")+')</div></div>'+
+        '<div class="flight-route-middle"><div>'+durationText(leg.duration)+'</div><div class="line"></div><div>'+(leg.stops===0?"Non-stop":leg.stops+" stop")+'</div></div>'+
+        '<div class="text-end"><div class="flight-time">'+safe(leg.arrive)+'</div><div class="flight-city">'+safe(leg.destination.label)+' ('+safe(leg.destination.code||"—")+')</div></div></div>';
       return '<article class="flight-result-card">'+
         '<div class="flight-result-top"><div class="flight-airline"><div class="flight-airline-mark"><i class="fas fa-plane"></i></div><div><div class="flight-airline-name">'+safe(offer.airline)+'</div><div class="flight-flight-number">'+safe(offer.flight)+' · <span class="flight-demo-chip">Demo itinerary</span></div></div></div>'+
-        '<div class="flight-demo-price"><strong>'+money(offer.price)+'</strong><small>outbound demo fare / passenger</small></div></div>'+
-        '<div class="flight-route-line"><div><div class="flight-time">'+safe(offer.depart)+'</div><div class="flight-city">'+safe(offer.origin.label)+' ('+safe(offer.origin.code||"—")+')</div></div>'+
-        '<div class="flight-route-middle"><div>'+durationText(offer.duration)+'</div><div class="line"></div><div>'+stopText+'</div></div>'+
-        '<div class="text-end"><div class="flight-time">'+safe(offer.arrive)+'</div><div class="flight-city">'+safe(offer.destination.label)+' ('+safe(offer.destination.code||"—")+')</div></div></div>'+
-        '<div class="flight-result-meta"><span><i class="far fa-calendar"></i>'+formatDate(offer.departureDate)+'</span><span><i class="fas fa-suitcase"></i>'+safe(offer.baggage)+' (sample)</span><span><i class="fas fa-chair"></i>'+safe(currentSearch.cabin)+'</span></div>'+
+        '<div class="flight-demo-price"><strong>'+money(offer.totalPrice)+'</strong><small>'+(offer.returnLeg?"round-trip demo total":"one-way demo fare")+' / passenger</small></div></div>'+
+        legMarkup(offer,"Outbound")+
+        (offer.returnLeg?'<div class="flight-return-divider"></div>'+legMarkup(offer.returnLeg,"Return"):"")+
+        '<div class="flight-result-meta"><span><i class="fas fa-suitcase"></i>'+safe(offer.baggage)+' (sample)</span><span><i class="fas fa-chair"></i>'+safe(currentSearch.cabin)+'</span><span><i class="fas fa-receipt"></i> Outbound '+money(offer.price)+(offer.returnLeg?' · Return '+money(offer.returnLeg.price):'')+'</span></div>'+
         '<div class="flight-result-actions"><button type="button" class="flight-enquire-wa" data-save-flight="'+offer.id+'"><i class="fas fa-bookmark me-1"></i>Confirm booking request</button><a class="flight-enquire-email" href="'+links.email+'"><i class="far fa-envelope me-1"></i>Email enquiry</a><a class="flight-enquire-email" href="'+links.whatsapp+'" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp me-1"></i>WhatsApp enquiry</a></div><div class="small text-muted mt-2" data-save-status="'+offer.id+'">Saving creates a pending request in your dashboard; it does not issue a ticket.</div></article>';
     }).join("");
     empty.classList.toggle("is-visible",filtered.length===0);
@@ -137,7 +155,10 @@ import { supabase } from "./auth-client.js";
         return_date:currentSearch.tripType==="Round trip"?currentSearch.returnDate:null,
         adults:currentSearch.adults,children:currentSearch.children,infants:currentSearch.infants,
         cabin_class:currentSearch.cabin,airline:offer.airline,flight_number:offer.flight,
-        departure_time:offer.depart,arrival_time:offer.arrive,demo_fare:offer.price
+        departure_time:offer.depart,arrival_time:offer.arrive,
+        return_airline:offer.returnLeg?.airline||null,return_flight_number:offer.returnLeg?.flight||null,
+        return_departure_time:offer.returnLeg?.depart||null,return_arrival_time:offer.returnLeg?.arrive||null,
+        demo_fare:offer.totalPrice
       };
       const {data,error}=await supabase.from("flight_bookings").insert(payload).select("booking_reference").single();
       if(error)throw error;
