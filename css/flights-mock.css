@@ -38,3 +38,8 @@
 .flight-result-actions button{border:0;cursor:pointer;font:inherit;background:#13357b;color:#fff}
 .flight-result-actions button:disabled{opacity:.7;cursor:wait}
 .flight-result-actions button.is-saved{background:#187647;color:#fff}
+
+.flight-leg-heading{font-size:.76rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#244b8c;margin:14px 0 5px}
+.flight-leg-airline{font-size:.78rem;font-weight:700;color:#65728a;margin-bottom:9px}
+.flight-return-divider{border-top:1px dashed #d7e0ee;margin:17px 0 5px}
+@media(max-width:575px){.flight-leg-heading{margin-top:12px}.flight-return-divider{margin:14px 0 4px}}
