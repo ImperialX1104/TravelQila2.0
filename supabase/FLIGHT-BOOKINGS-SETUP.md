@@ -14,7 +14,7 @@ The customer dashboard reads from `public.flight_bookings`. Before enabling this
 
 ## What the current action means
 
-The flight page is using mock inventory. Clicking **Confirm booking request** inserts a record with status `pending_confirmation`. It saves the selected demo itinerary and passenger counts against the authenticated user's Supabase Auth UUID.
+The flight page is using mock inventory. Clicking **Confirm booking request** inserts a record with status `pending_confirmation`. It saves the selected itinerary legs and passenger counts against the authenticated user's Supabase Auth UUID. A round trip stores separate outbound and return airline, flight number and time details; a one-way request stores no return-leg details.
 
 It does **not**:
 - reserve an airline seat;
@@ -23,7 +23,7 @@ It does **not**:
 - issue a PNR or e-ticket;
 - mark a booking as confirmed.
 
-The displayed demo fare is stored only as a reference to the selected mock option. It is not a quote or payment amount.
+The displayed demo fare is the combined per-passenger demo total for a round trip, or the single-leg demo fare for a one-way trip. It is stored only as a reference to the selected mock option, not as a quote or payment amount.
 
 ## Security model
 
