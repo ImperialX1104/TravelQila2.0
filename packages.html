@@ -434,7 +434,7 @@
                     <a href="contact.html" class="nav-link">Contact</a>
                 </div>
 
-                <a href="trip-planner.html"
+                <a href="trip-enquiry.html?type=custom"
                    class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">
                     Plan My Trip
                 </a>
@@ -901,7 +901,7 @@
                 We'll help you plan a customised trip.
             </p>
 
-            <a href="trip-planner.html"
+            <a href="trip-enquiry.html?type=custom"
                class="btn btn-light text-primary rounded-pill py-3 px-5 fw-bold">
                 <i class="fas fa-route me-2"></i>
                 Plan a Custom Trip
@@ -942,7 +942,7 @@
                     <h5 class="text-white mb-3">Plan Your Trip</h5>
                     <p><a href="flights.html">Flights</a></p>
                     <p><a href="hotels.html">Hotels</a></p>
-                    <p><a href="trip-planner.html">Custom Trips</a></p>
+                    <p><a href="trip-enquiry.html?type=custom">Custom Trips</a></p>
                     <p><a href="dashboard.html">My Account</a></p>
                 </div>
 
@@ -1033,7 +1033,18 @@
 
                 image.addEventListener("load", function () {
                     image.style.display = "block";
+                    const fallback = image.parentElement.querySelector(".image-fallback");
+                    if (fallback) fallback.style.display = "none";
                 });
+
+                // Cached images may finish before listeners are attached.
+                if (image.complete) {
+                    if (image.naturalWidth > 0) {
+                        image.style.display = "block";
+                    } else {
+                        image.dispatchEvent(new Event("error"));
+                    }
+                }
 
             });
 
