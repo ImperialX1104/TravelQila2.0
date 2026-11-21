@@ -21,6 +21,42 @@ const emailDisplay = document.querySelector("[data-profile-email]");
 const createdDisplay = document.querySelector("[data-profile-created]");
 
 let currentUser = null;
+
+const bookingsList = document.querySelector("[data-bookings-list]");
+const bookingsCount = document.querySelector("[data-bookings-count]");
+function escapeBookingText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
+}
+function bookingDate(value) {
+    if (!value) return "Date to be confirmed";
+    const date = new Date(value + (String(value).length === 10 ? "T12:00:00" : ""));
+    return Number.isNaN(date.getTime()) ? "Date to be confirmed" : date.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+}
+async function loadCustomerBookings() {
+    if (!bookingsList || !currentUser) return;
+    const {data,error} = await supabase.from("flight_bookings")
+        .select("id,booking_reference,origin,destination,origin_code,destination_code,trip_type,departure_date,return_date,adults,children,infants,cabin_class,airline,flight_number,status,created_at")
+        .eq("user_id",currentUser.id).order("created_at",{ascending:false});
+    if (error) {
+        console.error("[Travel Qila] Booking list load failed:",error.code || "unknown");
+        bookingsList.innerHTML = '<div class="alert alert-warning mb-0">Your bookings could not be loaded. Ask the site administrator to apply supabase/flight-bookings.sql, then refresh.</div>';
+        return;
+    }
+    const rows = data || [];
+    if (bookingsCount) bookingsCount.textContent = String(rows.length);
+    if (!rows.length) {
+        bookingsList.innerHTML = '<div class="dashboard-bookings-empty"><div class="empty-icon"><i class="fas fa-plane"></i></div><h3>Your travel plans will appear here</h3><p>Save a flight booking request and track its reference and status here.</p><a href="services.html" class="btn btn-primary rounded-pill px-4 py-2">Search flights</a></div>';
+        return;
+    }
+    bookingsList.innerHTML = rows.map(row => {
+        const status = row.status || "pending_confirmation";
+        const label = status === "confirmed" ? "Confirmed" : status === "cancelled" ? "Cancelled" : "Pending confirmation";
+        const cls = status === "confirmed" ? "is-confirmed" : status === "cancelled" ? "is-cancelled" : "";
+        const returnText = row.trip_type === "Round trip" && row.return_date ? " · Return " + bookingDate(row.return_date) : " · One way";
+        return '<article class="dashboard-booking-card"><div class="dashboard-booking-top"><div><div class="dashboard-booking-ref">'+escapeBookingText(row.booking_reference)+'</div><div class="dashboard-booking-airline">'+escapeBookingText(row.airline)+' · '+escapeBookingText(row.flight_number)+'</div></div><span class="dashboard-booking-status '+cls+'">'+label+'</span></div><div class="dashboard-booking-route"><div><div class="dashboard-booking-city">'+escapeBookingText(row.origin)+'</div><div class="dashboard-booking-code">'+escapeBookingText(row.origin_code || "")+'</div></div><div class="dashboard-booking-arrow"><i class="fas fa-long-arrow-alt-right"></i></div><div class="text-end"><div class="dashboard-booking-city">'+escapeBookingText(row.destination)+'</div><div class="dashboard-booking-code">'+escapeBookingText(row.destination_code || "")+'</div></div></div><div class="dashboard-booking-meta"><span><i class="far fa-calendar"></i>'+bookingDate(row.departure_date)+returnText+'</span><span><i class="fas fa-users"></i>'+Number(row.adults)+' adult(s), '+Number(row.children)+' child(ren), '+Number(row.infants)+' infant(s)</span><span><i class="fas fa-chair"></i>'+escapeBookingText(row.cabin_class)+'</span><span><i class="far fa-clock"></i>Requested '+bookingDate(row.created_at)+'</span></div></article>';
+    }).join("");
+}
+
 let isSaving = false;
 let isSigningOut = false;
 
@@ -148,6 +184,7 @@ async function initializeDashboard() {
         currentUser = userData.user;
 
         populateProfile(currentUser);
+        await loadCustomerBookings();
 
     } catch (error) {
         console.error("[Travel Qila] Dashboard initialization failed.");
