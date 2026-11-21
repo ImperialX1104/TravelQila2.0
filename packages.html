@@ -1079,8 +1079,7 @@
             emptyResetButton.addEventListener("click", resetFilters);
 /* Current year */
 
-            document.getElementById("currentYear").textContent =
-                new Date().getFullYear();
+            (()=>{const yearNode=document.getElementById("currentYear");if(yearNode)yearNode.textContent=new Date().getFullYear()})();
 
             /* Initial results */
 
