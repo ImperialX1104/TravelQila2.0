@@ -1,3 +1,5 @@
+import { supabase } from "./auth-client.js";
+
 /* Travel Qila flight search: deterministic illustrative data only; no live airline inventory. */
 (function () {
   "use strict";
@@ -102,7 +104,7 @@
         '<div class="flight-route-middle"><div>'+durationText(offer.duration)+'</div><div class="line"></div><div>'+stopText+'</div></div>'+
         '<div class="text-end"><div class="flight-time">'+safe(offer.arrive)+'</div><div class="flight-city">'+safe(offer.destination.label)+' ('+safe(offer.destination.code||"—")+')</div></div></div>'+
         '<div class="flight-result-meta"><span><i class="far fa-calendar"></i>'+formatDate(offer.departureDate)+'</span><span><i class="fas fa-suitcase"></i>'+safe(offer.baggage)+' (sample)</span><span><i class="fas fa-chair"></i>'+safe(currentSearch.cabin)+'</span></div>'+
-        '<div class="flight-result-actions"><a class="flight-enquire-wa" href="'+links.whatsapp+'" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp me-1"></i>Enquire on WhatsApp</a><a class="flight-enquire-email" href="'+links.email+'"><i class="far fa-envelope me-1"></i>Enquire by email</a></div></article>';
+        '<div class="flight-result-actions"><button type="button" class="flight-enquire-wa" data-save-flight="'+offer.id+'"><i class="fas fa-bookmark me-1"></i>Confirm booking request</button><a class="flight-enquire-email" href="'+links.email+'"><i class="far fa-envelope me-1"></i>Email enquiry</a><a class="flight-enquire-email" href="'+links.whatsapp+'" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp me-1"></i>WhatsApp enquiry</a></div><div class="small text-muted mt-2" data-save-status="'+offer.id+'">Saving creates a pending request in your dashboard; it does not issue a ticket.</div></article>';
     }).join("");
     empty.classList.toggle("is-visible",filtered.length===0);
     list.hidden=filtered.length===0;
@@ -113,6 +115,46 @@
   byId("maxPrice").addEventListener("input",()=>{updatePriceLabel();if(currentSearch)renderOffers();});
   byId("swapCities").addEventListener("click",()=>{const a=byId("origin"),b=byId("destination"),v=a.value;a.value=b.value;b.value=v;});
   ["resultStops","resultAirline","resultSort"].forEach(id=>byId(id).addEventListener("change",renderOffers));
+
+  async function saveFlightRequest(offerId,button) {
+    const offer=currentOffers.find(item=>item.id===offerId);
+    if(!offer||!currentSearch||button.disabled)return;
+    const status=document.querySelector('[data-save-status="'+offerId+'"]');
+    const original=button.innerHTML;
+    button.disabled=true;button.textContent="Saving request…";
+    try {
+      const {data:userData,error:userError}=await supabase.auth.getUser();
+      if(userError)throw userError;
+      if(!userData.user) {
+        button.disabled=false;button.innerHTML=original;
+        if(status)status.innerHTML='Please <a href="login.html">sign in</a> to save this flight request to your dashboard.';
+        return;
+      }
+      const payload={
+        user_id:userData.user.id,origin:currentSearch.origin.label,destination:currentSearch.destination.label,
+        origin_code:currentSearch.origin.code||null,destination_code:currentSearch.destination.code||null,
+        trip_type:currentSearch.tripType,departure_date:currentSearch.departureDate,
+        return_date:currentSearch.tripType==="Round trip"?currentSearch.returnDate:null,
+        adults:currentSearch.adults,children:currentSearch.children,infants:currentSearch.infants,
+        cabin_class:currentSearch.cabin,airline:offer.airline,flight_number:offer.flight,
+        departure_time:offer.depart,arrival_time:offer.arrive,demo_fare:offer.price
+      };
+      const {data,error}=await supabase.from("flight_bookings").insert(payload).select("booking_reference").single();
+      if(error)throw error;
+      button.textContent="Request saved";button.classList.add("is-saved");
+      if(status)status.textContent="Saved to your dashboard · Reference "+data.booking_reference+". Awaiting Travel Qila confirmation.";
+    } catch(error) {
+      console.error("[Travel Qila] Flight request save failed:",error.code||"unknown");
+      button.disabled=false;button.innerHTML=original;
+      if(status)status.textContent=(error.code==="42P01"||error.code==="PGRST205")
+        ?"Booking storage is not enabled yet. Ask the site administrator to apply supabase/flight-bookings.sql."
+        :"We couldn't save this request. Please try again or contact support.";
+    }
+  }
+  results.addEventListener("click",event=>{
+    const button=event.target.closest("[data-save-flight]");
+    if(button)saveFlightRequest(button.dataset.saveFlight,button);
+  });
 
   form.addEventListener("submit",event=>{
     event.preventDefault();
