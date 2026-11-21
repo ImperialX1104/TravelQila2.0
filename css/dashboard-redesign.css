@@ -45,3 +45,10 @@
 .dashboard-stat-number{font:700 24px Jost,Roboto,sans-serif;color:#173e83}
 @media(max-width:991px){.dashboard-layout{grid-template-columns:1fr}.dashboard-sidebar{position:static}.dashboard-topline{margin-top:5px}}
 @media(max-width:575px){.dashboard-welcome{padding:24px 22px}.dashboard-bookings-panel{padding:15px}.dashboard-booking-card{padding:14px}.dashboard-booking-city{font-size:15px}.dashboard-booking-top{align-items:flex-start}}
+
+.dashboard-booking-leg{padding:5px 0 10px}
+.dashboard-booking-leg-title{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#244b8c}
+.dashboard-booking-leg .dashboard-booking-airline{font-size:12px;margin-top:3px}
+.dashboard-booking-leg .dashboard-booking-route{padding:8px 0 4px}
+.dashboard-booking-leg .dashboard-booking-route small{display:block;font-size:11px;color:#718096;margin-top:3px}
+.dashboard-booking-return{border-top:1px dashed #d7e0ee;margin-top:8px;padding-top:14px}
