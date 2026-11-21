@@ -40,7 +40,7 @@ The goal is to create a clean, accessible and visually appealing travel experien
 - **Travel Blog:** Space for travel-related articles and updates.
 - **Travel Guides:** Helpful travel information for visitors.
 - **Gallery:** Visual presentation of travel experiences.
-- **Booking Interface:** A dedicated booking page and booking calls to action.
+- **Enquiry Flow:** A shared trip enquiry form for customized holiday requests.
 - **Contact Page:** A dedicated point of contact for visitor enquiries.
 - **Responsive Design:** Intended for a consistent experience across desktop, tablet and mobile screens.
 
@@ -73,7 +73,6 @@ Travel-Qila/
 ├── packages.html                # Travel packages
 ├── destination.html             # Destinations
 ├── tour.html                    # Tour details
-├── booking.html                 # Booking page
 ├── gallery.html                 # Travel gallery
 ├── blog.html                    # Blog page
 ├── guides.html                  # Travel guides
