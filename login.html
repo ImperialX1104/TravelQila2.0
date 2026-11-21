@@ -233,8 +233,7 @@
 
 
 <script>
-    document.getElementById("auth-year").textContent =
-        new Date().getFullYear();
+    (()=>{const yearNode=document.getElementById("auth-year");if(yearNode)yearNode.textContent=new Date().getFullYear()})();
 </script>
 
 <script type="module" src="js/auth-pages.js"></script>
