@@ -10,16 +10,15 @@ This is a page-to-intent map, not a list to paste into a meta-keywords tag. Use 
 
 | URL | Primary search intent / phrase | Supporting keyword themes |
 |---|---|---|
-| / | Travel agency in India; full-service travel agency | domestic and international tour packages, flight booking assistance, hotel reservations, visa assistance, customized itineraries |
+| / | Travel agency in India; full-service travel agency | domestic and international tour packages, customized itineraries |
 | /about.html | About Travel Qila | travel planning partner, customized holidays, travel services |
-| /services.html | Travel services in India | flight reservations, hotel booking, visa assistance, holiday planning, travel insurance (only if offered) |
+| /services.html | Travel services in India | holiday planning, customized itineraries |
 | /packages.html | Domestic and international tour packages from India | family holidays, couple holidays, group tours, customized packages |
 | /destination.html | Travel destinations in India and worldwide | Thailand, Dubai, Vietnam, Bali, Singapore, Kashmir, Goa, Kerala, Maldives, Malaysia, Europe |
 | /tour.html | Customized holiday tours and itineraries | tailor-made trips, sightseeing, family tours, couple holidays |
-| /booking.html | Holiday booking enquiry | plan a trip, request itinerary, travel quote |
 | /contact.html | Contact Travel Qila | travel agency contact, Pitampura travel agency, New Delhi travel planner |
 | /blog.html | Travel blog and destination guides | travel tips, itineraries, budgets, trip planning (currently noindex until original articles replace template content) |
-| /guides.html | Travel guides and visa information | entry requirements, travel preparation, destination advice (currently noindex until useful original guide content is published) |
+| /guides.html | Travel guides and destination information | entry requirements, travel preparation, destination advice (currently noindex until useful original guide content is published) |
 | /gallery.html | Travel photo gallery | destination inspiration, holiday photographs (currently noindex until curated original/appropriately licensed image content and descriptive alt text are ready) |
 | /testimonial.html | Travel Qila customer reviews | traveller feedback, service experiences (currently noindex until genuine, permissioned customer reviews replace template content) |
 | /privacy.html | Privacy policy | branded/legal intent |
@@ -46,9 +45,9 @@ This is a page-to-intent map, not a list to paste into a meta-keywords tag. Use 
 1. Every destination page should show original, useful destination-specific content—not spun or duplicated template copy.
 2. Add package prices, durations, inclusions, exclusions, departure cities and availability only when verified by the business.
 3. Add an enquiry CTA that captures dates, travellers, departure city, budget and contact details.
-4. Link destination pages to /booking.html and /contact.html, and link the destination hub to every destination page.
+4. Link destination pages to /trip-enquiry.html and /contact.html, and link the destination hub to every destination page.
 5. Add relevant contextual links from blog articles to the destination pages they genuinely support.
-6. Avoid unsupported claims such as guaranteed visa approval, lowest price, 24/7 service or fixed availability.
+6. Avoid unsupported claims such as lowest price, 24/7 service or fixed availability.
 7. Do not publish empty or thin pages just to target keyword variations. Consolidate overlapping intents.
 8. Do not use meta keywords as a ranking tactic; major search engines do not rely on that tag.
 
