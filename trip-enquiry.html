@@ -329,6 +329,10 @@
                 document.title = "Enquire About " + selected.name + " | Travel Qila";
             } else if (params.get("type") === "custom") {
                 document.title = "Plan a Custom Trip | Travel Qila";
+                const requestedDestination = params.get("destination");
+                if (requestedDestination) {
+                    destinationInput.value = requestedDestination;
+                }
             }
 
             const departure = document.getElementById("departureDate");
