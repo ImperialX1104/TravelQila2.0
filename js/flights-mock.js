@@ -62,7 +62,7 @@ import { supabase } from "./auth-client.js";
       const shift = routeSeed % 7;
       const duration = offer.duration + (shift * 3) + (index % 2 ? 10 : 0);
       const price = Math.round((offer.price + (routeSeed % 13) * 175 + (index % 3) * 260) / 10) * 10;
-      const outbound={airline:offer.airline,flight:offer.flight,depart:addMinutes(offer.depart,shift*4),arrive:addMinutes(offer.depart,duration),duration,stops:offer.stops,price,origin:search.origin,destination:search.destination,departureDate:search.departureDate};
+      const outbound={airline:offer.airline,flight:offer.flight,baggage:offer.baggage,cabin:offer.cabin,depart:addMinutes(offer.depart,shift*4),arrive:addMinutes(offer.depart,duration),duration,stops:offer.stops,price,origin:search.origin,destination:search.destination,departureDate:search.departureDate};
       const returnSource=sampleOffers[(index+3)%sampleOffers.length];
       const returnShift=(search.destination.code+search.origin.code).split("").reduce((sum,char)=>sum+char.charCodeAt(0),0)%7;
       const returnDuration=returnSource.duration+(returnShift*3)+(index%2?10:0);
