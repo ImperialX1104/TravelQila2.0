@@ -59,28 +59,6 @@
             border-color: #0d275e;
         }
 
-        .topbar {
-            background: var(--tq-primary);
-        }
-
-        .navbar {
-            background: #fff;
-            box-shadow: 0 3px 18px rgba(0,0,0,.06);
-        }
-
-        .navbar-brand {
-            color: var(--tq-primary) !important;
-            font-family: 'Jost', sans-serif;
-            font-size: 27px;
-            font-weight: 700;
-        }
-
-        .navbar .nav-link {
-            color: #333;
-            font-weight: 500;
-            padding: 25px 13px !important;
-        }
-
         .navbar .nav-link:hover,
         .navbar .nav-link.active {
             color: var(--tq-primary);
@@ -301,11 +279,6 @@
             padding: 40px;
         }
 
-        .footer {
-            background: var(--tq-dark);
-            color: #c6c6d0;
-        }
-
         .footer a {
             color: #c6c6d0;
             text-decoration: none;
@@ -412,68 +385,72 @@
 </head>
 
 <body>
-
-    <!-- Topbar -->
-    <div class="container-fluid topbar px-4 d-none d-lg-block">
-        <div class="row align-items-center" style="min-height:45px;">
-            <div class="col-lg-7">
-                <span class="text-white small">
-                    <i class="fas fa-map-marker-alt me-2"></i>
-                    Your journey begins with Travel Qila
-                </span>
-            </div>
-
-            <div class="col-lg-5 text-end">
-                <a href="register.html" class="text-white small me-3">
-                    <i class="fas fa-user me-1"></i> Register
-                </a>
-                <a href="login.html" class="text-white small me-3">
-                    <i class="fas fa-sign-in-alt me-1"></i> Login
-                </a>
-                <a href="dashboard.html" class="text-white small">
-                    <i class="fas fa-home me-1"></i> My Dashboard
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top px-3 px-lg-5">
-        <div class="container-fluid">
-
-            <a href="index.html" class="navbar-brand">
-                <i class="fas fa-map-marker-alt me-2"></i>Travel Qila
-            </a>
-
-            <button class="navbar-toggler" type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="fas fa-bars"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="mainNavbar">
-
-                <div class="navbar-nav ms-auto">
-                    <a href="index.html" class="nav-link">Home</a>
-                    <a href="about.html" class="nav-link">About</a>
-                    <a href="services.html" class="nav-link">Services</a>
-                    <a href="packages.html" class="nav-link active">Packages</a>
-                    <a href="blog.html" class="nav-link">Blog</a>
-                    <a href="contact.html" class="nav-link">Contact</a>
+<!-- Topbar Start -->
+        <div class="container-fluid bg-primary px-5 d-none d-lg-block">
+            <div class="row gx-0">
+                <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-twitter fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-instagram fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href=""><i class="fab fa-youtube fw-normal"></i></a>
+                    </div>
                 </div>
-
-                <a href="trip-enquiry.html?type=custom"
-                   class="btn btn-primary rounded-pill py-2 px-4 ms-lg-3">
-                    Plan My Trip
-                </a>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a href="register.html"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
+                        <a href="login.html"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
+                            <div class="dropdown-menu rounded">
+                                <a href="#" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-comment-alt me-2"></i> Inbox</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-bell me-2"></i> Notifications</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-cog me-2"></i> Account Settings</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
-
-    <!-- Hero -->
+        <!-- Topbar End -->
+<div class="container-fluid position-relative p-0">
+<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <span class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila </span>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="services.html" class="nav-item nav-link">Services</a>
+                        <a href="packages.html" class="nav-item nav-link active">Packages</a>
+                        <a href="blog.html" class="nav-item nav-link">Blog</a>
+                        <!-- <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="destination.html" class="dropdown-item">Destination</a>
+                                <a href="tour.html" class="dropdown-item">Explore Tour</a>
+                                <a href="booking.html" class="dropdown-item">Travel Booking</a>
+                                <a href="gallery.html" class="dropdown-item">Our Gallery</a>
+                                <a href="guides.html" class="dropdown-item">Travel Guides</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
+                            </div> -->
+                        <!-- </div> -->
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+                </div>
+            </nav>
+</div>
+<!-- Hero -->
     <section class="page-hero">
         <div class="container text-center text-white">
 
@@ -823,60 +800,114 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer pt-5 pb-4">
-        <div class="container">
-
-            <div class="row g-4">
-
-                <div class="col-lg-4 col-md-6">
-                    <h3 class="text-white mb-3">
-                        <i class="fas fa-map-marker-alt me-2"></i>
-                        Travel Qila
-                    </h3>
-
-                    <p>
-                        Discover destinations, explore holiday ideas and
-                        plan journeys with personalised travel assistance.
-                    </p>
+    <!-- Footer Start -->
+        <div class="container-fluid footer py-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Get In Touch</h4>
+                            <a href="contact.html"><i class="fas fa-home me-2"></i> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
+                            <a href=""><i class="fas fa-envelope me-2"></i> info@travelqila.com</a>
+                            <a href=""><i class="fas fa-phone me-2"></i> +91 9871101345</a>
+                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +91 9871101345</a>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-share fa-2x text-white me-2"></i>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Company</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Support</h4>
+                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item">
+                            <div class="row gy-3 gx-2 mb-4">
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">Arabic</option>
+                                                <option value="2">German</option>
+                                                <option value="3">Greek</option>
+                                                <option value="3">New York</option>
+                                            </select>
+                                            <label for="select1">English</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">USD</option>
+                                                <option value="2">EUR</option>
+                                                <option value="3">INR</option>
+                                                <option value="3">GBP</option>
+                                            </select>
+                                            <label for="select1">$</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4 class="text-white mb-3">Payments</h4>
+                            <div class="footer-bank-card">
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="col-lg-2 col-md-6">
-                    <h5 class="text-white mb-3">Quick Links</h5>
-                    <p><a href="index.html">Home</a></p>
-                    <p><a href="about.html">About</a></p>
-                    <p><a href="services.html">Services</a></p>
-                    <p><a href="packages.html">Packages</a></p>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-3">Explore</h5>
-                    <p><a href="flights.html">Flights</a></p>
-                    <p><a href="hotels.html">Hotels</a></p>
-                    <p><a href="trip-enquiry.html?type=custom">Custom Trips</a></p>
-                    <p><a href="dashboard.html">My Account</a></p>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-3">Support</h5>
-                    <p><a href="contact.html">Contact Us</a></p>
-                    <p><a href="help-centre.html">Help Centre</a></p>
-                    <p><a href="enquiries.html">My Enquiries</a></p>
-                </div>
-
             </div>
-
-            <hr class="border-secondary my-4">
-
-            <div class="text-center small">
-                &copy; <span id="currentYear"></span>
-                Travel Qila. All Rights Reserved.
-                <br>
-                Operated by Imperial Technologies.
-            </div>
-
         </div>
-    </footer>
+        <!-- Footer End -->
+        
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright text-body py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-end mb-md-0">
+                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Qila </a>, All right reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-start">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                        <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
+                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a> </a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+
+<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 
 <!-- jQuery must load before main.js -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
