@@ -95,6 +95,8 @@ try {
         await page.locator("#flightResults").waitFor({ state:"visible" });
         const initialCards = await page.locator(".flight-result-card").count();
         if (initialCards !== 8) failures.push(`${route}: expected 8 mock flight cards, received ${initialCards}`);
+        const roundTripLegs = await page.locator(".flight-result-card").first().locator(".flight-leg-heading").allTextContents();
+        if (roundTripLegs.length !== 2 || !roundTripLegs[0].includes("Outbound") || !roundTripLegs[1].includes("Return")) failures.push(`${route}: round-trip result must show outbound and return legs`);
 
         await page.locator("#resultAirline").selectOption("IndiGo");
         const filteredCards = await page.locator(".flight-result-card").count();
@@ -108,6 +110,11 @@ try {
         await page.locator('input[name="tripType"][value="One way"]').check();
         const returnRequired = await page.locator("#returnDate").evaluate(el => el.required);
         if (returnRequired) failures.push(`${route}: return date remained required for one-way search`);
+        await page.locator("#flightSearchForm button[type=submit]").click();
+        const oneWayLegCount = await page.locator(".flight-result-card").first().locator(".flight-leg-heading").count();
+        if (oneWayLegCount !== 1) failures.push(`${route}: one-way result must show exactly one outbound leg`);
+        const oneWayReturnDate = await page.locator("#resultDates").textContent();
+        if (oneWayReturnDate.includes("Return")) failures.push(`${route}: one-way result unexpectedly displays a return date`);
       } catch (error) {
         failures.push(`${route}: flight search interaction test failed: ${error.message}`);
       }
