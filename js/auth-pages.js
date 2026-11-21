@@ -62,10 +62,14 @@ function getSafeError(error) {
         over_request_rate_limit: "Too many attempts. Please wait before trying again.",
         otp_expired: "This password reset link has expired. Request a new one.",
         flow_state_expired: "This password reset link has expired. Request a new one.",
-        validation_failed: "Please check your details and try again."
+        validation_failed: "Please check your details and try again.",
+        provider_disabled: "This sign-in option is not configured yet. Please use email sign-in or contact support."
     };
 
     if (knownErrors[code]) return knownErrors[code];
+    if (/unsupported provider|provider.{0,40}(not enabled|disabled)/i.test(messageText)) {
+        return "This sign-in option is not configured yet. Please use email sign-in or contact support.";
+    }
     if (/invalid login credentials/i.test(messageText)) return "Incorrect email or password.";
     if (/email not confirmed/i.test(messageText)) return "Please verify your email address before signing in.";
     if (/expired|invalid.*(token|code)|token.*(expired|invalid)/i.test(messageText)) {
