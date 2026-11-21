@@ -107,7 +107,7 @@ import { supabase } from "./auth-client.js";
     const stopFilter=byId("resultStops").value, airlineFilter=byId("resultAirline").value, sort=byId("resultSort").value;
     const budget=Number(byId("maxPrice").value);
     let filtered=currentOffers.filter(o=>(stopFilter==="any"||(stopFilter==="nonstop"&&o.stops===0)||(stopFilter==="one"&&o.stops<=1))&&(airlineFilter==="all"||o.airline===airlineFilter)&&o.totalPrice<=budget);
-    filtered.sort((a,b)=>sort==="duration"?a.duration-b.duration:sort==="departure"?a.depart.localeCompare(b.depart):a.price-b.price);
+    filtered.sort((a,b)=>sort==="duration"?a.duration-b.duration:sort==="departure"?a.depart.localeCompare(b.depart):a.totalPrice-b.totalPrice);
     count.textContent=filtered.length+" illustrative options · "+currentOffers.length+" generated for this search · budget applies to total per-passenger trip fare";
     list.innerHTML=filtered.map(offer=>{
       const links=enquiryLinks(offer), stopText=offer.stops===0?"Non-stop":offer.stops+" stop";
