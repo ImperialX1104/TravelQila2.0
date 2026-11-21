@@ -71,6 +71,41 @@ try {
     await page.waitForTimeout(100);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
     if (overflow) failures.push(`${route}: horizontal overflow at 390px viewport`);
+
+    if (route === "/services.html") {
+      try {
+        await page.setViewportSize({ width:1440, height:900 });
+        const future = days => {
+          const date = new Date();
+          date.setDate(date.getDate() + days);
+          return date.toISOString().slice(0,10);
+        };
+        await page.locator("#origin").fill("New Delhi (DEL)");
+        await page.locator("#destination").fill("Mumbai (BOM)");
+        await page.locator("#departDate").fill(future(7));
+        await page.locator("#returnDate").fill(future(10));
+        await page.locator("#flightSearchForm button[type=submit]").click();
+        await page.locator("#flightResults").waitFor({ state:"visible" });
+        const initialCards = await page.locator(".flight-result-card").count();
+        if (initialCards !== 8) failures.push(`${route}: expected 8 mock flight cards, received ${initialCards}`);
+
+        await page.locator("#resultAirline").selectOption("IndiGo");
+        const filteredCards = await page.locator(".flight-result-card").count();
+        if (filteredCards !== 3) failures.push(`${route}: airline filter expected 3 IndiGo cards, received ${filteredCards}`);
+
+        const enquiryHref = await page.locator(".flight-enquire-wa").first().getAttribute("href");
+        if (!enquiryHref || !enquiryHref.includes("wa.me/919871101345") || !decodeURIComponent(enquiryHref).includes("DEMO OPTION")) {
+          failures.push(`${route}: WhatsApp enquiry link missing or missing demo-fare warning`);
+        }
+
+        await page.locator('input[name="tripType"][value="One way"]').check();
+        const returnRequired = await page.locator("#returnDate").evaluate(el => el.required);
+        if (returnRequired) failures.push(`${route}: return date remained required for one-way search`);
+      } catch (error) {
+        failures.push(`${route}: flight search interaction test failed: ${error.message}`);
+      }
+    }
+
     if (runtimeErrors.length) failures.push(...runtimeErrors.map(e => `${route}: uncaught browser error: ${e}`));
     await page.close();
   }
