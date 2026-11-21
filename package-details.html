@@ -545,13 +545,13 @@
                     <div class="package-cover-wrap">
                         <img id="packageImage"
                              class="package-cover"
-                             src="img/carousel-2.jpg"
                              alt="Holiday destination"
-                             fetchpriority="high">
-                        <div id="packageImageFallback" class="package-cover-fallback" hidden aria-live="polite">
+                             fetchpriority="high"
+                             hidden>
+                        <div id="packageImageFallback" class="package-cover-fallback" aria-live="polite">
                             <i class="fas fa-globe-asia" aria-hidden="true"></i>
                             <strong id="packageImageFallbackTitle">Explore the world</strong>
-                            <span>Destination photo is temporarily unavailable</span>
+                            <span id="packageImageFallbackMessage">Loading destination photo...</span>
                         </div>
                     </div>
 
@@ -1378,8 +1378,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
 
         if (image) {
-            image.hidden = false;
+            image.hidden = true;
             image.alt = data.name + " holiday destination";
+            const imageFallbackMessage = document.getElementById("packageImageFallbackMessage");
+            if (imageFallbackTitle) imageFallbackTitle.textContent = data.destination || data.name;
+            if (imageFallbackMessage) imageFallbackMessage.textContent = "Loading destination photo...";
+            if (imageFallback) imageFallback.hidden = false;
             image.onload = function () {
                 image.hidden = false;
                 if (imageFallback) imageFallback.hidden = true;
@@ -1387,10 +1391,17 @@ document.addEventListener("DOMContentLoaded", function () {
             image.onerror = function () {
                 image.hidden = true;
                 if (imageFallback) imageFallback.hidden = false;
+                if (imageFallbackMessage) imageFallbackMessage.textContent = "Destination photo is temporarily unavailable";
             };
-            if (imageFallbackTitle) imageFallbackTitle.textContent = data.destination || data.name;
             image.src = data.image || fallbackImage;
-            if (image.complete && image.naturalWidth === 0) image.onerror();
+            if (image.complete) {
+                if (image.naturalWidth > 0) {
+                    image.hidden = false;
+                    if (imageFallback) imageFallback.hidden = true;
+                } else {
+                    image.onerror();
+                }
+            }
         }
 
         createList(
@@ -1453,6 +1464,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const imageFallback = document.getElementById("packageImageFallback");
             const imageFallbackTitle = document.getElementById("packageImageFallbackTitle");
             if (imageFallbackTitle) imageFallbackTitle.textContent = "Package not available";
+            const imageFallbackMessage = document.getElementById("packageImageFallbackMessage");
+            if (imageFallbackMessage) imageFallbackMessage.textContent = "Choose another holiday from our packages";
             if (imageFallback) imageFallback.hidden = false;
         }
 
