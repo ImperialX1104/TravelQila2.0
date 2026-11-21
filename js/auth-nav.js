@@ -46,6 +46,8 @@ async function updateAuthNavigation() {
     const loginLinks = findAnchors((text) => text === "login");
     const dashboardLinks = findAnchors((text) => text.includes("my dashboard"));
     const logoutLinks = findAnchors((text) => text === "log out" || text === "logout");
+    const profileLinks = findAnchors((text) => text === "my profile");
+    const settingsLinks = findAnchors((text) => text === "account settings");
 
     registerLinks.forEach((link) => {
         link.href = authPageUrl("register.html");
@@ -59,6 +61,16 @@ async function updateAuthNavigation() {
 
     dashboardLinks.forEach((link) => {
         link.href = authPageUrl("dashboard.html");
+        setVisible(link, signedIn);
+    });
+
+    profileLinks.forEach((link) => {
+        link.href = `${authPageUrl("dashboard.html")}#profile`;
+        setVisible(link, signedIn);
+    });
+
+    settingsLinks.forEach((link) => {
+        link.href = `${authPageUrl("dashboard.html")}#account-details`;
         setVisible(link, signedIn);
     });
 
