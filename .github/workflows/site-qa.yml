@@ -1,0 +1,27 @@
+name: Travel Qila site QA
+
+on:
+  push:
+    branches:
+      - qa/bug-free-homepage-redesign
+  pull_request:
+    branches:
+      - qa/bug-free-homepage-redesign
+  workflow_dispatch:
+
+jobs:
+  browser-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install QA dependencies
+        run: npm install
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run full-site browser QA
+        run: npm run qa
