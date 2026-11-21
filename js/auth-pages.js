@@ -255,11 +255,6 @@ async function initializePasswordReset() {
                 "This reset link is invalid or has expired. Request a new password reset link.",
                 "error"
             );
-            if (form) {
-                form.querySelectorAll("input, button").forEach((element) => {
-                    element.disabled = true;
-                });
-            }
             return false;
         }
         return true;
