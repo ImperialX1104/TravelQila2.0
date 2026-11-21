@@ -17,6 +17,7 @@
 <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link href="css/flights-mock.css" rel="stylesheet">
 <style>
 :root{--flight-primary:#13357b;--flight-ink:#17233e;--flight-muted:#64708a;--flight-border:#e4eaf4}
 body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f9fd}
@@ -155,7 +156,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
       <div class="col-12 col-sm-2 swap-wrap"><button type="button" class="swap-btn" id="swapCities" aria-label="Swap departure and destination"><i class="fas fa-exchange-alt"></i></button></div>
       <div class="col-12 col-sm-5"><label class="flight-label" for="destination">To</label><input class="flight-control" id="destination" name="destination" list="airportSuggestions" placeholder="City or airport" autocomplete="off" required><div class="field-hint">Arrival city / airport</div></div>
      </div>
-     <datalist id="airportSuggestions"><option value="New Delhi (DEL)"><option value="Mumbai (BOM)"><option value="Bengaluru (BLR)"><option value="Hyderabad (HYD)"><option value="Chennai (MAA)"><option value="Kolkata (CCU)"><option value="Dubai (DXB)"><option value="Singapore (SIN)"><option value="Bangkok (BKK)"><option value="London (LHR)"></datalist>
+     <datalist id="airportSuggestions"><option value="New Delhi (DEL)"><option value="Mumbai (BOM)"><option value="Bengaluru (BLR)"><option value="Hyderabad (HYD)"><option value="Chennai (MAA)"><option value="Kolkata (CCU)"><option value="Goa (GOI)"><option value="Ahmedabad (AMD)"><option value="Pune (PNQ)"><option value="Kochi (COK)"><option value="Jaipur (JAI)"><option value="Dubai (DXB)"><option value="Singapore (SIN)"><option value="Bangkok (BKK)"><option value="London (LHR)"><option value="Doha (DOH)"><option value="Abu Dhabi (AUH)"><option value="Kuala Lumpur (KUL)"><option value="Phuket (HKT)"><option value="New York (JFK)"></datalist>
     </div>
     <div class="col-sm-6 col-lg-2"><label class="flight-label" for="departDate">Departure</label><input class="flight-control" type="date" id="departDate" name="departureDate" required><div class="field-hint">Journey start date</div></div>
     <div class="col-sm-6 col-lg-2" id="returnDateWrap"><label class="flight-label" for="returnDate">Return</label><input class="flight-control" type="date" id="returnDate" name="returnDate" required><div class="field-hint">Journey return date</div></div>
@@ -182,15 +183,24 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
      <select class="flight-control" id="flexibility" name="dateFlexibility"><option>Exact dates</option><option>1 day before or after</option><option>3 days before or after</option><option>Flexible - lowest fare matters most</option></select>
     </div>
     <div class="col-12"><label class="flight-label" for="notes">Additional preferences <span class="text-muted fw-normal">(optional)</span></label><textarea class="flight-control" id="notes" name="additionalPreferences" rows="2" maxlength="600" placeholder="Preferred airline, baggage needs, meal preference, child/infant details or any special request"></textarea></div>
-    <div class="col-12 d-flex flex-column flex-sm-row gap-3 mt-2">
-     <button class="btn btn-primary rounded-pill px-4 py-3 flight-submit flex-grow-1" type="submit" name="channel" value="whatsapp"><i class="fab fa-whatsapp me-2"></i>Request flight options on WhatsApp</button>
-     <button class="btn btn-outline-primary rounded-pill px-4 py-3 flight-submit" type="submit" name="channel" value="email"><i class="far fa-envelope me-2"></i>Send by email</button>
+    <div class="col-12 mt-2">
+     <button class="btn btn-primary rounded-pill px-5 py-3 flight-submit w-100" type="submit"><i class="fas fa-search me-2"></i>Search demo flights</button>
     </div>
-    <div class="col-12"><div id="flightStatus" class="flight-note" role="status" aria-live="polite"></div></div>
    </div>
   </form>
  </div>
- <div class="flight-note mt-4"><i class="fas fa-info-circle me-2 text-primary"></i><strong>How this works:</strong> This page currently collects your flight requirements and sends them to our team. Live airline fares, seat availability and instant ticketing will be connected after the flight API provider is selected. No fare or booking is confirmed by submitting this request.</div>
+ <section id="flightResults" class="flight-results" hidden aria-live="polite" aria-label="Flight search results">
+  <div class="flight-results-heading"><div><div class="flight-eyebrow text-primary">YOUR SEARCH RESULTS</div><h2 id="resultRoute" class="mt-1">Flight options</h2><div id="resultDates" class="text-muted small mt-1"></div></div><div id="flightResultsCount" class="flight-results-count"></div></div>
+  <div class="flight-demo-banner"><i class="fas fa-info-circle mt-1"></i><div><strong>Demo results only — not live airline inventory.</strong> These sample routes, times, flight numbers, fares and baggage details are generated for testing the website. They are not verified schedules or bookable prices. Contact Travel Qila for an actual quote before making travel decisions.</div></div>
+  <div class="flight-results-tools">
+   <label for="resultStops">Stops</label><select id="resultStops"><option value="any">Any</option><option value="nonstop">Non-stop</option><option value="one">Up to 1 stop</option></select>
+   <label for="resultAirline">Airline</label><select id="resultAirline"><option value="all">All airlines</option><option>IndiGo</option><option>Air India</option><option>Akasa Air</option><option>Air India Express</option></select>
+   <label for="resultSort">Sort by</label><select id="resultSort"><option value="price">Lowest demo fare</option><option value="duration">Shortest duration</option><option value="departure">Departure time</option></select>
+  </div>
+  <div id="flightResultsList"></div>
+  <div id="flightResultsEmpty" class="flight-empty"><i class="fas fa-plane-slash fa-2x mb-3"></i><h3 class="h5">No demo options match these filters</h3><p class="mb-0">Try another airline, stop preference or a higher budget.</p></div>
+ </section>
+ <div class="flight-note mt-4"><i class="fas fa-info-circle me-2 text-primary"></i><strong>How this works:</strong> Search results are illustrative mock data for website testing. Selecting an option opens a prefilled enquiry so our team can check current fares and availability separately. No fare, seat or booking is confirmed by these demo results.</div>
 </section>
 <section class="container pb-5">
  <div class="text-center mb-4"><div class="flight-eyebrow text-primary">THE TRAVEL QILA DIFFERENCE</div><h2 class="display-6 fw-bold mt-2">Flight planning, with people who care</h2><p class="text-muted mx-auto" style="max-width:650px">Get help with the details that make your journey smoother, from choosing a route to understanding the fare conditions.</p></div>
@@ -204,7 +214,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
  <div class="row g-4">
   <div class="col-lg-5"><div class="flight-eyebrow text-primary">GOOD TO KNOW</div><h2 class="display-6 fw-bold mt-2">Flight booking FAQs</h2><p class="text-muted">A few helpful details before you send your request.</p></div>
   <div class="col-lg-7">
-   <details class="flight-faq"><summary>Are the fares shown live?</summary><p>Not yet. Live fare and seat availability integration will be added once the airline or travel inventory API is selected. For now, submit your requirements and our team will respond with available options.</p></details>
+   <details class="flight-faq"><summary>Are the fares and flight timings live?</summary><p>No. The current search uses illustrative mock data only. Flight numbers, timings, fares, durations and baggage details are examples for testing the website and are not verified airline inventory. Our team must confirm a current fare and availability before any booking.</p></details>
    <details class="flight-faq"><summary>Does submitting this form confirm my ticket?</summary><p>No. This is an enquiry only. Your booking is confirmed only after you review the final itinerary, fare rules and payment instructions and receive confirmation from Travel Qila.</p></details>
    <details class="flight-faq"><summary>Can I request flights for children and infants?</summary><p>Yes. Select the correct passenger counts. Our team may contact you for passenger names and dates of birth before ticketing.</p></details>
    <details class="flight-faq"><summary>Can I ask for a specific airline or baggage allowance?</summary><p>Yes. Add your preferred airline or baggage requirements in the additional preferences field.</p></details>
@@ -212,54 +222,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
  </div>
 </section>
 </main>
-<script>
-(function(){
- const form=document.getElementById('flightSearchForm');
- const tripRadios=form.querySelectorAll('input[name="tripType"]');
- const returnWrap=document.getElementById('returnDateWrap');
- const returnDate=document.getElementById('returnDate');
- const departDate=document.getElementById('departDate');
- const price=document.getElementById('maxPrice');
- const priceOutput=document.getElementById('priceOutput');
- const status=document.getElementById('flightStatus');
- const today=new Date(); today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
- const todayValue=today.toISOString().slice(0,10);
- departDate.min=todayValue; returnDate.min=todayValue;
- function updateTripType(){
-  const roundTrip=form.querySelector('input[name="tripType"]:checked').value==='Round trip';
-  returnWrap.hidden=!roundTrip; returnDate.required=roundTrip;
-  if(!roundTrip) returnDate.value='';
- }
- tripRadios.forEach(r=>r.addEventListener('change',updateTripType));
- departDate.addEventListener('change',function(){returnDate.min=this.value||todayValue;if(returnDate.value&&returnDate.value<this.value)returnDate.value='';});
- price.addEventListener('input',function(){priceOutput.textContent=Number(this.value)>=200000?'₹2,00,000+':'₹'+Number(this.value).toLocaleString('en-IN');});
- document.getElementById('swapCities').addEventListener('click',function(){const a=document.getElementById('origin'),b=document.getElementById('destination');const v=a.value;a.value=b.value;b.value=v;});
- form.addEventListener('submit',function(event){
-  event.preventDefault();
-  updateTripType();
-  if(!form.reportValidity())return;
-  const origin=document.getElementById('origin').value.trim(), destination=document.getElementById('destination').value.trim();
-  if(origin.toLowerCase()===destination.toLowerCase()){document.getElementById('destination').setCustomValidity('Departure and destination must be different.');document.getElementById('destination').reportValidity();document.getElementById('destination').setCustomValidity('');return;}
-  if(Number(document.getElementById('infants').value)>Number(document.getElementById('adults').value)){document.getElementById('infants').setCustomValidity('Infants cannot exceed the number of adults.');document.getElementById('infants').reportValidity();document.getElementById('infants').setCustomValidity('');return;}
-  const data=new FormData(form), lines=[];
-  for(const [key,value] of data.entries()){if(key!=='channel'&&String(value).trim())lines.push(key.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase())+': '+String(value).trim());}
-  const message='Hello Travel Qila, I would like to request flight options.\n\n'+lines.join('\n')+'\n\nPlease share available flights, final fare, baggage allowance and fare rules. I understand this is an enquiry and not a confirmed booking.';
-  const subject='Flight enquiry | '+origin+' to '+destination;
-  const channel=event.submitter&&event.submitter.value==='email'?'email':'whatsapp';
-  status.classList.add('is-visible');
-  if(channel==='email'){
-   status.textContent='Your email app will open with your flight request pre-filled. Please review and press Send.';
-   window.location.href='mailto:info@travelqila.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
-  }else{
-   const url='https://wa.me/919871101345?text='+encodeURIComponent(message);
-   status.innerHTML='Your WhatsApp request is ready. If WhatsApp does not open automatically, <a class="fw-bold" target="_blank" rel="noopener noreferrer" href="'+url+'">open your pre-filled message here</a>. Please press Send in WhatsApp to submit it.';
-   const win=window.open(url,'_blank','noopener,noreferrer');
-   if(!win)status.innerHTML='Your browser blocked the new tab. <a class="fw-bold" target="_blank" rel="noopener noreferrer" href="'+url+'">Click here to open WhatsApp</a> and send your request.';
-  }
- });
- updateTripType();
-})();
-</script>
+<script src="js/flights-mock.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Footer Start -->
         <div class="container-fluid footer py-5">
