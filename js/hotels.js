@@ -70,7 +70,7 @@ async function bookHotel(id){
  if(!h||!s.checkIn||!s.checkOut||dateNights(s.checkIn,s.checkOut)<1){message("Please choose valid check-in and check-out dates first.","error");return;}
  const q=quote(h,s);
  const name=user.user_metadata?.full_name||user.user_metadata?.name||"Traveller";
- const {data,error}=await supabase.from("hotel_booking_requests").insert({user_id:user.id,hotel_id:h.id,hotel_name:h.name,destination:h.city,check_in:s.checkIn,check_out:s.checkOut,guests:s.guests,rooms:1,nightly_rate:h.rate,taxes:q.tax,total_price:q.total,currency:"INR",customer_name:name,customer_email:user.email||"",customer_phone:user.user_metadata?.phone||""}).select("id").single();
+ const {data,error}=await supabase.from("hotel_booking_requests").insert({user_id:user.id,hotel_id:h.id,hotel_name:h.name,destination:h.city,check_in:s.checkIn,check_out:s.checkOut,guests:s.guests,rooms:1,nightly_rate:h.rate,taxes:q.tax,total_price:q.total,currency:"INR",customer_name:name,customer_email:user.email||"Not provided",customer_phone:user.user_metadata?.phone||""}).select("id").single();
  if(error){message("Your request could not be saved. Please try again or contact our team.","error");return;}
  message("Your hotel enquiry has been saved to your dashboard. Our team will contact you to confirm live availability and the final rate.","success");
  const wa="https://wa.me/919871101345?text="+encodeURIComponent("Hello Travel Qila, I would like to book this hotel.\nHotel: "+h.name+"\nDestination: "+h.city+"\nCheck-in: "+s.checkIn+"\nCheck-out: "+s.checkOut+"\nGuests: "+s.guests+"\nEstimated total incl. taxes: "+currency.format(q.total)+"\nEnquiry ID: "+data.id);
