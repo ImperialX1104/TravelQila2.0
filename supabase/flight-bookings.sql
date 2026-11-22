@@ -83,6 +83,8 @@ drop policy if exists "Customers can save their own flights" on public.flight_wi
 create policy "Customers can save their own flights" on public.flight_wishlists for insert to authenticated with check ((select auth.uid()) = user_id);
 drop policy if exists "Customers can remove their own saved flights" on public.flight_wishlists;
 create policy "Customers can remove their own saved flights" on public.flight_wishlists for delete to authenticated using ((select auth.uid()) = user_id);
+drop policy if exists "Customers can update their own saved flights" on public.flight_wishlists;
+create policy "Customers can update their own saved flights" on public.flight_wishlists for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 revoke all on public.flight_bookings from anon, authenticated;
 grant select on public.flight_bookings to authenticated;
@@ -90,6 +92,7 @@ grant insert (user_id,origin,destination,origin_code,destination_code,trip_type,
 
 revoke all on public.flight_wishlists from anon, authenticated;
 grant select, delete on public.flight_wishlists to authenticated;
+grant update (title,itinerary) on public.flight_wishlists to authenticated;
 grant insert (user_id,title,itinerary) on public.flight_wishlists to authenticated;
 
 -- Customers cannot change booking status or modify an existing saved itinerary through the browser.
