@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const mime = { ".html":"text/html", ".css":"text/css", ".js":"text/javascript", ".json":"application/json", ".png":"image/png", ".jpg":"image/jpeg", ".jpeg":"image/jpeg", ".webp":"image/webp", ".svg":"image/svg+xml", ".woff":"font/woff", ".woff2":"font/woff2", ".ico":"image/x-icon" };
@@ -40,6 +41,21 @@ const base = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({ headless:true });
 const failures = [];
 const pages = (await walk(root)).sort();
+async function walkJs(dir) {
+  const entries = await readdir(dir, { withFileTypes:true });
+  const out = [];
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...await walkJs(full));
+    else if (entry.isFile() && entry.name.endsWith(".js")) out.push(full);
+  }
+  return out;
+}
+for (const file of await walkJs(path.join(root, "js"))) {
+  const source = await readFile(file, "utf8");
+  const check = spawnSync(process.execPath, ["--input-type=module", "--check"], { input:source, encoding:"utf8" });
+  if (check.status !== 0) failures.push(`/${path.relative(root,file).split(path.sep).join("/")}: JavaScript syntax check failed: ${(check.stderr||check.stdout).trim()}`);
+}
 
 try {
   for (const file of pages) {
