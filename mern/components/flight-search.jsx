@@ -28,11 +28,28 @@ function buildOptions(origin,destination,date,seedText,tripFlex) {
   return offers.map((offer,index)=>{const shift=seed%7;const depart=addMinutes(offer.depart,shift*4);const duration=offer.duration+shift*3+(index%2?10:0);const offset=offsets[index]||0;return {...offer,id:`leg-${seed}-${index}`,depart,arrive:addMinutes(depart,duration),duration,price:Math.round((offer.price+(seed%13)*175+(index%3)*260+(offset<0?Math.abs(offset)*-80:offset*40))/10)*10,origin,destination,departureDate:shiftDate(date,offset)};});
 }
 
-export default function FlightSearch() {
-  const [form,setForm]=useState({tripType:"Round trip",origin:"",destination:"",departureDate:"",returnDate:"",cabin:"Economy",adults:"1",children:"0",infants:"0",stops:"Any",maximumBudget:"50000",dateFlexibility:"Exact dates",additionalPreferences:""});
-  const [stage,setStage]=useState("form");
-  const [outboundOptions,setOutboundOptions]=useState([]);
-  const [returnOptions,setReturnOptions]=useState([]);
+export default function FlightSearch({ initialSearch = {} }) {
+  const hasInitialSearch = Boolean(initialSearch.origin && initialSearch.destination && initialSearch.departureDate);
+  const defaults = {
+    tripType: "Round trip", origin: "", destination: "", departureDate: "", returnDate: "",
+    cabin: "Economy", adults: "1", children: "0", infants: "0", stops: "Any",
+    maximumBudget: "50000", dateFlexibility: "Exact dates", additionalPreferences: ""
+  };
+  const [form,setForm] = useState(() => ({ ...defaults, ...initialSearch, tripType: initialSearch.tripType || defaults.tripType }));
+  const [minDate,setMinDate] = useState("");
+  const [stage,setStage] = useState(() => hasInitialSearch ? "outbound" : "form");
+  const [outboundOptions,setOutboundOptions] = useState(() => {
+    if (!hasInitialSearch) return [];
+    const from = parseAirport(initialSearch.origin);
+    const to = parseAirport(initialSearch.destination);
+    return buildOptions(from,to,initialSearch.departureDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
+  });
+  const [returnOptions,setReturnOptions] = useState(() => {
+    if (!hasInitialSearch || initialSearch.tripType === "One way" || !initialSearch.returnDate) return [];
+    const from = parseAirport(initialSearch.destination);
+    const to = parseAirport(initialSearch.origin);
+    return buildOptions(from,to,initialSearch.returnDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
+  });
   const [outbound,setOutbound]=useState(null);
   const [returning,setReturning]=useState(null);
   const [filters,setFilters]=useState({stops:"any",airline:"all",sort:"price"});
