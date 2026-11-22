@@ -75,8 +75,11 @@ try {
     if (route === "/dashboard.html") {
       const hasBookings = await page.locator("[data-bookings-list]").count();
       if (hasBookings !== 1) failures.push(`${route}: customer bookings panel is missing`);
-      const hasBookingsNav = await page.locator("a[href=\"#bookings\"]").count();
-      if (hasBookingsNav !== 1) failures.push(`${route}: dashboard bookings navigation is missing`);
+      if (await page.locator("[data-wishlist-list]").count() !== 1) failures.push(`${route}: saved flights panel is missing`);
+      if (await page.locator("a[href=\"#wishlist\"]").count() !== 1) failures.push(`${route}: saved flights navigation is missing`);
+      const navBg = await page.locator(".navbar").evaluate(el => getComputedStyle(el).backgroundColor);
+      if (navBg === "rgba(0, 0, 0, 0)" || navBg === "transparent") failures.push(`${route}: dashboard navbar has no solid background`);
+      if (await page.locator(".footer").count() !== 1) failures.push(`${route}: shared site footer is missing`);
     }
 
     if (route === "/services.html") {
@@ -94,27 +97,29 @@ try {
         await page.locator("#flightSearchForm button[type=submit]").click();
         await page.locator("#flightResults").waitFor({ state:"visible" });
         const initialCards = await page.locator(".flight-result-card").count();
-        if (initialCards !== 8) failures.push(`${route}: expected 8 mock flight cards, received ${initialCards}`);
-        const roundTripLegs = await page.locator(".flight-result-card").first().locator(".flight-leg-heading").allTextContents();
-        if (roundTripLegs.length !== 2 || !roundTripLegs[0].includes("Outbound") || !roundTripLegs[1].includes("Return")) failures.push(`${route}: round-trip result must show outbound and return legs`);
-
-        await page.locator("#resultAirline").selectOption("IndiGo");
-        const filteredCards = await page.locator(".flight-result-card").count();
-        if (filteredCards !== 3) failures.push(`${route}: airline filter expected 3 IndiGo cards, received ${filteredCards}`);
-
-        const enquiryHref = await page.locator(".flight-result-actions a[href*=\"wa.me\"]").first().getAttribute("href");
-        if (!enquiryHref || !enquiryHref.includes("wa.me/919871101345") || !decodeURIComponent(enquiryHref).includes("DEMO OPTION")) {
-          failures.push(`${route}: WhatsApp enquiry link missing or missing demo-fare warning`);
-        }
+        if (initialCards !== 8) failures.push(`${route}: expected 8 outbound demo flight cards, received ${initialCards}`);
+        const outboundButtons = page.locator('.flight-result-card [data-select-leg="outbound"]');
+        if (await outboundButtons.count() !== 8) failures.push(`${route}: each outbound option must have a selection action`);
+        await outboundButtons.first().click();
+        const returnHeading = await page.locator("#resultRoute").textContent();
+        if (!returnHeading.includes("return flight")) failures.push(`${route}: selecting outbound did not open return-flight selection`);
+        const returnCards = await page.locator('.flight-result-card [data-select-leg="return"]').count();
+        if (returnCards !== 8) failures.push(`${route}: round trip must offer separate return-flight choices`);
+        const returnRoute = await page.locator(".flight-result-card").first().locator(".flight-city").allTextContents();
+        if (!returnRoute[0]?.includes("Mumbai") || !returnRoute[1]?.includes("New Delhi")) failures.push(`${route}: return route must reverse Mumbai to Delhi`);
+        await page.locator('.flight-result-card [data-select-leg="return"]').first().click();
+        if (await page.locator(".tq-summary-leg").count() !== 2) failures.push(`${route}: round-trip review must include both selected legs`);
+        if (!(await page.locator(".tq-price-breakdown").innerText()).includes("Estimated taxes")) failures.push(`${route}: itinerary review must show estimated taxes`);
+        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1) failures.push(`${route}: review must provide booking and wishlist actions`);
 
         await page.locator('input[name="tripType"][value="One way"]').check();
         const returnRequired = await page.locator("#returnDate").evaluate(el => el.required);
         if (returnRequired) failures.push(`${route}: return date remained required for one-way search`);
         await page.locator("#flightSearchForm button[type=submit]").click();
-        const oneWayLegCount = await page.locator(".flight-result-card").first().locator(".flight-leg-heading").count();
-        if (oneWayLegCount !== 1) failures.push(`${route}: one-way result must show exactly one outbound leg`);
-        const oneWayReturnDate = await page.locator("#resultDates").textContent();
-        if (oneWayReturnDate.includes("Return")) failures.push(`${route}: one-way result unexpectedly displays a return date`);
+        await page.locator('.flight-result-card [data-select-leg="outbound"]').first().click();
+        if (await page.locator(".tq-summary-leg").count() !== 1) failures.push(`${route}: one-way review must include exactly one selected leg`);
+        if (await page.locator(".tq-summary-leg-title").allTextContents().then(x => x.some(t => t.includes("Return")))) failures.push(`${route}: one-way review unexpectedly includes a return leg`);
+        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1) failures.push(`${route}: one-way review must provide booking and wishlist actions`);
       } catch (error) {
         failures.push(`${route}: flight search interaction test failed: ${error.message}`);
       }
