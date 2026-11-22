@@ -2,3 +2,6 @@
 @media(max-width:1050px){.hotel-search-form{grid-template-columns:repeat(3,1fr)}.hotel-result-card{grid-template-columns:230px minmax(0,1fr) 210px;gap:15px}}
 @media(max-width:760px){.hotel-search-form{grid-template-columns:repeat(2,1fr)}.hotel-result-card{grid-template-columns:1fr}.hotel-photo{min-height:240px}.hotel-price{padding:15px 0 0;border-left:0;border-top:1px solid #edf0f5}.hotel-book,.hotel-wish{max-width:320px}.hotel-results-heading,.hotel-panel-title{align-items:flex-start;flex-direction:column;gap:8px}}
 @media(max-width:480px){.hotel-hero{padding:60px 0 130px}.hotel-search-wrap{width:calc(100% - 22px)}.hotel-search-panel{padding:20px 15px}.hotel-search-form{grid-template-columns:1fr}.hotel-search-button{width:100%}.hotel-result-card{padding:12px}.hotel-photo{min-height:205px}}
+
+.hotel-form-handoffs{display:flex;gap:10px;flex-wrap:wrap;grid-column:1/-1}.hotel-form-handoffs button{padding:10px 13px;border:1px solid #d9e1ee;border-radius:4px;background:#fff;color:var(--navy);font-size:10px;font-weight:700;cursor:pointer}.hotel-form-handoffs button:first-child{border-color:#16794f;background:#16794f;color:#fff}
+@media(max-width:480px){.hotel-form-handoffs{display:grid}.hotel-form-handoffs button{width:100%}}

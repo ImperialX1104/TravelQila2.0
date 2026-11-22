@@ -53,7 +53,20 @@ export default function HotelSearch() {
 
   function submit(event) {
     event.preventDefault();setMessage({text:"",kind:"info"});setWhatsapp("");
+    const channel=event.nativeEvent.submitter?.value;
     if(!form.destination.trim()||!form.checkIn||!form.checkOut||nightsBetween(form.checkIn,form.checkOut)<1){setMessage({text:"Enter a destination and a check-out date after check-in.",kind:"error"});return;}
+    if(channel==="whatsapp"||channel==="email"){
+      const details=["Hello Travel Qila, I would like hotel booking assistance.","Destination: "+form.destination,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Rooms: "+form.rooms,"Guests: "+form.guests,"Minimum rating: "+form.stars+" stars","Maximum total price: "+(form.maxPrice||"No limit")].join("\n");
+      if(channel==="whatsapp"){
+        const url="https://wa.me/919871101345?text="+encodeURIComponent(details);
+        setWhatsapp(url);window.open(url,"_blank","noopener,noreferrer");
+        setMessage({text:"WhatsApp should open with your enquiry pre-filled. Please press Send to submit it.",kind:"success"});
+      }else{
+        window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila hotel enquiry")+"&body="+encodeURIComponent(details);
+        setMessage({text:"Your email app should open with your enquiry pre-filled. Please press Send to submit it.",kind:"success"});
+      }
+      return;
+    }
     setSearched(true);
   }
 
@@ -61,7 +74,7 @@ export default function HotelSearch() {
     if(!user){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});
     const isSaved=wishlist.includes(hotel.id);
-    const q=form.checkIn&&form.checkOut&&nightsBetween(form.checkIn,form.checkOut)>0?quote(hotel,form.checkIn,form.checkOut):{nights:1,base:hotel.rate,tax:Math.round(hotel.rate*.12),total:Math.round(hotel.rate*1.12)};
+    const q=form.checkIn&&form.checkOut&&nightsBetween(form.checkIn,form.checkOut)>0?quote(hotel,form.checkIn,form.checkOut,Number(form.rooms)):{nights:1,base:hotel.rate*Number(form.rooms),tax:Math.round(hotel.rate*Number(form.rooms)*.12),total:Math.round(hotel.rate*Number(form.rooms)*1.12)};
     try {
       if(isSaved){
         const {error}=await getSupabaseBrowserClient().from("hotel_wishlists").delete().eq("user_id",user.id).eq("hotel_id",hotel.id);

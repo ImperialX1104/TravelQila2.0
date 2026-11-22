@@ -123,8 +123,8 @@ export default function DashboardClient({ user, initial, loadErrors }) {
 
       {active === "overview" && <div className="dash-overview">
         <div className="dash-stat-grid"><article><span>Flight requests</span><strong>{bookings.length}</strong></article><article><span>Saved flights</span><strong>{wishlist.length}</strong></article><article><span>Saved hotels</span><strong>{hotelWishlist.length}</strong></article></div>
-        <div className="dash-welcome"><div><h2>Your next journey starts here.</h2><p>Search flights, explore stays or ask our team to build a holiday around your plans.</p></div><div className="dash-quick-links"><Link href="/services.html">Find flights ↗</Link><Link href="/hotels.html">Explore hotels ↗</Link><Link href="/packages.html">Browse packages ↗</Link></div></div>
-        <h2 className="dash-section-title">Recent flight requests</h2>
+        <div className="dash-welcome"><div><h2>Your next journey starts here.</h2><p>Search flights, explore stays or ask our team to build a holiday around your plans.</p></div><div className="dash-quick-links" data-wishlist-list><Link href="/services.html">Find flights ↗</Link><Link href="/hotels.html">Explore hotels ↗</Link><Link href="/packages.html">Browse packages ↗</Link><a href="#wishlist" onClick={() => setActive("flights")}>Saved flights ↗</a></div></div>
+        <h2 className="dash-section-title" data-bookings-list>Recent flight requests</h2>
         {bookings.slice(0,2).map(row => <BookingCard key={row.id} row={row} />)}
         {!bookings.length && <EmptyState title="No booking requests yet" text="Your submitted flight requests will appear here." href="/services.html" action="Search flights" />}
       </div>}
