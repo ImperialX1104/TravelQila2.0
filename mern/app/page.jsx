@@ -1,98 +1,111 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { packages } from "@/lib/package-data";
+import GalleryGrid from "@/components/gallery-grid";
+import { HeroCarousel, HomeSearch, DestinationTabs, ExploreTourTabs, BookingPromo, NewsletterForm } from "@/components/home-interactions";
+import "./home-replica.css";
 
-export const metadata = { title: "Tour Packages, Flights, Hotels & Visa Assistance", description: "Discover destinations, explore holiday packages and request flight, hotel and visa assistance with Travel Qila.", alternates: { canonical: "/" } };
+export const metadata = {
+  title: "Tour Packages, Flights, Hotels & Visa Assistance",
+  description: "Discover destinations, explore holiday packages and request flight, hotel and visa assistance with Travel Qila.",
+  alternates: { canonical: "/" }
+};
 
-const services = [
-  { number: "01", title: "Flights", copy: "Share your route, dates and preferences. Our team will help you explore suitable flight options.", href: "/services.html", action: "Explore flights" },
-  { number: "02", title: "Hotels", copy: "Find a stay that fits your destination, travel dates, group and budget.", href: "/hotels.html", action: "Explore hotels" },
-  { number: "03", title: "Visa assistance", copy: "Understand the documents and next steps for your intended destination.", href: "/visa.html", action: "Explore visa help" },
-  { number: "04", title: "Holiday packages", copy: "Explore curated travel ideas or request a personalised itinerary.", href: "/packages.html", action: "Explore packages" }
+const guides = [
+  {name:"Travel Specialist",role:"Holiday Planning",image:"guide-1.jpg"},
+  {name:"Destination Expert",role:"International Tours",image:"guide-2.jpg"},
+  {name:"Travel Consultant",role:"Family Holidays",image:"guide-3.jpg"},
+  {name:"Trip Planner",role:"Custom Itineraries",image:"guide-4.jpg"}
 ];
-
-const destinations = [
-  ["Thailand", "/destinations/thailand-tour-packages.html", "Beaches, culture and city breaks"],
-  ["Vietnam", "/destinations/vietnam-tour-packages.html", "Coastal escapes and memorable stays"],
-  ["Dubai", "/destinations/dubai-tour-packages.html", "A vibrant city and desert experience"],
-  ["Bali", "/destinations/bali-tour-packages.html", "Island landscapes and slow travel"],
-  ["Kashmir", "/destinations/kashmir-tour-packages.html", "Mountains, lakes and scenic retreats"],
-  ["Kerala", "/destinations/kerala-tour-packages.html", "Backwaters, nature and wellness"]
+const blogs = [
+  {title:"How to Plan a Memorable Holiday",category:"Travel Tips",image:"blog-1.jpg",description:"A few thoughtful choices can make your next holiday smoother, richer and more memorable."},
+  {title:"Discover New Places and Experiences",category:"Destination Guide",image:"blog-2.jpg",description:"Explore local experiences, culture and places worth adding to your travel plans."},
+  {title:"Make Every Journey Count",category:"Travel Inspiration",image:"blog-3.jpg",description:"Simple planning ideas to help you make the most of every day away."}
 ];
+const stories = [
+  {quote:"The team helped us organise the details of our holiday and made the planning process feel straightforward.",name:"Travel Qila Customer",trip:"Family holiday"},
+  {quote:"We appreciated having one point of contact for our hotel options, itinerary and travel questions.",name:"Travel Qila Customer",trip:"International trip"},
+  {quote:"The itinerary was shaped around our dates and preferences. Communication was clear throughout.",name:"Travel Qila Customer",trip:"Couple getaway"},
+  {quote:"A helpful team when we needed advice and a little extra guidance before travelling.",name:"Travel Qila Customer",trip:"Custom holiday"}
+];
+const domestic = ["Goa","Kashmir","Kerala","Rajasthan","Himachal Pradesh","Andaman"];
+const international = ["Bali","Dubai","Thailand","Singapore","Maldives","Vietnam"];
 
 export default function HomePage() {
-  return (
-    <main>
-      <section className="hero">
-        <div className="hero-orbit hero-orbit-one" aria-hidden="true"></div>
-        <div className="hero-orbit hero-orbit-two" aria-hidden="true"></div>
-        <div className="container hero-content">
-          <p className="eyebrow">Your journey, thoughtfully planned</p>
-          <h1>Travel farther.<br /><em>Feel more.</em></h1>
-          <p className="hero-copy">Discover destinations, compare travel options and create a holiday that feels like yours with Travel Qila.</p>
-          <div className="hero-actions">
-            <Link className="button" href="/trip-enquiry.html">Plan your journey <span aria-hidden="true">↗</span></Link>
-            <Link className="button button-ghost" href="/packages.html">Explore packages</Link>
-          </div>
-          <div className="hero-proof"><span className="proof-dot"></span> Personalised travel assistance from enquiry to itinerary</div>
-        </div>
-        <div className="hero-side-note" aria-hidden="true">DISCOVER · EXPERIENCE · REMEMBER</div>
-      </section>
+  return <main className="home-main">
+    <HeroCarousel/>
+    <div className="home-search-container"><HomeSearch/></div>
 
-      <section className="intro-section section-space">
-        <div className="container intro-grid">
-          <div>
-            <p className="eyebrow eyebrow-blue">Explore the world</p>
-            <h2>Find your perfect <em>holiday.</em></h2>
-          </div>
-          <div className="intro-copy">
-            <p>From flight and hotel enquiries to visa guidance and complete holiday packages, bring your travel plans together in one place.</p>
-            <Link className="text-link" href="/trip-enquiry.html">Tell us where you want to go <span aria-hidden="true">→</span></Link>
-          </div>
-        </div>
-      </section>
+    <section className="home-section home-about" id="about">
+      <div className="home-about-image"><Image src="/img/about-img.jpg" alt="Travel experiences and destinations" width={720} height={520} priority/></div>
+      <div className="home-about-copy">
+        <p className="home-section-eyebrow">About Travel Qila</p>
+        <h2>Welcome to <em>Travel Qila</em></h2>
+        <p>Travel is about the experiences, people and memories you bring home. At Travel Qila, we help you plan journeys that fit your interests, dates and budget.</p>
+        <p>From holiday packages and flight options to hotel assistance and visa guidance, our team brings the details together so you can focus on the journey ahead.</p>
+        <ul><li>Personalised holiday planning</li><li>Domestic and international trips</li><li>Flight and hotel assistance</li><li>Visa guidance and support</li></ul>
+        <Link className="home-primary-button" href="/about.html">Read More</Link>
+      </div>
+    </section>
 
-      <section className="services-section section-space">
-        <div className="container">
-          <div className="section-heading">
-            <div><p className="eyebrow eyebrow-blue">Travel made simpler</p><h2>Everything for your <em>next journey.</em></h2></div>
-            <p>Choose the service you need. We’ll help you take the next step with clear information and personal support.</p>
-          </div>
-          <div className="service-grid">
-            {services.map(service => (
-              <article className="service-card" key={service.number}>
-                <span className="service-number">{service.number}</span>
-                <div><h3>{service.title}</h3><p>{service.copy}</p></div>
-                <Link href={service.href}>{service.action} <span aria-hidden="true">↗</span></Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+    <section className="home-section" id="popular-destinations">
+      <div className="home-section-heading"><p className="home-section-eyebrow">Popular Destination</p><h2>Choose Your Next <em>Destination</em></h2><p>Explore inspiring places and find a destination that suits your style of travel.</p></div>
+      <DestinationTabs/>
+    </section>
 
-      <section className="destinations-section section-space">
-        <div className="container">
-          <div className="section-heading">
-            <div><p className="eyebrow eyebrow-blue">A little inspiration</p><h2>Where will your next<br /><em>journey take you?</em></h2></div>
-            <Link className="text-link" href="/packages.html">View all destinations <span aria-hidden="true">→</span></Link>
-          </div>
-          <div className="destination-grid">
-            {destinations.map(([name, href, copy], index) => (
-              <Link className="destination-card" href={href} key={name}>
-                <span className="destination-index">0{index + 1}</span>
-                <span><strong>{name}</strong><small>{copy}</small></span>
-                <span className="destination-arrow" aria-hidden="true">↗</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+    <section className="home-tour-section">
+      <div className="home-section">
+        <div className="home-section-heading"><p className="home-section-eyebrow">Explore Tour</p><h2>Explore The <em>World</em></h2><p>Find a little inspiration for your next domestic or international escape.</p></div>
+        <ExploreTourTabs/>
+      </div>
+    </section>
 
-      <section className="closing-cta">
-        <div className="container closing-inner">
-          <div><p className="eyebrow">Make it a journey to remember</p><h2>Your next chapter<br /><em>starts somewhere.</em></h2></div>
-          <Link className="button button-light" href="/trip-enquiry.html">Start planning <span aria-hidden="true">↗</span></Link>
-        </div>
-      </section>
-    </main>
-  );
+    <section className="home-section" id="featured-packages">
+      <div className="home-section-heading"><p className="home-section-eyebrow">Awesome Packages</p><h2>Our Popular <em>Packages</em></h2><p>Discover a few of the journeys you can start planning with Travel Qila.</p></div>
+      <div className="home-package-grid">{packages.slice(0,4).map(item=><article className="home-package-card" key={item.id}>
+        <Link href={"/package-details.html?id="+encodeURIComponent(item.id)}><Image src={item.image} alt={item.name} width={520} height={340}/></Link>
+        <div className="home-package-card-body"><small>{item.destination}</small><h3>{item.name}</h3><p>{item.duration} · Tailored travel planning</p><div className="home-package-card-footer"><strong>{item.price}</strong><Link href={"/package-details.html?id="+encodeURIComponent(item.id)}>View details ↗</Link></div></div>
+      </article>)}</div>
+      <div className="home-gallery-link"><Link href="/packages.html" className="home-primary-button">View All Packages</Link></div>
+    </section>
+
+    <section className="home-gallery-section">
+      <div className="home-section">
+        <div className="home-section-heading"><p className="home-section-eyebrow">Travel Memories</p><h2>Tourism &amp; Traveling <em>Gallery</em></h2><p>A little inspiration from the places and experiences waiting to be discovered.</p></div>
+        <GalleryGrid/>
+        <div className="home-gallery-link"><Link href="/gallery.html" className="home-primary-button">View Full Gallery</Link></div>
+      </div>
+    </section>
+
+    <section className="home-booking-section"><BookingPromo/></section>
+
+    <section className="home-section" id="travel-guides">
+      <div className="home-section-heading"><p className="home-section-eyebrow">Meet Our Guide</p><h2>Meet Our Travel <em>Specialists</em></h2><p>Connect with a team that can help you plan the details of your next journey.</p></div>
+      <div className="home-guide-grid">{guides.map(guide=><article className="home-guide-card" key={guide.image}><Image src={"/img/"+guide.image} alt={guide.role} width={440} height={340}/><div><h3>{guide.name}</h3><p>{guide.role}</p></div></article>)}</div>
+    </section>
+
+    <section className="home-tour-section">
+      <div className="home-section" id="travel-blogs">
+        <div className="home-section-heading"><p className="home-section-eyebrow">Travel Inspiration</p><h2>Popular Travel <em>Blogs</em></h2><p>Read ideas and useful notes to help you plan a better trip.</p></div>
+        <div className="home-blog-grid">{blogs.map(blog=><article className="home-blog-card" key={blog.image}><Link href="/blog.html"><Image src={"/img/"+blog.image} alt={blog.title} width={520} height={340}/></Link><div><small>{blog.category}</small><h3>{blog.title}</h3><p>{blog.description}</p><Link href="/blog.html">Read more ↗</Link></div></article>)}</div>
+      </div>
+    </section>
+
+    <section className="home-testimonials-section">
+      <div className="home-section">
+        <div className="home-section-heading"><p className="home-section-eyebrow">Customer Experiences</p><h2>Travel Stories &amp; <em>Experiences</em></h2><p>We value the trust travellers place in our team when planning their journeys.</p></div>
+        <div className="home-testimonial-grid">{stories.map((story,index)=><article className="home-testimonial-card" key={index}><span className="quote-mark" aria-hidden="true">“</span><p>{story.quote}</p><strong>{story.name}</strong><small>{story.trip}</small></article>)}</div>
+      </div>
+    </section>
+
+    <section className="home-section" id="popular-travel-destinations">
+      <div className="home-section-heading"><p className="home-section-eyebrow">Find Your Next Escape</p><h2>Popular Domestic &amp; International <em>Destinations</em></h2><p>Browse destination ideas and ask our team to help you shape an itinerary.</p></div>
+      <div className="home-seo-links">
+        <div><h3>Domestic Destinations</h3><ul>{domestic.map(place=><li key={place}><Link href={"/trip-enquiry.html?destination="+encodeURIComponent(place)}>{place} Tour Packages</Link></li>)}</ul></div>
+        <div><h3>International Destinations</h3><ul>{international.map(place=><li key={place}><Link href={"/trip-enquiry.html?destination="+encodeURIComponent(place)}>{place} Tour Packages</Link></li>)}</ul></div>
+      </div>
+    </section>
+
+    <section className="home-newsletter"><h2>Our Newsletter</h2><p>Get travel inspiration and planning ideas delivered to your inbox.</p><NewsletterForm/></section>
+  </main>;
 }
