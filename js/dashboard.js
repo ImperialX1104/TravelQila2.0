@@ -24,6 +24,9 @@ let currentUser = null;
 let isSaving = false;
 let isSigningOut = false;
 
+const hotelWishlist = document.querySelector('[data-hotel-wishlist]');
+const hotelBookings = document.querySelector('[data-hotel-bookings]');
+
 // =====================================================
 // 2. MESSAGE HANDLING
 // =====================================================
@@ -148,6 +151,7 @@ async function initializeDashboard() {
         currentUser = userData.user;
 
         populateProfile(currentUser);
+        await loadHotelActivity();
 
     } catch (error) {
         console.error("[Travel Qila] Dashboard initialization failed.");
@@ -300,6 +304,71 @@ supabase.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_OUT" && !isSigningOut) {
         redirectToLogin();
     }
+});
+
+
+function escapeHotelHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+}
+function hotelMoney(value) {
+    return new Intl.NumberFormat("en-IN", {style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(value) || 0);
+}
+function hotelDate(value) {
+    if (!value) return "Dates not selected";
+    const date = new Date(value + "T00:00:00");
+    return Number.isNaN(date.getTime()) ? "Date unavailable" : date.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+}
+function renderHotelWishlist(rows) {
+    if (!hotelWishlist) return;
+    if (!rows.length) {
+        hotelWishlist.innerHTML = '<div class="hotel-dashboard-empty">You have not saved any hotels yet. <a href="hotels.html">Explore stays</a> and tap “Save to wishlist”.</div>';
+        return;
+    }
+    hotelWishlist.innerHTML = rows.map(row =>
+        '<article class="hotel-dashboard-row"><img src="' + escapeHotelHtml(row.image_url || "img/destination-1.jpg") + '" alt="' + escapeHotelHtml(row.hotel_name) + '" loading="lazy"><div><h3>' + escapeHotelHtml(row.hotel_name) + '</h3><p><i class="fas fa-map-marker-alt me-1"></i>' + escapeHotelHtml(row.destination) + ' · ' + Number(row.star_rating || 0) + '-star</p><p>' + hotelDate(row.check_in) + ' – ' + hotelDate(row.check_out) + ' · ' + Number(row.guests || 2) + ' guests</p><div class="hotel-dashboard-price">' + hotelMoney(row.total_price) + ' <small class="text-muted fw-normal">estimated total incl. taxes</small></div></div><button class="hotel-dashboard-action" type="button" data-remove-hotel="' + escapeHotelHtml(row.id) + '"><i class="fas fa-trash-alt me-1"></i>Remove</button></article>'
+    ).join("");
+}
+function renderHotelBookings(rows) {
+    if (!hotelBookings) return;
+    if (!rows.length) {
+        hotelBookings.innerHTML = '<div class="hotel-dashboard-empty">No hotel booking requests yet. Your submitted hotel enquiries will appear here.</div>';
+        return;
+    }
+    hotelBookings.innerHTML = rows.map(row =>
+        '<article class="hotel-dashboard-row"><div class="feature-icon"><i class="fas fa-hotel"></i></div><div><h3>' + escapeHotelHtml(row.hotel_name) + '</h3><p>' + escapeHotelHtml(row.destination) + ' · ' + hotelDate(row.check_in) + ' – ' + hotelDate(row.check_out) + ' · ' + Number(row.guests || 1) + ' guests</p><p>Request #' + escapeHotelHtml(String(row.id).slice(0,8).toUpperCase()) + ' · Submitted ' + hotelDate(String(row.created_at || "").slice(0,10)) + '</p><div class="hotel-dashboard-price">' + hotelMoney(row.total_price) + ' <small class="text-muted fw-normal">estimated incl. taxes</small></div></div><span class="hotel-dashboard-status">' + escapeHotelHtml(String(row.status || "enquiry received").replace(/_/g," ")) + '</span></article>'
+    ).join("");
+}
+async function loadHotelActivity() {
+    if (!currentUser || (!hotelWishlist && !hotelBookings)) return;
+    try {
+        const results = await Promise.all([
+            supabase.from("hotel_wishlists").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false}),
+            supabase.from("hotel_booking_requests").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false})
+        ]);
+        if (results[0].error) throw results[0].error;
+        if (results[1].error) throw results[1].error;
+        renderHotelWishlist(results[0].data || []);
+        renderHotelBookings(results[1].data || []);
+    } catch (error) {
+        console.error("[Travel Qila] Hotel dashboard data could not be loaded:",error.message);
+        if (hotelWishlist) hotelWishlist.innerHTML = '<div class="hotel-dashboard-empty">Hotel wishlist is temporarily unavailable. Please refresh or try again later.</div>';
+        if (hotelBookings) hotelBookings.innerHTML = '<div class="hotel-dashboard-empty">Hotel requests are temporarily unavailable. Please refresh or try again later.</div>';
+    }
+}
+hotelWishlist?.addEventListener("click",async event => {
+    const button = event.target.closest("[data-remove-hotel]");
+    if (!button || !currentUser) return;
+    button.disabled = true;
+    const {error} = await supabase.from("hotel_wishlists").delete().eq("id",button.dataset.removeHotel).eq("user_id",currentUser.id);
+    if (error) {
+        button.disabled = false;
+        showMessage("Unable to remove this hotel from your wishlist. Please try again.","error");
+        return;
+    }
+    showMessage("Hotel removed from your wishlist.","success");
+    await loadHotelActivity();
 });
 
 // =====================================================
