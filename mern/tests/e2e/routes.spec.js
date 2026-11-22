@@ -41,7 +41,7 @@ test("homepage destination filters, tour tabs and package search work", async ({
   await expect(page.locator(".home-destination-card")).toHaveCount(2);
   await expect(page.getByText("Toronto")).toBeVisible();
   await page.getByRole("button",{name:"International Tour Category"}).click();
-  await expect(page.getByText("Bali Discovery")).toBeVisible();
+  await expect(page.locator(".home-tour-card").getByText("Bali Discovery")).toBeVisible();
 });
 
 test("protected dashboard sends signed-out visitor to sign in", async ({ page }) => {
@@ -57,7 +57,7 @@ test("flight search supports a round-trip selection and review", async ({ page }
   await page.getByRole("button", { name: /select this departure flight/i }).first().click();
   await page.getByRole("button", { name: /select this return flight/i }).first().click();
   await expect(page.getByRole("heading", { name: /review & save/i })).toBeVisible();
-  await expect(page.getByText(/illustrative demo snapshot|live fare/i)).toBeVisible();
+  await expect(page.locator(".flight-price-breakdown").getByText(/Demo estimate only/i)).toBeVisible();
 });
 
 test("hotel search filters sample stays and renders a price breakdown", async ({ page }) => {
