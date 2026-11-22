@@ -47,7 +47,8 @@ export default function PackageAttractions({packageId}) {
       if(!response.ok||!result.success||!result.place)throw new Error("Details are unavailable.");
       const placeDetails=result.place;
       const description=placeDetails.wikipedia_extracts?.text||placeDetails.info?.descr||placeDetails.description||"Additional description is unavailable.";
-      setDetails(current=>({...current,[xid]:description}));
+      const website=typeof placeDetails.url==="string"&&/^https:\/\//i.test(placeDetails.url)?placeDetails.url:null;
+      setDetails(current=>({...current,[xid]:{description,website}}));
     }catch{
       setDetails(current=>({...current,[xid]:{description:"Unable to load details. Please try again.",website:null}}));
     }finally{
