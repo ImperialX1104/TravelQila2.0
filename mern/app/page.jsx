@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link";\nimport Image from "next/image";
 
 const services = [
   { number: "01", title: "Flights", copy: "Share your route, dates and preferences. Our team will help you explore suitable flight options.", href: "/services.html", action: "Explore flights" },
