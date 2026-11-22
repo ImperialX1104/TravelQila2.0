@@ -44,7 +44,7 @@ const normalizedSiteUrl = siteUrl.href.replace(/\/+$/, "");
 
 const ALLOWED_PAGES = new Set([
     "index.html", "trip-enquiry.html", "packages.html", "dashboard.html",
-    "about.html", "services.html", "contact.html", "login.html",
+    "about.html", "services.html", "hotels.html", "visa.html", "contact.html", "login.html",
     "register.html", "forgot-password.html", "reset-password.html"
 ]);
 const ALLOWED_MESSAGE_TYPES = new Set(["info", "error", "success", "warning"]);
