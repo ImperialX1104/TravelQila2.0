@@ -1,6 +1,6 @@
 import Link from "next/link";
 import PackageList from "@/components/package-list";
-import "./packages.css";
+import "../packages.css";
 
 export const metadata = {
   title: "Holiday Packages | Explore Domestic & International Tours",
