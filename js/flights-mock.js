@@ -1,204 +1,119 @@
 import { supabase } from "./auth-client.js";
 
-/* Travel Qila flight search: deterministic illustrative data only; no live airline inventory. */
-(function () {
+(() => {
   "use strict";
   const form = document.getElementById("flightSearchForm");
   const results = document.getElementById("flightResults");
   if (!form || !results) return;
 
-  const airportMap = {
-    DEL:"New Delhi", BOM:"Mumbai", BLR:"Bengaluru", HYD:"Hyderabad", MAA:"Chennai",
-    CCU:"Kolkata", GOI:"Goa", AMD:"Ahmedabad", PNQ:"Pune", COK:"Kochi",
-    JAI:"Jaipur", DXB:"Dubai", SIN:"Singapore", BKK:"Bangkok", LHR:"London",
-    DOH:"Doha", AUH:"Abu Dhabi", KUL:"Kuala Lumpur", HKT:"Phuket", JFK:"New York"
-  };
+  const airportMap = {DEL:"New Delhi",BOM:"Mumbai",BLR:"Bengaluru",HYD:"Hyderabad",MAA:"Chennai",CCU:"Kolkata",GOI:"Goa",AMD:"Ahmedabad",PNQ:"Pune",COK:"Kochi",JAI:"Jaipur",DXB:"Dubai",SIN:"Singapore",BKK:"Bangkok",LHR:"London",DOH:"Doha",AUH:"Abu Dhabi",KUL:"Kuala Lumpur",HKT:"Phuket",JFK:"New York"};
   const sampleOffers = [
-    {airline:"IndiGo",code:"6E",flight:"6E 2145",depart:"06:10",arrive:"08:25",duration:135,stops:0,price:6450,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"Air India",code:"AI",flight:"AI 887",depart:"07:35",arrive:"10:05",duration:150,stops:0,price:7850,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"Akasa Air",code:"QP",flight:"QP 1320",depart:"09:20",arrive:"11:50",duration:150,stops:0,price:6990,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"Air India Express",code:"IX",flight:"IX 1042",depart:"11:45",arrive:"15:10",duration:205,stops:1,price:5980,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"IndiGo",code:"6E",flight:"6E 6087",depart:"13:15",arrive:"15:50",duration:155,stops:0,price:7350,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"Air India",code:"AI",flight:"AI 441",depart:"16:40",arrive:"20:25",duration:225,stops:1,price:8250,baggage:"25 kg check-in",cabin:"Economy"},
-    {airline:"Akasa Air",code:"QP",flight:"QP 1718",depart:"18:30",arrive:"21:05",duration:155,stops:0,price:7590,baggage:"15 kg check-in",cabin:"Economy"},
-    {airline:"IndiGo",code:"6E",flight:"6E 9912",depart:"21:15",arrive:"00:50",duration:215,stops:1,price:6250,baggage:"15 kg check-in",cabin:"Economy"}
+    {airline:"IndiGo",flight:"6E 2145",depart:"06:10",duration:135,stops:0,price:6450,baggage:"15 kg check-in"},
+    {airline:"Air India",flight:"AI 887",depart:"07:35",duration:150,stops:0,price:7850,baggage:"15 kg check-in"},
+    {airline:"Akasa Air",flight:"QP 1320",depart:"09:20",duration:150,stops:0,price:6990,baggage:"15 kg check-in"},
+    {airline:"Air India Express",flight:"IX 1042",depart:"11:45",duration:205,stops:1,price:5980,baggage:"15 kg check-in"},
+    {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},
+    {airline:"Air India",flight:"AI 441",depart:"16:40",duration:225,stops:1,price:8250,baggage:"25 kg check-in"},
+    {airline:"Akasa Air",flight:"QP 1718",depart:"18:30",duration:155,stops:0,price:7590,baggage:"15 kg check-in"},
+    {airline:"IndiGo",flight:"6E 9912",depart:"21:15",duration:215,stops:1,price:6250,baggage:"15 kg check-in"}
   ];
   const byId = id => document.getElementById(id);
-  const safe = value => String(value == null ? "" : value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));
-  const money = value => "₹" + Number(value).toLocaleString("en-IN");
-  const durationText = minutes => Math.floor(minutes / 60) + "h " + (minutes % 60 ? minutes % 60 + "m" : "");
-  const parseAirport = value => {
-    const match = String(value).trim().match(/\(([A-Za-z]{3})\)\s*$/);
-    const code = match ? match[1].toUpperCase() : "";
-    const city = String(value).trim().replace(/\s*\([A-Za-z]{3}\)\s*$/, "");
-    return { city: city || value, code, label: code ? (airportMap[code] || city) : city };
-  };
-  const formatDate = value => {
-    if (!value) return "";
-    return new Date(value + "T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
-  };
-  const addMinutes = (time, minutes) => {
-    const parts = time.split(":").map(Number);
-    const total = (parts[0] * 60 + parts[1] + minutes) % 1440;
-    return String(Math.floor(total / 60)).padStart(2,"0") + ":" + String(total % 60).padStart(2,"0");
-  };
-  let currentOffers = [];
-  let currentSearch = null;
+  const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const money = value => "₹" + Number(value || 0).toLocaleString("en-IN",{maximumFractionDigits:2});
+  const durationText = minutes => Math.floor(minutes/60)+"h "+(minutes%60?minutes%60+"m":"");
+  const formatDate = value => value ? new Date(value+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "";
+  const addMinutes = (time,minutes) => {const p=time.split(":").map(Number),n=(p[0]*60+p[1]+minutes)%1440;return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");};
+  function parseAirport(value){const m=String(value).trim().match(/\(([A-Za-z]{3})\)\s*$/),code=m?m[1].toUpperCase():"",city=String(value).trim().replace(/\s*\([A-Za-z]{3}\)\s*$/,"");return {city:city||value,code,label:code?(airportMap[code]||city):city};}
+  let search=null, outboundOptions=[], returnOptions=[], selectedOutbound=null, selectedReturn=null, stage="outbound";
 
-  function updatePriceLabel() {
-    const output = byId("priceOutput"), slider = byId("maxPrice");
-    if (output && slider) output.textContent = Number(slider.value) >= 200000 ? "₹2,00,000+" : money(slider.value);
+  function updateTripType(){const round=form.querySelector('input[name="tripType"]:checked').value==="Round trip",wrap=byId("returnDate"),container=byId("returnDateWrap");container.hidden=!round;wrap.required=round;if(!round)wrap.value="";}
+  function makeOptions(origin,destination,date,seedText){
+    const seed=seedText.split("").reduce((n,c)=>n+c.charCodeAt(0),0);
+    return sampleOffers.map((x,i)=>{const shift=seed%7,depart=addMinutes(x.depart,shift*4),duration=x.duration+shift*3+(i%2?10:0),price=Math.round((x.price+(seed%13)*175+(i%3)*260)/10)*10;return {id:"leg-"+seed+"-"+i,airline:x.airline,flight:x.flight,depart,arrive:addMinutes(x.depart,duration),duration,stops:x.stops,price,baggage:x.baggage,origin,destination,departureDate:date};});
   }
-  function updateTripType() {
-    const isRoundTrip = form.querySelector('input[name="tripType"]:checked').value === "Round trip";
-    const wrap = byId("returnDateWrap"), ret = byId("returnDate");
-    wrap.hidden = !isRoundTrip;
-    ret.required = isRoundTrip;
-    if (!isRoundTrip) ret.value = "";
+  function passengers(){return search.adults+search.children+search.infants;}
+  function pricing(){
+    const base=(selectedOutbound?.price||0)+(selectedReturn?.price||0);
+    const tax=Math.round(base*passengers()*0.05);
+    return {baseFare:base*passengers(),taxAmount:tax,totalFare:base*passengers()+tax,taxRate:0.05,currency:"INR",perPassengerBase:base};
   }
-  function buildOffers(search) {
-    const routeSeed = (search.origin.code + search.destination.code).split("").reduce((sum,char)=>sum+char.charCodeAt(0),0);
-    return sampleOffers.map((offer,index) => {
-      const shift = routeSeed % 7;
-      const duration = offer.duration + (shift * 3) + (index % 2 ? 10 : 0);
-      const price = Math.round((offer.price + (routeSeed % 13) * 175 + (index % 3) * 260) / 10) * 10;
-      const outbound={airline:offer.airline,flight:offer.flight,baggage:offer.baggage,cabin:offer.cabin,depart:addMinutes(offer.depart,shift*4),arrive:addMinutes(offer.depart,duration),duration,stops:offer.stops,price,origin:search.origin,destination:search.destination,departureDate:search.departureDate};
-      const returnSource=sampleOffers[(index+3)%sampleOffers.length];
-      const returnShift=(search.destination.code+search.origin.code).split("").reduce((sum,char)=>sum+char.charCodeAt(0),0)%7;
-      const returnDuration=returnSource.duration+(returnShift*3)+(index%2?10:0);
-      const returnPrice=Math.round((returnSource.price+(returnShift%13)*175+((index+1)%3)*260)/10)*10;
-      const returnLeg=search.tripType==="Round trip"?{
-        airline:returnSource.airline,flight:returnSource.flight,
-        depart:addMinutes(returnSource.depart,returnShift*4),
-        arrive:addMinutes(returnSource.depart,returnDuration),duration:returnDuration,
-        stops:returnSource.stops,price:returnPrice,
-        origin:search.destination,destination:search.origin,departureDate:search.returnDate
-      }:null;
-      return {...outbound,id:"demo-"+index,returnLeg,totalPrice:price+(returnLeg?returnLeg.price:0)};
-    });
+  function itinerary(){
+    const p=pricing();
+    return {version:1,origin:search.origin,destination:search.destination,tripType:search.tripType,departureDate:search.departureDate,returnDate:search.tripType==="Round trip"?search.returnDate:null,passengers:{adults:search.adults,children:search.children,infants:search.infants},cabin:search.cabin,outbound:selectedOutbound,return:selectedReturn,pricing:p,priceSource:"illustrative_demo",savedAt:new Date().toISOString()};
   }
-  function enquiryLinks(offer) {
-    const s=currentSearch;
-    const message = [
-      "Hello Travel Qila, I would like to enquire about this flight option.",
-      "DEMO OPTION — please provide an actual current fare and availability before any booking.",
-      "",
-      "Airline: "+offer.airline+" ("+offer.flight+")",
-      "Route: "+s.origin.label+" ("+(s.origin.code||"")+") to "+s.destination.label+" ("+(s.destination.code||"")+")",
-      "Outbound: "+s.origin.label+" ("+(s.origin.code||"")+") to "+s.destination.label+" ("+(s.destination.code||"")+")",
-      "Departure: "+formatDate(s.departureDate)+" at "+offer.depart+" · "+offer.airline+" "+offer.flight,
-      "Trip type: "+s.tripType,
-      s.tripType==="Round trip" ? "Return: "+s.destination.label+" ("+(s.destination.code||"")+") to "+s.origin.label+" ("+(s.origin.code||"")+") on "+formatDate(s.returnDate)+" at "+offer.returnLeg.depart+" · "+offer.returnLeg.airline+" "+offer.returnLeg.flight : "",
-      "Passengers: "+s.adults+" adult(s), "+s.children+" child(ren), "+s.infants+" infant(s)",
-      "Cabin: "+s.cabin,
-      "Illustrative outbound fare: "+money(offer.price)+" per passenger",
-      offer.returnLeg ? "Illustrative return fare: "+money(offer.returnLeg.price)+" per passenger" : "",
-      "Illustrative total demo fare: "+money(offer.totalPrice)+" per passenger (not a live quote)",
-      "",
-      "Please check live availability, baggage rules and final fare. I understand this is an enquiry, not a booking."
-    ].filter(Boolean).join("\n");
-    return {
-      whatsapp:"https://wa.me/919871101345?text="+encodeURIComponent(message),
-      email:"mailto:info@travelqila.com?subject="+encodeURIComponent("Flight enquiry | "+s.origin.label+" to "+s.destination.label)+"&body="+encodeURIComponent(message)
-    };
+  function optionsMarkup(items,leg){
+    return items.map(o=>'<article class="flight-result-card tq-leg-card"><div class="flight-result-top"><div><div class="flight-airline-name">'+safe(o.airline)+'</div><div class="flight-flight-number">'+safe(o.flight)+' · '+(o.stops===0?"Non-stop":o.stops+" stop")+'</div></div><div class="flight-demo-price"><strong>'+money(o.price)+'</strong><small>demo fare / passenger</small></div></div><div class="flight-route-line"><div><div class="flight-time">'+safe(o.depart)+'</div><div class="flight-city">'+safe(o.origin.label)+' ('+safe(o.origin.code||"—")+')</div></div><div class="flight-route-middle"><div>'+durationText(o.duration)+'</div><div class="line"></div><div>'+(o.stops===0?"Non-stop":o.stops+" stop")+'</div></div><div class="text-end"><div class="flight-time">'+safe(o.arrive)+'</div><div class="flight-city">'+safe(o.destination.label)+' ('+safe(o.destination.code||"—")+')</div></div></div><div class="flight-result-meta"><span><i class="far fa-calendar"></i>'+formatDate(o.departureDate)+'</span><span><i class="fas fa-suitcase"></i>'+safe(o.baggage)+'</span><span><i class="fas fa-chair"></i>'+safe(search.cabin)+'</span></div><div class="flight-result-actions"><button type="button" class="flight-select-leg" data-select-leg="'+leg+'" data-offer-id="'+o.id+'">Select this '+(leg==="outbound"?"departure":"return")+' flight <i class="fas fa-arrow-right ms-1"></i></button></div></article>').join("");
   }
-  function renderOffers() {
-    const list=byId("flightResultsList"), empty=byId("flightResultsEmpty"), count=byId("flightResultsCount");
-    const stopFilter=byId("resultStops").value, airlineFilter=byId("resultAirline").value, sort=byId("resultSort").value;
-    const budget=Number(byId("maxPrice").value);
-    let filtered=currentOffers.filter(o=>(stopFilter==="any"||(stopFilter==="nonstop"&&o.stops===0)||(stopFilter==="one"&&o.stops<=1))&&(airlineFilter==="all"||o.airline===airlineFilter)&&o.totalPrice<=budget);
-    filtered.sort((a,b)=>sort==="duration"?a.duration-b.duration:sort==="departure"?a.depart.localeCompare(b.depart):a.totalPrice-b.totalPrice);
-    count.textContent=filtered.length+" illustrative options · "+currentOffers.length+" generated for this search · budget applies to total per-passenger trip fare";
-    list.innerHTML=filtered.map(offer=>{
-      const links=enquiryLinks(offer), stopText=offer.stops===0?"Non-stop":offer.stops+" stop";
-      const legMarkup=(leg,title)=>'<div class="flight-leg-heading">'+title+' · '+formatDate(leg.departureDate)+'</div>'+
-        '<div class="flight-leg-airline">'+safe(leg.airline)+' · '+safe(leg.flight)+' · '+(leg.stops===0?"Non-stop":leg.stops+" stop")+'</div>'+
-        '<div class="flight-route-line"><div><div class="flight-time">'+safe(leg.depart)+'</div><div class="flight-city">'+safe(leg.origin.label)+' ('+safe(leg.origin.code||"—")+')</div></div>'+
-        '<div class="flight-route-middle"><div>'+durationText(leg.duration)+'</div><div class="line"></div><div>'+(leg.stops===0?"Non-stop":leg.stops+" stop")+'</div></div>'+
-        '<div class="text-end"><div class="flight-time">'+safe(leg.arrive)+'</div><div class="flight-city">'+safe(leg.destination.label)+' ('+safe(leg.destination.code||"—")+')</div></div></div>';
-      return '<article class="flight-result-card">'+
-        '<div class="flight-result-top"><div class="flight-airline"><div class="flight-airline-mark"><i class="fas fa-plane"></i></div><div><div class="flight-airline-name">'+safe(offer.airline)+'</div><div class="flight-flight-number">'+safe(offer.flight)+' · <span class="flight-demo-chip">Demo itinerary</span></div></div></div>'+
-        '<div class="flight-demo-price"><strong>'+money(offer.totalPrice)+'</strong><small>'+(offer.returnLeg?"round-trip demo total":"one-way demo fare")+' / passenger</small></div></div>'+
-        legMarkup(offer,"Outbound")+
-        (offer.returnLeg?'<div class="flight-return-divider"></div>'+legMarkup(offer.returnLeg,"Return"):"")+
-        '<div class="flight-result-meta"><span><i class="fas fa-suitcase"></i>'+safe(offer.baggage)+' (sample)</span><span><i class="fas fa-chair"></i>'+safe(currentSearch.cabin)+'</span><span><i class="fas fa-receipt"></i> Outbound '+money(offer.price)+(offer.returnLeg?' · Return '+money(offer.returnLeg.price):'')+'</span></div>'+
-        '<div class="flight-result-actions"><button type="button" class="flight-enquire-wa" data-save-flight="'+offer.id+'"><i class="fas fa-bookmark me-1"></i>Confirm booking request</button><a class="flight-enquire-email" href="'+links.email+'"><i class="far fa-envelope me-1"></i>Email enquiry</a><a class="flight-enquire-email" href="'+links.whatsapp+'" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp me-1"></i>WhatsApp enquiry</a></div><div class="small text-muted mt-2" data-save-status="'+offer.id+'">Saving creates a pending request in your dashboard; it does not issue a ticket.</div></article>';
-    }).join("");
-    empty.classList.toggle("is-visible",filtered.length===0);
-    list.hidden=filtered.length===0;
+  function filtersMarkup(){return '<div class="flight-results-tools"><label for="resultStops">Stops</label><select id="resultStops"><option value="any">Any stops</option><option value="nonstop">Non-stop</option><option value="one">Up to 1 stop</option></select><label for="resultAirline">Airline</label><select id="resultAirline"><option value="all">All airlines</option><option>IndiGo</option><option>Air India</option><option>Akasa Air</option><option>Air India Express</option></select><label for="resultSort">Sort by</label><select id="resultSort"><option value="price">Lowest fare</option><option value="duration">Shortest duration</option><option value="departure">Departure time</option></select></div>';}
+  function filteredOptions(items){
+    const stops=byId("resultStops")?.value||"any",airline=byId("resultAirline")?.value||"all",sort=byId("resultSort")?.value||"price";
+    const out=items.filter(o=>(stops==="any"||(stops==="nonstop"&&o.stops===0)||(stops==="one"&&o.stops<=1))&&(airline==="all"||o.airline===airline));
+    out.sort((a,b)=>sort==="duration"?a.duration-b.duration:sort==="departure"?a.depart.localeCompare(b.depart):a.price-b.price);return out;
   }
-
-  form.querySelectorAll('input[name="tripType"]').forEach(el=>el.addEventListener("change",updateTripType));
-  byId("departDate").addEventListener("change",function(){byId("returnDate").min=this.value;});
-  byId("maxPrice").addEventListener("input",()=>{updatePriceLabel();if(currentSearch)renderOffers();});
+  function heading(title,sub){byId("resultRoute").textContent=title;byId("resultDates").textContent=sub;}
+  function renderLegStage(){
+    const isReturn=stage==="return",items=filteredOptions(isReturn?returnOptions:outboundOptions);
+    const from=isReturn?search.destination:search.origin,to=isReturn?search.origin:search.destination;
+    heading((isReturn?"Choose your return flight":"Choose your departure flight")+" · "+from.label+" → "+to.label,formatDate(isReturn?search.returnDate:search.departureDate)+" · "+search.tripType+" · "+passengers()+" passenger(s)");
+    const stepper='<div class="tq-booking-steps"><span class="'+(stage==="outbound"?"is-active":"is-done")+'">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="'+(stage==="return"?"is-active":"")+'">2. Return</span>':'')+'<span> '+(search.tripType==="Round trip"?"3":"2")+'. Review & save</span></div>';
+    const back=isReturn?'<button type="button" class="btn btn-outline-secondary rounded-pill mb-3" data-back-outbound><i class="fas fa-arrow-left me-1"></i>Change departure flight</button>':"";
+    byId("flightResultsList").innerHTML=stepper+back+filtersMarkup()+(items.length?optionsMarkup(items,isReturn?"return":"outbound"):'<div class="flight-empty is-visible">No flights match these filters. Try another airline or stop preference.</div>');
+    byId("flightResultsEmpty").classList.remove("is-visible");byId("flightResultsList").hidden=false;
+    ["resultStops","resultAirline","resultSort"].forEach(id=>byId(id)?.addEventListener("change",renderLegStage));
+    byId("flightResultsCount").textContent=items.length+" demo flight options";
+  }
+  function renderSummary(){
+    const trip=itinerary(),p=trip.pricing;
+    const leg=(o,label)=>'<div class="tq-summary-leg"><div class="tq-summary-leg-title">'+label+' · '+formatDate(o.departureDate)+'</div><strong>'+safe(o.airline)+' · '+safe(o.flight)+'</strong><div class="tq-summary-route">'+safe(o.origin.label)+' ('+safe(o.origin.code||"—")+') <i class="fas fa-arrow-right"></i> '+safe(o.destination.label)+' ('+safe(o.destination.code||"—")+')</div><div class="tq-summary-times">'+safe(o.depart)+' – '+safe(o.arrive)+' · '+durationText(o.duration)+'</div><div class="tq-summary-fare">'+money(o.price)+' per passenger</div></div>';
+    const legs=leg(selectedOutbound,"Outbound")+(selectedReturn?leg(selectedReturn,"Return"):"");
+    const html='<div class="tq-booking-steps"><span class="is-done">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="is-done">2. Return</span>':'')+'<span class="is-active">Review & save</span></div><div class="tq-summary-card"><div class="tq-summary-heading"><div><span class="flight-eyebrow text-primary">YOUR ITINERARY</span><h3>'+safe(search.origin.label)+' ↔ '+safe(search.destination.label)+'</h3><p>'+search.tripType+' · '+passengers()+' passenger(s) · '+safe(search.cabin)+'</p></div><button type="button" class="btn btn-link" data-edit-flights>Edit flights</button></div>'+legs+'<div class="tq-price-breakdown"><div><span>Base fare · all passengers</span><strong>'+money(p.baseFare)+'</strong></div><div><span>Estimated taxes & fees (illustrative 5%)</span><strong>'+money(p.taxAmount)+'</strong></div><div class="tq-grand-total"><span>Estimated total</span><strong>'+money(p.totalFare)+'</strong></div><small>Demo estimate only. Actual airline taxes, convenience fees, fare rules and availability may change. A live fare check is required before payment.</small></div><div class="tq-summary-actions"><button type="button" class="btn btn-primary" data-book-itinerary><i class="fas fa-lock me-2"></i>Request booking</button><button type="button" class="btn btn-outline-primary" data-save-wishlist><i class="far fa-heart me-2"></i>Save to wishlist</button></div><p class="small text-muted mt-3 mb-0" data-itinerary-message>Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.</p></div>';
+    byId("flightResultsList").innerHTML=html;byId("flightResultsCount").textContent="Complete itinerary selected";byId("flightResultsEmpty").classList.remove("is-visible");byId("flightResultsList").hidden=false;
+    heading("Review your trip",formatDate(search.departureDate)+(search.tripType==="Round trip"?" · Return "+formatDate(search.returnDate):" · One way"));
+  }
+  function showStage(){if(stage==="summary")renderSummary();else renderLegStage();}
+  function resetFilters(){["resultStops","resultAirline","resultSort"].forEach(id=>{const el=byId(id);if(el)el.value=id==="resultStops"?"any":id==="resultAirline"?"all":"price";});}
+  async function signedInUser(){const {data,error}=await supabase.auth.getUser();if(error)throw error;if(!data.user){throw new Error("Please sign in to save or request this itinerary.");}return data.user;}
+  function messageNode(){return byId("itinerary-message")||document.querySelector("[data-itinerary-message]");}
+  async function saveWishlist(){
+    const node=messageNode();try{const user=await signedInUser();const trip=itinerary();const {data,error}=await supabase.from("flight_wishlists").insert({user_id:user.id,title:search.origin.label+" to "+search.destination.label,itinerary:trip}).select("id").single();if(error)throw error;if(node)node.textContent="Saved to your wishlist. You can find it in your dashboard and request it later.";const btn=byId("save-wishlist");if(btn){btn.textContent="Saved to wishlist";btn.disabled=true;}}catch(e){if(node)node.innerHTML=safe(e.message)+" <a href=\"login.html\">Sign in</a>";}}
+  async function requestBooking(trip,user){
+    const o=trip.outbound,r=trip.return,p=trip.pricing,s=trip;
+    const payload={user_id:user.id,origin:s.origin.label,destination:s.destination.label,origin_code:s.origin.code||null,destination_code:s.destination.code||null,trip_type:s.tripType,departure_date:s.departureDate,return_date:s.tripType==="Round trip"?s.returnDate:null,adults:s.passengers.adults,children:s.passengers.children,infants:s.passengers.infants,cabin_class:s.cabin,airline:o.airline,flight_number:o.flight,departure_time:o.depart,arrival_time:o.arrive,return_airline:r?.airline||null,return_flight_number:r?.flight||null,return_departure_time:r?.depart||null,return_arrival_time:r?.arrive||null,base_fare:p.baseFare,tax_amount:p.taxAmount,demo_fare:p.totalFare};
+    const {data,error}=await supabase.from("flight_bookings").insert(payload).select("booking_reference").single();if(error)throw error;return data.booking_reference;
+  }
+  async function bookCurrent(){
+    const node=messageNode();const button=byId("book-itinerary");if(button){button.disabled=true;button.textContent="Submitting…";}
+    try{const user=await signedInUser(),ref=await requestBooking(itinerary(),user);if(node)node.textContent="Booking request "+ref+" is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.";}
+    catch(e){if(node)node.innerHTML=safe(e.message)+(e.message.includes("sign in")?' <a href="login.html">Sign in</a>':"");if(button){button.disabled=false;button.innerHTML='<i class="fas fa-lock me-2"></i>Request booking';}}
+  }
+  results.addEventListener("click",async event=>{
+    const target=event.target.closest("button");if(!target)return;
+    if(target.hasAttribute("data-select-leg")){
+      const id=target.dataset.offerId,leg=target.dataset.selectLeg,options=leg==="return"?returnOptions:outboundOptions,selected=options.find(x=>x.id===id);if(!selected)return;
+      if(leg==="outbound"){selectedOutbound=selected;if(search.tripType==="Round trip"){stage="return";resetFilters();}else{selectedReturn=null;stage="summary";}}
+      else{selectedReturn=selected;stage="summary";}
+      showStage();results.scrollIntoView({behavior:"smooth",block:"start"});
+    }else if(target.hasAttribute("data-back-outbound")){stage="outbound";selectedReturn=null;resetFilters();showStage();}
+    else if(target.hasAttribute("data-edit-flights")){stage=selectedOutbound&&search.tripType==="Round trip"?"return":"outbound";resetFilters();showStage();}
+    else if(target.hasAttribute("data-save-wishlist")){target.id="save-wishlist";await saveWishlist();}
+    else if(target.hasAttribute("data-book-itinerary")){target.id="book-itinerary";await bookCurrent();}
+  });
+  form.querySelectorAll('input[name="tripType"]').forEach(x=>x.addEventListener("change",updateTripType));
+  byId("departDate").addEventListener("change",()=>{byId("returnDate").min=byId("departDate").value;});
   byId("swapCities").addEventListener("click",()=>{const a=byId("origin"),b=byId("destination"),v=a.value;a.value=b.value;b.value=v;});
-  ["resultStops","resultAirline","resultSort"].forEach(id=>byId(id).addEventListener("change",renderOffers));
-
-  async function saveFlightRequest(offerId,button) {
-    const offer=currentOffers.find(item=>item.id===offerId);
-    if(!offer||!currentSearch||button.disabled)return;
-    const status=document.querySelector('[data-save-status="'+offerId+'"]');
-    const original=button.innerHTML;
-    button.disabled=true;button.textContent="Saving request…";
-    try {
-      const {data:userData,error:userError}=await supabase.auth.getUser();
-      if(userError)throw userError;
-      if(!userData.user) {
-        button.disabled=false;button.innerHTML=original;
-        if(status)status.innerHTML='Please <a href="login.html">sign in</a> to save this flight request to your dashboard.';
-        return;
-      }
-      const payload={
-        user_id:userData.user.id,origin:currentSearch.origin.label,destination:currentSearch.destination.label,
-        origin_code:currentSearch.origin.code||null,destination_code:currentSearch.destination.code||null,
-        trip_type:currentSearch.tripType,departure_date:currentSearch.departureDate,
-        return_date:currentSearch.tripType==="Round trip"?currentSearch.returnDate:null,
-        adults:currentSearch.adults,children:currentSearch.children,infants:currentSearch.infants,
-        cabin_class:currentSearch.cabin,airline:offer.airline,flight_number:offer.flight,
-        departure_time:offer.depart,arrival_time:offer.arrive,
-        return_airline:offer.returnLeg?.airline||null,return_flight_number:offer.returnLeg?.flight||null,
-        return_departure_time:offer.returnLeg?.depart||null,return_arrival_time:offer.returnLeg?.arrive||null,
-        demo_fare:offer.totalPrice
-      };
-      const {data,error}=await supabase.from("flight_bookings").insert(payload).select("booking_reference").single();
-      if(error)throw error;
-      button.textContent="Request saved";button.classList.add("is-saved");
-      if(status)status.textContent="Saved to your dashboard · Reference "+data.booking_reference+". Awaiting Travel Qila confirmation.";
-    } catch(error) {
-      console.error("[Travel Qila] Flight request save failed:",error.code||"unknown");
-      button.disabled=false;button.innerHTML=original;
-      if(status)status.textContent=(error.code==="42P01"||error.code==="PGRST205")
-        ?"Booking storage is not enabled yet. Ask the site administrator to apply supabase/flight-bookings.sql."
-        :"We couldn't save this request. Please try again or contact support.";
-    }
-  }
-  results.addEventListener("click",event=>{
-    const button=event.target.closest("[data-save-flight]");
-    if(button)saveFlightRequest(button.dataset.saveFlight,button);
-  });
-
   form.addEventListener("submit",event=>{
-    event.preventDefault();
-    updateTripType();
-    if(!form.reportValidity())return;
-    const origin=parseAirport(byId("origin").value), destination=parseAirport(byId("destination").value);
-    if(origin.city.toLowerCase()===destination.city.toLowerCase()||(origin.code&&origin.code===destination.code)){
-      byId("destination").setCustomValidity("Choose a different arrival airport.");byId("destination").reportValidity();byId("destination").setCustomValidity("");return;
-    }
-    const adults=Number(byId("adults").value), infants=Number(byId("infants").value);
-    if(infants>adults){byId("infants").setCustomValidity("Infants cannot exceed the number of adults.");byId("infants").reportValidity();byId("infants").setCustomValidity("");return;}
+    event.preventDefault();updateTripType();if(!form.reportValidity())return;
+    const origin=parseAirport(byId("origin").value),destination=parseAirport(byId("destination").value);
+    if(origin.city.toLowerCase()===destination.city.toLowerCase()||(origin.code&&origin.code===destination.code)){byId("destination").setCustomValidity("Choose a different arrival airport.");byId("destination").reportValidity();byId("destination").setCustomValidity("");return;}
+    const adults=Number(byId("adults").value),infants=Number(byId("infants").value);if(infants>adults){byId("infants").setCustomValidity("Infants cannot exceed the number of adults.");byId("infants").reportValidity();byId("infants").setCustomValidity("");return;}
     const tripType=form.querySelector('input[name="tripType"]:checked').value;
-    currentSearch={origin,destination,departureDate:byId("departDate").value,returnDate:byId("returnDate").value,tripType,
-      adults,children:Number(byId("children").value),infants,cabin:byId("cabin").value};
-    currentOffers=buildOffers(currentSearch);
-    byId("resultRoute").textContent=origin.label+" ("+(origin.code||"—")+") → "+destination.label+" ("+(destination.code||"—")+")";
-    byId("resultDates").textContent=formatDate(currentSearch.departureDate)+(tripType==="Round trip"?" · Return "+formatDate(currentSearch.returnDate):" · One way");
-    results.hidden=false;
-    renderOffers();
-    results.scrollIntoView({behavior:"smooth",block:"start"});
+    search={origin,destination,departureDate:byId("departDate").value,returnDate:tripType==="Round trip"?byId("returnDate").value:null,tripType,adults,children:Number(byId("children").value),infants,cabin:byId("cabin").value};
+    selectedOutbound=null;selectedReturn=null;stage="outbound";
+    outboundOptions=makeOptions(origin,destination,search.departureDate,origin.code+destination.code);
+    returnOptions=tripType==="Round trip"?makeOptions(destination,origin,search.returnDate,destination.code+origin.code):[];
+    byId("flightResultsCount").textContent="Choose your departure flight";
+    results.hidden=false;showStage();results.scrollIntoView({behavior:"smooth",block:"start"});
   });
-  const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());
-  const today=now.toISOString().slice(0,10);
-  byId("departDate").min=today;byId("returnDate").min=today;
-  updateTripType();updatePriceLabel();
+  const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());const today=now.toISOString().slice(0,10);
+  byId("departDate").min=today;byId("returnDate").min=today;updateTripType();
 })();
