@@ -1,4 +1,4 @@
-import "./globals.css";
+import "./globals.css";\nimport "./shared-shell.css";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 
@@ -37,7 +37,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body id="top">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(travelAgencySchema) }} />
         <SiteHeader />
         {children}
