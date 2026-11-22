@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 const routes = [
-  "/", "/about.html", "/services.html", "/hotels.html", "/visa.html",
+  "/", "/index.html", "/about.html", "/services.html", "/hotels.html", "/visa.html",
   "/packages.html", "/package-details.html?id=bali-discovery",
   "/destination.html", "/tour.html", "/trip-enquiry.html", "/contact.html",
   "/blog.html", "/gallery.html", "/guides.html", "/testimonial.html",
