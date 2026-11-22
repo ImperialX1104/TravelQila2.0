@@ -64,10 +64,11 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {
     const minReturn=stage==="outbound"&&form.tripType==="Round trip"&&returnOptions.length?Math.min(...returnOptions.map(x=>x.price)):0;
     return activeOptions.filter(option=>{
       const allowed=preference==="Any"||(preference==="Non-stop only"&&option.stops===0)||(preference==="1 stop or fewer"&&option.stops<=1);
+      const returnDateAllowed=stage!=="return"||option.departureDate>=outbound.departureDate;
       const filterAllowed=filters.stops==="any"||(filters.stops==="nonstop"&&option.stops===0)||(filters.stops==="one"&&option.stops<=1);
       const airlineAllowed=filters.airline==="all"||option.airline===filters.airline;
       const committed=stage==="return"?(outbound?.price||0):0;
-      return allowed&&filterAllowed&&airlineAllowed&&((committed+option.price+minReturn)*1.05)<=Number(form.maximumBudget||Infinity);
+      return allowed&&returnDateAllowed&&filterAllowed&&airlineAllowed&&((committed+option.price+minReturn)*1.05)<=Number(form.maximumBudget||Infinity);
     }).sort((a,b)=>filters.sort==="duration"?a.duration-b.duration:filters.sort==="departure"?a.depart.localeCompare(b.depart):a.price-b.price);
   },[activeOptions,filters,form.stops,form.maximumBudget,form.tripType,returnOptions,stage,outbound]);
 

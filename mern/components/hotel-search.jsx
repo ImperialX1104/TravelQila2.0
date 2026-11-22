@@ -62,6 +62,7 @@ export default function HotelSearch({ today }) {
       return;
     }
     setSearched(true);
+    document.querySelector("#hotelResultsHeading")?.scrollIntoView({behavior:"smooth",block:"start"});
   }
 
   async function toggleWishlist(hotel) {
