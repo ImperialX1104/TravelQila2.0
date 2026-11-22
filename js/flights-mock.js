@@ -24,7 +24,7 @@ import { supabase } from "./auth-client.js";
   const formatDate = value => value ? new Date(value+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "";
   const addMinutes = (time,minutes) => {const p=time.split(":").map(Number),n=(p[0]*60+p[1]+minutes)%1440;return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0");};
   function parseAirport(value){const m=String(value).trim().match(/\(([A-Za-z]{3})\)\s*$/),code=m?m[1].toUpperCase():"",city=String(value).trim().replace(/\s*\([A-Za-z]{3}\)\s*$/,"");return {city:city||value,code,label:code?(airportMap[code]||city):city};}
-  let search=null, outboundOptions=[], returnOptions=[], selectedOutbound=null, selectedReturn=null, stage="outbound";
+  let search=null, outboundOptions=[], returnOptions=[], selectedOutbound=null, selectedReturn=null, stage="outbound", wishlistId=null;
 
   function updateTripType(){const round=form.querySelector('input[name="tripType"]:checked').value==="Round trip",wrap=byId("returnDate"),container=byId("returnDateWrap");container.hidden=!round;wrap.required=round;if(!round)wrap.value="";}
   function makeOptions(origin,destination,date,seedText){
@@ -66,7 +66,7 @@ import { supabase } from "./auth-client.js";
     const trip=itinerary(),p=trip.pricing;
     const leg=(o,label)=>'<div class="tq-summary-leg"><div class="tq-summary-leg-title">'+label+' · '+formatDate(o.departureDate)+'</div><strong>'+safe(o.airline)+' · '+safe(o.flight)+'</strong><div class="tq-summary-route">'+safe(o.origin.label)+' ('+safe(o.origin.code||"—")+') <i class="fas fa-arrow-right"></i> '+safe(o.destination.label)+' ('+safe(o.destination.code||"—")+')</div><div class="tq-summary-times">'+safe(o.depart)+' – '+safe(o.arrive)+' · '+durationText(o.duration)+'</div><div class="tq-summary-fare">'+money(o.price)+' per passenger</div></div>';
     const legs=leg(selectedOutbound,"Outbound")+(selectedReturn?leg(selectedReturn,"Return"):"");
-    const html='<div class="tq-booking-steps"><span class="is-done">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="is-done">2. Return</span>':'')+'<span class="is-active">Review & save</span></div><div class="tq-summary-card"><div class="tq-summary-heading"><div><span class="flight-eyebrow text-primary">YOUR ITINERARY</span><h3>'+safe(search.origin.label)+' ↔ '+safe(search.destination.label)+'</h3><p>'+search.tripType+' · '+passengers()+' passenger(s) · '+safe(search.cabin)+'</p></div><button type="button" class="btn btn-link" data-edit-flights>Edit flights</button></div>'+legs+'<div class="tq-price-breakdown"><div><span>Base fare · all passengers</span><strong>'+money(p.baseFare)+'</strong></div><div><span>Estimated taxes & fees (illustrative 5%)</span><strong>'+money(p.taxAmount)+'</strong></div><div class="tq-grand-total"><span>Estimated total</span><strong>'+money(p.totalFare)+'</strong></div><small>Demo estimate only. Actual airline taxes, convenience fees, fare rules and availability may change. A live fare check is required before payment.</small></div><div class="tq-summary-actions"><button type="button" class="btn btn-primary" data-book-itinerary><i class="fas fa-lock me-2"></i>Request booking</button><button type="button" class="btn btn-outline-primary" data-save-wishlist><i class="far fa-heart me-2"></i>Save to wishlist</button></div><p class="small text-muted mt-3 mb-0" data-itinerary-message>Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.</p></div>';
+    const html='<div class="tq-booking-steps"><span class="is-done">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="is-done">2. Return</span>':'')+'<span class="is-active">Review & save</span></div><div class="tq-summary-card"><div class="tq-summary-heading"><div><span class="flight-eyebrow text-primary">YOUR ITINERARY</span><h3>'+safe(search.origin.label)+' ↔ '+safe(search.destination.label)+'</h3><p>'+search.tripType+' · '+passengers()+' passenger(s) · '+safe(search.cabin)+'</p></div><button type="button" class="btn btn-link" data-edit-flights>Edit flights</button></div>'+legs+'<div class="tq-price-breakdown"><div><span>Base fare · all passengers</span><strong>'+money(p.baseFare)+'</strong></div><div><span>Estimated taxes & fees (illustrative 5%)</span><strong>'+money(p.taxAmount)+'</strong></div><div class="tq-grand-total"><span>Estimated total</span><strong>'+money(p.totalFare)+'</strong></div><small>Demo estimate only. Actual airline taxes, convenience fees, fare rules and availability may change. A live fare check is required before payment.</small></div><div class="tq-summary-actions"><button type="button" class="btn btn-primary" data-book-itinerary><i class="fas fa-lock me-2"></i>Request booking</button><button type="button" class="btn btn-outline-primary" data-save-wishlist><i class="far fa-heart me-2"></i>'+(wishlistId?"Update saved trip":"Save to wishlist")+'</button></div><p class="small text-muted mt-3 mb-0" data-itinerary-message>Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.</p></div>';
     byId("flightResultsList").innerHTML=html;byId("flightResultsCount").textContent="Complete itinerary selected";byId("flightResultsEmpty").classList.remove("is-visible");byId("flightResultsList").hidden=false;
     heading("Review your trip",formatDate(search.departureDate)+(search.tripType==="Round trip"?" · Return "+formatDate(search.returnDate):" · One way"));
   }
@@ -78,11 +78,13 @@ import { supabase } from "./auth-client.js";
     const node=messageNode(),btn=byId("save-wishlist"),original=btn?.innerHTML;
     if(btn){btn.disabled=true;btn.textContent="Saving to wishlist…";}
     try{
-      const user=await signedInUser(),trip=itinerary();
-      const {error}=await supabase.from("flight_wishlists").insert({user_id:user.id,title:search.origin.label+" to "+search.destination.label,itinerary:trip});
+      const user=await signedInUser(),trip=itinerary(),title=search.origin.label+" to "+search.destination.label;
+      let error;
+      if(wishlistId){const result=await supabase.from("flight_wishlists").update({title,itinerary:trip}).eq("id",wishlistId).eq("user_id",user.id).select("id").single();error=result.error;}
+      else{const result=await supabase.from("flight_wishlists").insert({user_id:user.id,title,itinerary:trip});error=result.error;}
       if(error)throw error;
-      if(node)node.textContent="Saved to your wishlist. Find it in your dashboard whenever you're ready.";
-      if(btn){btn.textContent="Saved to wishlist";btn.disabled=true;}
+      if(node)node.textContent=wishlistId?"Your saved trip has been updated with the itinerary you just selected.":"Saved to your wishlist. Find it in your dashboard whenever you're ready.";
+      if(btn){btn.textContent=wishlistId?"Saved trip updated":"Saved to wishlist";btn.disabled=true;}
     }catch(e){
       if(node)node.innerHTML=safe(e.message)+(e.message.includes("sign in")?' <a href="login.html">Sign in</a>':"");
       if(btn){btn.disabled=false;btn.innerHTML=original;}
@@ -127,7 +129,7 @@ import { supabase } from "./auth-client.js";
     byId("flightResultsCount").textContent="Choose your departure flight";
     results.hidden=false;showStage();results.scrollIntoView({behavior:"smooth",block:"start"});
   });
-  const params=new URLSearchParams(window.location.search);
+  const params=new URLSearchParams(window.location.search);\n  wishlistId=params.get("wishlistId")||null;
   if(params.has("origin")&&params.has("destination")){
     byId("origin").value=params.get("origin")||"";
     byId("destination").value=params.get("destination")||"";
