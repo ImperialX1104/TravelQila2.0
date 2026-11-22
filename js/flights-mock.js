@@ -114,6 +114,17 @@ import { supabase } from "./auth-client.js";
     byId("flightResultsCount").textContent="Choose your departure flight";
     results.hidden=false;showStage();results.scrollIntoView({behavior:"smooth",block:"start"});
   });
+  const params=new URLSearchParams(window.location.search);
+  if(params.has("origin")&&params.has("destination")){
+    byId("origin").value=params.get("origin")||"";
+    byId("destination").value=params.get("destination")||"";
+    const trip=params.get("tripType")==="Round trip"?"Round trip":"One way";
+    const radio=form.querySelector('input[name="tripType"][value="'+trip+'"]');if(radio)radio.checked=true;
+    byId("departDate").value=params.get("departureDate")||"";
+    byId("returnDate").value=params.get("returnDate")||"";
+    ["adults","children","infants"].forEach(id=>{const value=params.get(id);if(value!==null&&byId(id))byId(id).value=value;});
+    if(params.get("cabin"))byId("cabin").value=params.get("cabin");
+  }
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());const today=now.toISOString().slice(0,10);
   byId("departDate").min=today;byId("returnDate").min=today;updateTripType();
 })();
