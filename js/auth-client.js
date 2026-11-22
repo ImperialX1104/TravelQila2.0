@@ -43,7 +43,7 @@ if (siteUrl.search || siteUrl.hash) {
 const normalizedSiteUrl = siteUrl.href.replace(/\/+$/, "");
 
 const ALLOWED_PAGES = new Set([
-    "index.html", "trip-enquiry.html", "packages.html", "dashboard.html",
+    "index.html", "trip-enquiry.html", "packages.html", "hotels.html", "dashboard.html",
     "about.html", "services.html", "contact.html", "login.html",
     "register.html", "forgot-password.html", "reset-password.html"
 ]);
