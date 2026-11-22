@@ -4,6 +4,7 @@ import { packages } from "@/lib/package-data";
 import GalleryGrid from "@/components/gallery-grid";
 import { HeroCarousel, HomeSearch, DestinationTabs, ExploreTourTabs, BookingPromo, NewsletterForm } from "@/components/home-interactions";
 import "./home-replica.css";
+import "./marketing.css";
 
 export const metadata = {
   title: "Tour Packages, Flights, Hotels & Visa Assistance",
