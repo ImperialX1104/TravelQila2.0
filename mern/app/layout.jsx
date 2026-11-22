@@ -9,7 +9,7 @@ export const metadata = {
     template: "%s | Travel Qila"
   },
   description: "Discover memorable holidays, compare travel options and plan your next journey with Travel Qila.",
-  applicationName: "Travel Qila",
+  applicationName: "Travel Qila",\n  alternates: { canonical: "/" },\n  robots: { index: true, follow: true },\n  twitter: { card: "summary_large_image", title: "Travel Qila | Explore the World", description: "Plan memorable holidays with Travel Qila." },
   openGraph: {
     type: "website",
     siteName: "Travel Qila",
