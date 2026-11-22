@@ -57,6 +57,12 @@ try {
     const response = await page.goto(base + route, { waitUntil:"domcontentloaded" });
     if (!response || response.status() !== 200) failures.push(`${route}: page returned ${response?.status() ?? "no response"}`);
 
+    if (await page.locator("nav.navbar").count()) {
+      if (await page.locator('nav.navbar a[href$="hotels.html"]').count() !== 1) failures.push(`${route}: shared navigation is missing the Hotels link`);
+      if (await page.locator('nav.navbar a[href$="visa.html"]').count() !== 1) failures.push(`${route}: shared navigation is missing the Visa link`);
+      if (await page.locator(".footer").count() !== 1) failures.push(`${route}: shared footer is missing or duplicated`);
+    }
+
     const references = await page.evaluate(() => {
       const values = [];
       for (const node of document.querySelectorAll("a[href], img[src], script[src], link[rel='stylesheet'][href], source[src]")) {
