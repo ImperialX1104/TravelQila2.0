@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export const metadata = { title: "Tour Packages, Flights, Hotels & Visa Assistance", description: "Discover destinations, explore holiday packages and request flight, hotel and visa assistance with Travel Qila.", alternates: { canonical: "/" } };\n\nconst services = [
+export const metadata = { title: "Tour Packages, Flights, Hotels & Visa Assistance", description: "Discover destinations, explore holiday packages and request flight, hotel and visa assistance with Travel Qila.", alternates: { canonical: "/" } };
+
+const services = [
   { number: "01", title: "Flights", copy: "Share your route, dates and preferences. Our team will help you explore suitable flight options.", href: "/services.html", action: "Explore flights" },
   { number: "02", title: "Hotels", copy: "Find a stay that fits your destination, travel dates, group and budget.", href: "/hotels.html", action: "Explore hotels" },
   { number: "03", title: "Visa assistance", copy: "Understand the documents and next steps for your intended destination.", href: "/visa.html", action: "Explore visa help" },
