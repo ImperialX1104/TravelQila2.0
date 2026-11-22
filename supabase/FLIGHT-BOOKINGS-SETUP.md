@@ -38,8 +38,8 @@ The **Recheck options** action reopens the search with the saved search details 
 
 - Customers can SELECT only their own booking requests and wishlist rows.
 - Customers can INSERT only rows with their own `user_id`.
-- Customers can DELETE only their own wishlist rows.
-- Customers cannot change booking status or update saved itinerary snapshots through the browser.
+- Customers can UPDATE and DELETE only their own wishlist rows; updates are limited to the saved title and itinerary snapshot.
+- Customers cannot change booking status or update booking requests through the browser. They can refresh only their own saved itinerary snapshot.
 - Actual ticket confirmation/cancellation must be performed by a trusted server-side workflow.
 
 Never put Supabase service-role keys or airline-provider secrets in browser code.
