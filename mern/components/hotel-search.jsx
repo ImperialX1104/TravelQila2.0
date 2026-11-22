@@ -26,11 +26,13 @@ export default function HotelSearch() {
   const [user,setUser]=useState(null);
   const [wishlist,setWishlist]=useState([]);
   const [message,setMessage]=useState({text:"",kind:"info"});
-  const [whatsapp,setWhatsapp]=useState("");\n  const [minDate,setMinDate]=useState("");
+  const [whatsapp,setWhatsapp]=useState("");
+  const [minDate,setMinDate]=useState("");
   const [busy,setBusy]=useState("");
 
   useEffect(()=>{
-    setMinDate(localDate());\n    setForm(current=>({...current,checkIn:localDate()}));
+    setMinDate(localDate());
+    setForm(current=>({...current,checkIn:localDate()}));
     let active=true;
     try {
       getSupabaseBrowserClient().auth.getUser().then(async({data,error})=>{
