@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-const SAFE_DESTINATIONS = new Set(["/","/dashboard.html","/services.html","/hotels.html","/visa.html","/packages.html","/trip-enquiry.html"]);
+const SAFE_DESTINATIONS = new Set(["/","/dashboard.html","/services.html","/hotels.html","/visa.html","/packages.html","/trip-enquiry.html","/reset-password.html","/login.html?verified=1"]);
 
 export async function GET(request) {
   const requestUrl = new URL(request.url);
