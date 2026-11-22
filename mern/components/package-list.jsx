@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { packages } from "@/lib/package-data";
 
-export default function PackageList(){
- const [search,setSearch]=useState("");const [destination,setDestination]=useState("all");const [duration,setDuration]=useState("all");
+export default function PackageList({ initialSearch = "" }){
+ const [search,setSearch]=useState(initialSearch);const [destination,setDestination]=useState("all");const [duration,setDuration]=useState("all");
  const filtered=useMemo(()=>packages.filter(item=>{
   const q=search.trim().toLowerCase();
   return (!q||(item.name+" "+item.destination+" "+item.description).toLowerCase().includes(q))&&(destination==="all"||item.category===destination)&&(duration==="all"||(duration==="short"&&item.days<=5)||(duration==="medium"&&item.days>=6&&item.days<=7)||(duration==="long"&&item.days>=8));
