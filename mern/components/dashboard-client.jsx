@@ -113,7 +113,8 @@ export default function DashboardClient({ user, initial, loadErrors }) {
     <aside className="dashboard-sidebar">
       <div className="dashboard-user"><span>{name.slice(0,1).toUpperCase()}</span><strong>{name}</strong><small>{user.email}</small></div>
       <p className="dash-side-label">My account</p>
-      {nav.map(([key,label]) => <button key={key} className={active === key ? "is-active" : ""} onClick={() => setActive(key)}>{label}</button>)}\n      <a className="dash-wishlist-anchor" data-wishlist-list href="#wishlist" onClick={() => setActive("flights")}>Saved flights</a>
+      {nav.map(([key,label]) => <button key={key} className={active === key ? "is-active" : ""} onClick={() => setActive(key)}>{label}</button>)}
+      <a className="dash-wishlist-anchor" data-wishlist-list href="#wishlist" onClick={() => setActive("flights")}>Saved flights</a>
       <button className="dash-logout" onClick={signOut} disabled={busy === "logout"}>{busy === "logout" ? "Signing out…" : "Sign out"}</button>
     </aside>
 
