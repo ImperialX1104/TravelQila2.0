@@ -4,6 +4,7 @@ The flight page and customer dashboard use two Supabase tables:
 
 - `public.flight_bookings` stores booking requests created by the signed-in customer.
 - `public.flight_wishlists` stores the customer's saved complete itinerary (outbound and, for round trips, return flight).
+- `flight_bookings.additional_preferences` retains optional customer requests (up to 600 characters).
 
 ## Apply the migration
 
