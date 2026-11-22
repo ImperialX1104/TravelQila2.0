@@ -35,7 +35,7 @@ test("homepage destination filters, tour tabs and package search work", async ({
   await page.locator("#homeDestination").fill("Bali");
   await page.getByRole("button",{name:"Search",exact:true}).click();
   await expect(page).toHaveURL(/packages\.html\?search=Bali/);
-  await expect(page.getByLabel("Search packages")).toHaveValue("Bali");
+  await expect(page.locator("#packageSearch")).toHaveValue("Bali");
   await page.goto("/");
   await page.getByRole("button",{name:"Canada",exact:true}).click();
   await expect(page.locator(".home-destination-card")).toHaveCount(2);
@@ -51,8 +51,8 @@ test("protected dashboard sends signed-out visitor to sign in", async ({ page })
 
 test("flight search supports a round-trip selection and review", async ({ page }) => {
   await page.goto("/services.html");
-  await page.getByLabel("From").fill("New Delhi (DEL)");
-  await page.getByLabel("To").fill("Mumbai (BOM)");
+  await page.locator("#origin").fill("New Delhi (DEL)");
+  await page.locator("#destination").fill("Mumbai (BOM)");
   await page.getByRole("button", { name: /find flights/i }).click();
   await page.getByRole("button", { name: /select this departure flight/i }).first().click();
   await page.getByRole("button", { name: /select this return flight/i }).first().click();
@@ -62,16 +62,16 @@ test("flight search supports a round-trip selection and review", async ({ page }
 
 test("hotel search filters sample stays and renders a price breakdown", async ({ page }) => {
   await page.goto("/hotels.html");
-  await page.getByLabel("Destination").fill("Goa");
-  await page.getByLabel("Check-out").fill("2027-02-04");
-  await page.getByRole("button", { name: /search stays/i }).click();
+  await page.locator("#hotelDestination").fill("Goa");
+  await page.locator("#checkout").fill("2027-02-04");
+  await page.locator("#hotelSearchForm button[type=submit][value=search]").click();
   await expect(page.getByText("Seabreeze Resort & Spa")).toBeVisible();
   await expect(page.getByText(/taxes \(12%\)/i).first()).toBeVisible();
 });
 
 test("package filters and gallery lightbox are interactive", async ({ page }) => {
   await page.goto("/packages.html");
-  await page.getByLabel("Search packages").fill("Bali");
+  await page.locator("#packageSearch").fill("Bali");
   await expect(page.getByText("Bali Discovery")).toBeVisible();
   await expect(page.getByText("Kashmir Escape")).toHaveCount(0);
   await page.goto("/gallery.html");
