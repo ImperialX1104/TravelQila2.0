@@ -117,7 +117,7 @@ try {
         await page.locator('.flight-result-card [data-select-leg="return"]').first().click();
         if (await page.locator(".tq-summary-leg").count() !== 2) failures.push(`${route}: round-trip review must include both selected legs`);
         if (!(await page.locator(".tq-price-breakdown").innerText()).includes("Estimated taxes")) failures.push(`${route}: itinerary review must show estimated taxes`);
-        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1) failures.push(`${route}: review must provide booking and wishlist actions`);
+        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1 || await page.locator("[data-share-itinerary]").count() !== 2) failures.push(`${route}: review must provide booking, wishlist, WhatsApp and email actions`);
 
         await page.locator('input[name="tripType"][value="One way"]').check();
         const returnRequired = await page.locator("#returnDate").evaluate(el => el.required);
@@ -126,7 +126,7 @@ try {
         await page.locator('.flight-result-card [data-select-leg="outbound"]').first().click();
         if (await page.locator(".tq-summary-leg").count() !== 1) failures.push(`${route}: one-way review must include exactly one selected leg`);
         if (await page.locator(".tq-summary-leg-title").allTextContents().then(x => x.some(t => t.includes("Return")))) failures.push(`${route}: one-way review unexpectedly includes a return leg`);
-        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1) failures.push(`${route}: one-way review must provide booking and wishlist actions`);
+        if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1 || await page.locator("[data-share-itinerary]").count() !== 2) failures.push(`${route}: one-way review must provide booking, wishlist, WhatsApp and email actions`);
         const recheckUrl = base + "/services.html?origin=New%20Delhi%20(DEL)&destination=Mumbai%20(BOM)&tripType=Round%20trip&departureDate=" + future(12) + "&returnDate=" + future(16) + "&adults=2&children=0&infants=0&cabin=Economy&wishlistId=test-saved-id";
         await page.goto(recheckUrl, { waitUntil:"domcontentloaded" });
         if (await page.locator("#origin").inputValue() !== "New Delhi (DEL)" || await page.locator("#destination").inputValue() !== "Mumbai (BOM)") failures.push(`${route}: saved-flight recheck did not prefill the route`);
