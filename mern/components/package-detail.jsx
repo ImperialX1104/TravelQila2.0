@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";\nimport PackageAttractions from "@/components/package-attractions";
+import Link from "next/link";
+import PackageAttractions from "@/components/package-attractions";
 
 export default function PackageDetail({item}){
  return <main className="package-detail-page">

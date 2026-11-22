@@ -24,7 +24,13 @@ for (const route of routes) {
   });
 }
 
-test("package details include the nearby attractions section", async ({ page }) => {\n  await page.goto("/package-details.html?id=bali-discovery");\n  await expect(page.getByRole("heading", { name: /Explore Attractions Nearby/i })).toBeVisible();\n  await expect(page.locator("#attractionsStatus")).toBeVisible();\n});\n\ntest("protected dashboard sends signed-out visitor to sign in", async ({ page }) => {
+test("package details include the nearby attractions section", async ({ page }) => {
+  await page.goto("/package-details.html?id=bali-discovery");
+  await expect(page.getByRole("heading", { name: /Explore Attractions Nearby/i })).toBeVisible();
+  await expect(page.locator("#attractionsStatus")).toBeVisible();
+});
+
+test("protected dashboard sends signed-out visitor to sign in", async ({ page }) => {
   await page.goto("/dashboard.html");
   await expect(page).toHaveURL(/login\.html/);
 });
