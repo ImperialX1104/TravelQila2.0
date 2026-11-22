@@ -103,7 +103,8 @@ export default function AuthForm({ mode }) {
         const invalid = passwordError(values.password);
         if (invalid) throw new Error(invalid);
         if (!values.terms) throw new Error("Please accept the Terms and Privacy Policy.");
-        const callback = new URL("/auth/callback", window.location.origin); callback.searchParams.set("next", "/login.html?verified=1");\n        const redirect = callback.href;
+        const callback = new URL("/auth/callback", window.location.origin); callback.searchParams.set("next", "/login.html?verified=1");
+        const redirect = callback.href;
         const { data, error } = await supabase.auth.signUp({
           email: values.email.trim(), password: values.password,
           options: { emailRedirectTo: redirect, data: { full_name: values.full_name.trim(), phone: values.phone.trim() } }

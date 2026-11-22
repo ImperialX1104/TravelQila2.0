@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";\nimport GalleryGrid from "@/components/gallery-grid";
+import Link from "next/link";
+import GalleryGrid from "@/components/gallery-grid";
 
 const blogCards=[
  {title:"Planning your first international holiday",copy:"A practical starting point for choosing dates, destinations and the details to confirm before you travel.",image:"/img/blog-1.jpg"},
