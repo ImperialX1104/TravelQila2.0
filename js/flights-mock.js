@@ -107,6 +107,7 @@ import { supabase } from "./auth-client.js";
     if(origin.city.toLowerCase()===destination.city.toLowerCase()||(origin.code&&origin.code===destination.code)){byId("destination").setCustomValidity("Choose a different arrival airport.");byId("destination").reportValidity();byId("destination").setCustomValidity("");return;}
     const adults=Number(byId("adults").value),infants=Number(byId("infants").value);if(infants>adults){byId("infants").setCustomValidity("Infants cannot exceed the number of adults.");byId("infants").reportValidity();byId("infants").setCustomValidity("");return;}
     const tripType=form.querySelector('input[name="tripType"]:checked').value;
+    if(tripType==="Round trip"&&byId("returnDate").value<byId("departDate").value){byId("returnDate").setCustomValidity("Return date must be on or after the departure date.");byId("returnDate").reportValidity();byId("returnDate").setCustomValidity("");return;}
     search={origin,destination,departureDate:byId("departDate").value,returnDate:tripType==="Round trip"?byId("returnDate").value:null,tripType,adults,children:Number(byId("children").value),infants,cabin:byId("cabin").value};
     selectedOutbound=null;selectedReturn=null;stage="outbound";
     outboundOptions=makeOptions(origin,destination,search.departureDate,origin.code+destination.code);
@@ -126,5 +127,5 @@ import { supabase } from "./auth-client.js";
     if(params.get("cabin"))byId("cabin").value=params.get("cabin");
   }
   const now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());const today=now.toISOString().slice(0,10);
-  byId("departDate").min=today;byId("returnDate").min=today;updateTripType();
+  byId("departDate").min=today;byId("returnDate").min=today;updateTripType();if(byId("departDate").value)byId("returnDate").min=byId("departDate").value;
 })();
