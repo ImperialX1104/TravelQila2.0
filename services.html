@@ -184,23 +184,18 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
     </div>
     <div class="col-12"><label class="flight-label" for="notes">Additional preferences <span class="text-muted fw-normal">(optional)</span></label><textarea class="flight-control" id="notes" name="additionalPreferences" rows="2" maxlength="600" placeholder="Preferred airline, baggage needs, meal preference, child/infant details or any special request"></textarea></div>
     <div class="col-12 mt-2">
-     <button class="btn btn-primary rounded-pill px-5 py-3 flight-submit w-100" type="submit"><i class="fas fa-search me-2"></i>Search demo flights</button>
+     <button class="btn btn-primary rounded-pill px-5 py-3 flight-submit w-100" type="submit"><i class="fas fa-search me-2"></i>Find flights</button>
     </div>
    </div>
   </form>
  </div>
  <section id="flightResults" class="flight-results" hidden aria-live="polite" aria-label="Flight search results">
   <div class="flight-results-heading"><div><div class="flight-eyebrow text-primary">YOUR SEARCH RESULTS</div><h2 id="resultRoute" class="mt-1">Flight options</h2><div id="resultDates" class="text-muted small mt-1"></div></div><div id="flightResultsCount" class="flight-results-count"></div></div>
-  <div class="flight-demo-banner"><i class="fas fa-info-circle mt-1"></i><div><strong>Demo results only — not live airline inventory.</strong> These sample routes, times, flight numbers, fares and baggage details are generated for testing the website. Round-trip options display both outbound and return legs; one-way options display only the outbound leg. Neither itinerary is a verified schedule or bookable price. Contact Travel Qila for an actual quote before making travel decisions.</div></div>
-  <div class="flight-results-tools">
-   <label for="resultStops">Stops</label><select id="resultStops"><option value="any">Any</option><option value="nonstop">Non-stop</option><option value="one">Up to 1 stop</option></select>
-   <label for="resultAirline">Airline</label><select id="resultAirline"><option value="all">All airlines</option><option>IndiGo</option><option>Air India</option><option>Akasa Air</option><option>Air India Express</option></select>
-   <label for="resultSort">Sort by</label><select id="resultSort"><option value="price">Lowest demo fare</option><option value="duration">Shortest duration</option><option value="departure">Departure time</option></select>
-  </div>
+  <div class="flight-demo-banner"><i class="fas fa-info-circle mt-1"></i><div><strong>Demo results only — not live airline inventory.</strong> These sample routes, times, flight numbers, fares and baggage details are generated for testing the website. For round trips, choose an outbound flight and then a separate return flight. One-way searches ask for just one flight. These are illustrative demo options, not live airline inventory. Contact Travel Qila for an actual quote before making travel decisions.</div></div>
   <div id="flightResultsList"></div>
   <div id="flightResultsEmpty" class="flight-empty"><i class="fas fa-plane-slash fa-2x mb-3"></i><h3 class="h5">No demo options match these filters</h3><p class="mb-0">Try another airline, stop preference or a higher budget.</p></div>
  </section>
- <div class="flight-note mt-4"><i class="fas fa-info-circle me-2 text-primary"></i><strong>How this works:</strong> Round-trip results include an outbound leg and a separate return leg; one-way results include only one leg. Search results are illustrative mock data for website testing. No fare, seat or booking is confirmed until our team checks live availability and the final fare.</div>
+ <div class="flight-note mt-4"><i class="fas fa-info-circle me-2 text-primary"></i><strong>How this works:</strong> Round trips require you to select both outbound and return flights before reviewing the total. One-way trips require only one selection. The summary includes an illustrative tax estimate; final airline fares, taxes and availability must be checked before ticketing.</div>
 </section>
 <section class="container pb-5">
  <div class="text-center mb-4"><div class="flight-eyebrow text-primary">THE TRAVEL QILA DIFFERENCE</div><h2 class="display-6 fw-bold mt-2">Flight planning, with people who care</h2><p class="text-muted mx-auto" style="max-width:650px">Get help with the details that make your journey smoother, from choosing a route to understanding the fare conditions.</p></div>
