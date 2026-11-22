@@ -96,13 +96,13 @@ export default function HotelSearch({ today }) {\n  const router = useRouter();
   }
 
   async function bookHotel(hotel) {
-    if(!user){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
+    if(!user){router.push("/login.html?returnTo=%2Fhotels.html");return;}
     if(!form.checkIn||!form.checkOut||nightsBetween(form.checkIn,form.checkOut)<1){setMessage({text:"Please choose valid check-in and check-out dates first.",kind:"error"});return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});setWhatsapp("");
     try{
       const response=await fetch("/api/hotel-bookings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({hotelId:hotel.id,checkIn:form.checkIn,checkOut:form.checkOut,guests:Number(form.guests),rooms:Number(form.rooms)})});
       const result=await response.json();
-      if(response.status===401){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
+      if(response.status===401){router.push("/login.html?returnTo=%2Fhotels.html");return;}
       if(!response.ok)throw new Error(result.error||"Request failed");
       setMessage({text:"Your hotel enquiry has been saved to your dashboard. Our team will contact you to confirm live availability and the final rate.",kind:"success"});
       const text=["Hello Travel Qila, I would like to book this hotel.","Hotel: "+hotel.name,"Destination: "+hotel.city,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Guests: "+form.guests,"Estimated total incl. taxes: "+currency.format(result.estimatedTotal),"Enquiry ID: "+result.enquiryId].join("\n");

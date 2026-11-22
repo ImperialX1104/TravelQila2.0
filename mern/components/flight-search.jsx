@@ -28,7 +28,7 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const
     if (!hasInitialSearch || initialSearch.tripType === "One way" || !initialSearch.returnDate) return [];
     const from = parseAirport(initialSearch.destination);
     const to = parseAirport(initialSearch.origin);
-    return buildOptions(from,to,initialSearch.returnDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
+    return buildFlightOptions(from,to,initialSearch.returnDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
   });
   const [outbound,setOutbound]=useState(null);
   const [returning,setReturning]=useState(null);
@@ -47,8 +47,8 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const
     if(!form.departureDate||(form.tripType==="Round trip"&&(!form.returnDate||form.returnDate<form.departureDate))){setMessage({text:"Choose valid travel dates. Return date must be on or after departure.",kind:"error"});return;}
     const adults=Number(form.adults),infants=Number(form.infants);
     if(infants>adults){setMessage({text:"Infants cannot exceed the number of adults.",kind:"error"});return;}
-    const out=buildOptions(origin,destination,form.departureDate,origin.code+destination.code,form.dateFlexibility);
-    const ret=form.tripType==="Round trip"?buildOptions(destination,origin,form.returnDate,destination.code+origin.code,form.dateFlexibility):[];
+    const out=buildFlightOptions(origin,destination,form.departureDate,origin.code+destination.code,form.dateFlexibility);
+    const ret=form.tripType==="Round trip"?buildFlightOptions(destination,origin,form.returnDate,destination.code+origin.code,form.dateFlexibility):[];
     setOutboundOptions(out);setReturnOptions(ret);setOutbound(null);setReturning(null);setFilters({stops:"any",airline:"all",sort:"price"});setStage("outbound");
   }
 
@@ -93,7 +93,7 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const
     try {
       const response=await fetch("/api/flight-bookings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(trip)});
       const result=await response.json();
-      if(response.status===401){window.location.href="/login.html?returnTo=%2Fservices.html";return;}
+      if(response.status===401){router.push("/login.html?returnTo=%2Fservices.html");return;}
       if(!response.ok)throw new Error(result.error||"Request failed");
       setMessage({text:"Booking request "+result.bookingReference+" is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.",kind:"success"});
     } catch(error) { setMessage({text:error.message||"We couldn't submit your request. Please try again.",kind:"error"}); }
