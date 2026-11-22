@@ -14,6 +14,6 @@ export default function ContactEnquiry(){
    <label className="contact-wide">Message *<textarea name="Message" value={fields.Message} onChange={change} required maxLength={2000} rows="6" placeholder="Tell us how we can help you."/></label>
   </div>
   <div className="contact-actions"><button className="button" type="submit" value="whatsapp">Send via WhatsApp ↗</button><button className="button button-outline" type="submit" value="email">Send by email</button></div>
-  {status&&<p id="contactFormStatus" className="contact-status" role="status">{status}</p>}
+  {status&&<p id="contactFormStatus" data-form-status className="contact-status" role="status">{status}</p>}
  </form>;
 }
