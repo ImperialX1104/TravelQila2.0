@@ -122,7 +122,7 @@ export default function HotelSearch() {
       {message.text&&<div id="hotelStatus" className={`hotel-message is-${message.kind}`} role={message.kind==="error"?"alert":"status"}>{message.text}</div>}
       {whatsapp&&<a id="hotelWhatsapp" className="hotel-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer">Continue on WhatsApp ↗</a>}
     </div></section>
-    <section className="container hotel-results-section" id="hotelResultsHeading"><span id="hotelResults" />
+    <section className="container hotel-results-section" id="hotelResults">
       <div className="hotel-results-heading"><div><p className="eyebrow eyebrow-blue">Recommended stays</p><h2>{searched?found.length+" stay"+(found.length===1?"":"s")+" matching your search":"A few places to get inspired"}</h2></div><span>Rates shown in INR</span></div>
       {!searched?<div className="hotel-empty"><h3>Start with your destination</h3><p>Enter a city and valid check-in/check-out dates to explore stays.</p></div>:!found.length?<div className="hotel-empty"><h3>No stays match these filters</h3><p>Try a nearby destination, lower star rating or a higher budget.</p></div>:<div className="hotel-result-list">{found.map(hotel=><article className="hotel-result-card" key={hotel.id}>
         <div className="hotel-photo"><Image src={hotel.image} alt={hotel.name} fill sizes="(max-width: 700px) 100vw, 360px" /><span>{hotel.tag}</span></div>

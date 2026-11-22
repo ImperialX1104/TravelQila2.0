@@ -138,7 +138,7 @@ export default function FlightSearch() {
           </div>
           <div className="flight-budget"><label htmlFor="maximumBudget">Maximum budget per passenger <strong>{money(form.maximumBudget)}</strong></label><input id="maxPrice" type="range" name="maximumBudget" min="5000" max="200000" step="5000" value={form.maximumBudget} onChange={change}/><div><span>₹5,000</span><span>₹2,00,000</span></div></div>
           <label className="flight-notes">Additional preferences<textarea id="notes" name="additionalPreferences" rows="2" maxLength={600} value={form.additionalPreferences} onChange={change} placeholder="Preferred airline, baggage needs, meal preference or special request"/></label>
-          <button className="button flight-submit" type="submit">Find flights <span aria-hidden="true">↗</span></button>
+          <button className="button flight-submit" type="submit" value="search">Find flights <span aria-hidden="true">↗</span></button>
         </form>
         {message.text&&<div className={`flight-message is-${message.kind}`} role={message.kind==="error"?"alert":"status"}>{message.text}</div>}
       </div>
