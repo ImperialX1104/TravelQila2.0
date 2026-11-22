@@ -1,0 +1,71 @@
+import { test, expect } from "@playwright/test";
+
+const routes = [
+  "/", "/about.html", "/services.html", "/hotels.html", "/visa.html",
+  "/packages.html", "/package-details.html?id=bali-discovery",
+  "/destination.html", "/tour.html", "/trip-enquiry.html", "/contact.html",
+  "/blog.html", "/gallery.html", "/guides.html", "/testimonial.html",
+  "/privacy.html", "/terms.html", "/404.html",
+  "/destinations/bali-tour-packages.html", "/destinations/dubai-tour-packages.html",
+  "/destinations/europe-tour-packages.html", "/destinations/goa-tour-packages.html",
+  "/destinations/kashmir-tour-packages.html", "/destinations/kerala-tour-packages.html",
+  "/destinations/malaysia-tour-packages.html", "/destinations/maldives-tour-packages.html",
+  "/destinations/singapore-tour-packages.html", "/destinations/thailand-tour-packages.html",
+  "/destinations/vietnam-tour-packages.html"
+];
+
+for (const route of routes) {
+  test(`route renders without server error: ${route}`, async ({ page }) => {
+    const response = await page.goto(route);
+    expect(response?.status(), route).toBeLessThan(500);
+    await expect(page.locator("header.site-header")).toBeVisible();
+    await expect(page.locator("footer.site-footer")).toBeVisible();
+    await expect(page.locator("main")).toHaveCount(1);
+  });
+}
+
+test("protected dashboard sends signed-out visitor to sign in", async ({ page }) => {
+  await page.goto("/dashboard.html");
+  await expect(page).toHaveURL(/login\.html/);
+});
+
+test("flight search supports a round-trip selection and review", async ({ page }) => {
+  await page.goto("/services.html");
+  await page.getByLabel("From").fill("New Delhi (DEL)");
+  await page.getByLabel("To").fill("Mumbai (BOM)");
+  await page.getByRole("button", { name: /find flights/i }).click();
+  await page.getByRole("button", { name: /select this departure flight/i }).first().click();
+  await page.getByRole("button", { name: /select this return flight/i }).first().click();
+  await expect(page.getByRole("heading", { name: /review & save/i })).toBeVisible();
+  await expect(page.getByText(/illustrative demo snapshot|live fare/i)).toBeVisible();
+});
+
+test("hotel search filters sample stays and renders a price breakdown", async ({ page }) => {
+  await page.goto("/hotels.html");
+  await page.getByLabel("Destination").fill("Goa");
+  await page.getByLabel("Check-out").fill("2027-02-04");
+  await page.getByRole("button", { name: /search stays/i }).click();
+  await expect(page.getByText("Seabreeze Resort & Spa")).toBeVisible();
+  await expect(page.getByText(/taxes \(12%\)/i).first()).toBeVisible();
+});
+
+test("package filters and gallery lightbox are interactive", async ({ page }) => {
+  await page.goto("/packages.html");
+  await page.getByLabel("Search packages").fill("Bali");
+  await expect(page.getByText("Bali Discovery")).toBeVisible();
+  await expect(page.getByText("Kashmir Escape")).toHaveCount(0);
+  await page.goto("/gallery.html");
+  await page.getByRole("button", { name: "Open travel gallery image 1" }).click();
+  await expect(page.getByRole("dialog", { name: "Travel photo viewer" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("mobile layouts do not introduce horizontal overflow on key service pages", async ({ page }) => {
+  for (const route of ["/", "/services.html", "/hotels.html", "/visa.html", "/packages.html", "/contact.html"]) {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(route);
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 2);
+    expect(overflow, route).toBe(false);
+  }
+});

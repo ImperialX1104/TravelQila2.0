@@ -32,14 +32,16 @@ export default function HotelSearch() {
   useEffect(()=>{
     setMinDate(localDate());\n    setForm(current=>({...current,checkIn:localDate()}));
     let active=true;
-    getSupabaseBrowserClient().auth.getUser().then(async({data,error})=>{
-      if(!active)return;
-      const current=data?.user||null;setUser(current);
-      if(current&&!error){
-        const {data:rows,error:loadError}=await getSupabaseBrowserClient().from("hotel_wishlists").select("hotel_id").eq("user_id",current.id);
-        if(active&&!loadError)setWishlist((rows||[]).map(row=>row.hotel_id));
-      }
-    }).catch(()=>{});
+    try {
+      getSupabaseBrowserClient().auth.getUser().then(async({data,error})=>{
+        if(!active)return;
+        const current=data?.user||null;setUser(current);
+        if(current&&!error){
+          const {data:rows,error:loadError}=await getSupabaseBrowserClient().from("hotel_wishlists").select("hotel_id").eq("user_id",current.id);
+          if(active&&!loadError)setWishlist((rows||[]).map(row=>row.hotel_id));
+        }
+      }).catch(()=>{});
+    } catch { /* Search remains available when Supabase environment is not configured. */ }
     return()=>{active=false;};
   },[]);
 
@@ -59,7 +61,7 @@ export default function HotelSearch() {
     if(!user){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});
     const isSaved=wishlist.includes(hotel.id);
-    const q=quote(hotel,form.checkIn,form.checkOut);
+    const q=form.checkIn&&form.checkOut&&nightsBetween(form.checkIn,form.checkOut)>0?quote(hotel,form.checkIn,form.checkOut):{nights:1,base:hotel.rate,tax:Math.round(hotel.rate*.12),total:Math.round(hotel.rate*1.12)};
     try {
       if(isSaved){
         const {error}=await getSupabaseBrowserClient().from("hotel_wishlists").delete().eq("user_id",user.id).eq("hotel_id",hotel.id);
@@ -80,13 +82,13 @@ export default function HotelSearch() {
     if(!user){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
     if(!form.checkIn||!form.checkOut||nightsBetween(form.checkIn,form.checkOut)<1){setMessage({text:"Please choose valid check-in and check-out dates first.",kind:"error"});return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});setWhatsapp("");
-    const q=quote(hotel,form.checkIn,form.checkOut);
-    const customerName=user.user_metadata?.full_name||user.user_metadata?.name||"Traveller";
     try{
-      const {data,error}=await getSupabaseBrowserClient().from("hotel_booking_requests").insert({user_id:user.id,hotel_id:hotel.id,hotel_name:hotel.name,destination:hotel.city,check_in:form.checkIn,check_out:form.checkOut,guests:Number(form.guests),rooms:1,nightly_rate:hotel.rate,taxes:q.tax,total_price:q.total,currency:"INR",customer_name:customerName,customer_email:user.email||"Not provided",customer_phone:user.user_metadata?.phone||""}).select("id").single();
-      if(error)throw error;
+      const response=await fetch("/api/hotel-bookings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({hotelId:hotel.id,checkIn:form.checkIn,checkOut:form.checkOut,guests:Number(form.guests),rooms:1})});
+      const result=await response.json();
+      if(response.status===401){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
+      if(!response.ok)throw new Error(result.error||"Request failed");
       setMessage({text:"Your hotel enquiry has been saved to your dashboard. Our team will contact you to confirm live availability and the final rate.",kind:"success"});
-      const text=["Hello Travel Qila, I would like to book this hotel.","Hotel: "+hotel.name,"Destination: "+hotel.city,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Guests: "+form.guests,"Estimated total incl. taxes: "+currency.format(q.total),"Enquiry ID: "+data.id].join("\n");
+      const text=["Hello Travel Qila, I would like to book this hotel.","Hotel: "+hotel.name,"Destination: "+hotel.city,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Guests: "+form.guests,"Estimated total incl. taxes: "+currency.format(result.estimatedTotal),"Enquiry ID: "+result.enquiryId].join("\\n");
       setWhatsapp("https://wa.me/919871101345?text="+encodeURIComponent(text));
     }catch{setMessage({text:"Your request could not be saved. Please try again or contact our team.",kind:"error"});}
     finally{setBusy("");}
