@@ -50,7 +50,9 @@ try {
     // The dashboard is intentionally protected. Keep its markup available for layout QA
     // without allowing the unauthenticated test browser to be redirected to login.
     if (route === "/dashboard.html") {
-      await page.route(/\\/js\\/(auth-nav|auth-pages|dashboard)\\.js(?:\\?.*)?$/, route => route.abort());
+      await page.route("**/js/auth-nav.js", route => route.abort());
+      await page.route("**/js/auth-pages.js", route => route.abort());
+      await page.route("**/js/dashboard.js", route => route.abort());
     }
     const response = await page.goto(base + route, { waitUntil:"domcontentloaded" });
     if (!response || response.status() !== 200) failures.push(`${route}: page returned ${response?.status() ?? "no response"}`);
