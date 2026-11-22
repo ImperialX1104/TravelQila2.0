@@ -1,5 +1,5 @@
 import ServiceEnquiryForm from "@/components/service-enquiry-form";
-import "./service-enquiry.css";
+import "../service-enquiry.css";
 export const metadata = {
   title: "Plan Your Trip | Request a Holiday Quotation",
   description: "Tell Travel Qila about your destination, dates, group and budget to request a personalised holiday quotation.",
