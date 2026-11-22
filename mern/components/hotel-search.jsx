@@ -31,20 +31,25 @@ export default function HotelSearch() {
   const [busy,setBusy]=useState("");
 
   useEffect(()=>{
-    setMinDate(localDate());
-    setForm(current=>({...current,checkIn:localDate()}));
-    let active=true;
+    const today = localDate();
+    setMinDate(today);
+    setForm(current=>({...current,checkIn:today}));
+    let active = true;
     try {
-      getSupabaseBrowserClient().auth.getUser().then(async({data,error})=>{
+      getSupabaseBrowserClient().auth.getUser().then(async ({data,error})=>{
         if(!active)return;
-        const current=data?.user||null;setUser(current);
-        if(current&&!error){
-          const {data:rows,error:loadError}=await getSupabaseBrowserClient().from("hotel_wishlists").select("hotel_id").eq("user_id",current.id);
+        const currentUser=data?.user||null;
+        setUser(currentUser);
+        if(currentUser&&!error){
+          const {data:rows,error:loadError}=await getSupabaseBrowserClient()
+            .from("hotel_wishlists").select("hotel_id").eq("user_id",currentUser.id);
           if(active&&!loadError)setWishlist((rows||[]).map(row=>row.hotel_id));
         }
       }).catch(()=>{});
-    } catch { /* Search remains available when Supabase environment is not configured. */ }
-    return()=>{active=false;};
+    } catch {
+      // Search remains available before Supabase environment configuration.
+    }
+    return ()=>{active=false;};
   },[]);
 
   function change(event) {const {name,value}=event.target;setForm(current=>({...current,[name]:value}));if(name==="checkIn"&&form.checkOut&&form.checkOut<=value)setForm(current=>({...current,checkOut:""}));}
@@ -103,7 +108,7 @@ export default function HotelSearch() {
       if(response.status===401){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
       if(!response.ok)throw new Error(result.error||"Request failed");
       setMessage({text:"Your hotel enquiry has been saved to your dashboard. Our team will contact you to confirm live availability and the final rate.",kind:"success"});
-      const text=["Hello Travel Qila, I would like to book this hotel.","Hotel: "+hotel.name,"Destination: "+hotel.city,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Guests: "+form.guests,"Estimated total incl. taxes: "+currency.format(result.estimatedTotal),"Enquiry ID: "+result.enquiryId].join("\\n");
+      const text=["Hello Travel Qila, I would like to book this hotel.","Hotel: "+hotel.name,"Destination: "+hotel.city,"Check-in: "+form.checkIn,"Check-out: "+form.checkOut,"Guests: "+form.guests,"Estimated total incl. taxes: "+currency.format(result.estimatedTotal),"Enquiry ID: "+result.enquiryId].join("\n");
       setWhatsapp("https://wa.me/919871101345?text="+encodeURIComponent(text));
     }catch{setMessage({text:"Your request could not be saved. Please try again or contact our team.",kind:"error"});}
     finally{setBusy("");}

@@ -10,7 +10,9 @@ const offers = [
   {airline:"Air India",flight:"AI 887",depart:"07:35",duration:150,stops:0,price:7850,baggage:"15 kg check-in"},
   {airline:"Akasa Air",flight:"QP 1320",depart:"09:20",duration:150,stops:0,price:6990,baggage:"15 kg check-in"},
   {airline:"Air India Express",flight:"IX 1042",depart:"11:45",duration:205,stops:1,price:5980,baggage:"15 kg check-in"},
-  {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},\n  {airline:"Air India",flight:"AI 321",depart:"15:05",duration:145,stops:0,price:8150,baggage:"15 kg check-in"},\n  {airline:"IndiGo",flight:"6E 5324",depart:"19:20",duration:225,stops:1,price:6250,baggage:"15 kg check-in"},
+  {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},
+  {airline:"Air India",flight:"AI 321",depart:"15:05",duration:145,stops:0,price:8150,baggage:"15 kg check-in"},
+  {airline:"IndiGo",flight:"6E 5324",depart:"19:20",duration:225,stops:1,price:6250,baggage:"15 kg check-in"},
   {airline:"Air India",flight:"AI 441",depart:"16:40",duration:180,stops:1,price:7550,baggage:"15 kg check-in"}
 ];
 const money = value => "₹" + Number(value || 0).toLocaleString("en-IN");
@@ -39,11 +41,37 @@ export default function FlightSearch() {
   const [wishlistId,setWishlistId]=useState(null);
 
   useEffect(()=>{
-    const params=new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
     setWishlistId(params.get("wishlistId"));
-    const map={origin:"origin",destination:"destination",tripType:"tripType",departureDate:"departureDate",returnDate:"returnDate",adults:"adults",children:"children",infants:"infants",cabin:"cabin",stops:"stops",maximumBudget:"maximumBudget",dateFlexibility:"dateFlexibility",additionalPreferences:"additionalPreferences"};
-    setForm(current=>{const next={...current};for(const [key,param] of Object.entries(map)){const value=params.get(param);if(value!==null)next[key]=value;}return next;});
-    const origin=params.get("origin"),destination=params.get("destination"),departure=params.get("departureDate");\n    if(origin&&destination&&departure){const tripType=params.get("tripType")||"Round trip";const out=parseAirport(origin),dest=parseAirport(destination);setOutboundOptions(buildOptions(out,dest,departure,out.code+dest.code,params.get("dateFlexibility")||"Exact dates"));setReturnOptions(tripType==="Round trip"&&params.get("returnDate")?buildOptions(dest,out,params.get("returnDate"),dest.code+out.code,params.get("dateFlexibility")||"Exact dates"):[]);setStage("outbound");}
+    const map = {
+      origin:"origin", destination:"destination", tripType:"tripType",
+      departureDate:"departureDate", returnDate:"returnDate", adults:"adults",
+      children:"children", infants:"infants", cabin:"cabin", stops:"stops",
+      maximumBudget:"maximumBudget", dateFlexibility:"dateFlexibility",
+      additionalPreferences:"additionalPreferences"
+    };
+    setForm(current => {
+      const next = { ...current };
+      for (const [key, param] of Object.entries(map)) {
+        const value = params.get(param);
+        if (value !== null) next[key] = value;
+      }
+      return next;
+    });
+    const origin = params.get("origin");
+    const destination = params.get("destination");
+    const departure = params.get("departureDate");
+    if (origin && destination && departure) {
+      const tripType = params.get("tripType") || "Round trip";
+      const from = parseAirport(origin);
+      const to = parseAirport(destination);
+      const flexibility = params.get("dateFlexibility") || "Exact dates";
+      setOutboundOptions(buildOptions(from, to, departure, from.code + to.code, flexibility));
+      setReturnOptions(tripType === "Round trip" && params.get("returnDate")
+        ? buildOptions(to, from, params.get("returnDate"), to.code + from.code, flexibility)
+        : []);
+      setStage("outbound");
+    }
   },[]);
 
   function change(event) { const {name,value}=event.target;setForm(current=>({...current,[name]:value})); }
