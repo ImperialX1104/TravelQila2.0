@@ -7,7 +7,12 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" }
     ]
   },
-  async rewrites() {\n    return [\n      { source: "/index.html", destination: "/" },\n      { source: "/404.html", destination: "/404-page" }\n    ];\n  },\n  async headers() {
+  async rewrites() {
+    return [
+      { source: "/index.html", destination: "/" },
+      { source: "/404.html", destination: "/404-page" }
+    ];
+  },\n  async headers() {
     return [
       {
         source: "/:path*",
