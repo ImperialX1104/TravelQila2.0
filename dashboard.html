@@ -457,6 +457,17 @@
                 font-size: 19px;
             }
         }
+    
+        .hotel-dashboard-row{display:grid;grid-template-columns:105px minmax(0,1fr) auto;gap:16px;align-items:center;padding:15px 0;border-bottom:1px solid var(--tq-border)}
+        .hotel-dashboard-row:last-child{border-bottom:0}
+        .hotel-dashboard-row img{width:105px;height:82px;object-fit:cover;border-radius:10px;background:#edf2fa}
+        .hotel-dashboard-row h3{font:700 16px Jost,sans-serif;color:var(--tq-text);margin:0 0 4px}
+        .hotel-dashboard-row p{font-size:12px;color:var(--tq-muted);margin:3px 0}
+        .hotel-dashboard-price{font-weight:700;color:var(--tq-primary);font-size:14px}
+        .hotel-dashboard-action{border:1px solid #e5cbd2;background:#fff8fa;color:#a83b55;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600}
+        .hotel-dashboard-status{display:inline-block;border-radius:20px;padding:5px 9px;font-size:10px;font-weight:700;background:#edf3ff;color:#244a8f;text-transform:capitalize}
+        .hotel-dashboard-empty{padding:22px;text-align:center;color:var(--tq-muted);background:#f8faff;border:1px dashed #dce5f2;border-radius:12px;font-size:13px}
+        @media(max-width:575px){.hotel-dashboard-row{grid-template-columns:76px minmax(0,1fr);gap:11px}.hotel-dashboard-row img{width:76px;height:76px}.hotel-dashboard-row>button{grid-column:2;justify-self:start}}
     </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
@@ -543,6 +554,8 @@
                     <i class="fas fa-suitcase-rolling"></i>
                     Book a Trip
                 </a>
+                <a href="hotels.html" class="sidebar-link"><i class="fas fa-hotel"></i> Find Hotels</a>
+                <a href="#hotel-wishlist" class="sidebar-link"><i class="fas fa-heart"></i> Hotel Wishlist</a>
 
                 <div class="sidebar-divider"></div>
 
@@ -704,6 +717,22 @@
                     </div>
                     <div data-bookings-list><p class="text-muted small mb-0">Loading your booking requests…</p></div>
                     <p class="dashboard-bookings-note">A request is not a ticket. Travel Qila must confirm live inventory, the final fare, taxes and payment before ticketing.</p>
+                </section>
+
+                <!-- HOTEL WISHLIST -->
+                <div class="dashboard-section-heading" id="hotel-wishlist">
+                    <div><h2>Saved Hotels</h2><p>Your shortlisted stays, ready when you are.</p></div>
+                    <a href="hotels.html" class="btn btn-primary btn-sm rounded-pill px-3">Find Hotels</a>
+                </div>
+                <section class="dashboard-bookings-panel" aria-live="polite">
+                    <div data-hotel-wishlist><div class="hotel-dashboard-empty">Loading your saved hotels…</div></div>
+                </section>
+                <!-- HOTEL ENQUIRIES -->
+                <div class="dashboard-section-heading" id="hotel-bookings">
+                    <div><h2>Hotel Booking Requests</h2><p>Track hotel enquiries submitted from Travel Qila.</p></div>
+                </div>
+                <section class="dashboard-bookings-panel" aria-live="polite">
+                    <div data-hotel-bookings><div class="hotel-dashboard-empty">Loading your hotel requests…</div></div>
                 </section>
 
                 <!-- PROFILE -->
