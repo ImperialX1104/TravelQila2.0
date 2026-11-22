@@ -27,7 +27,7 @@ function buildOptions(origin,destination,date,seedText,tripFlex) {
 }
 
 export default function FlightSearch() {
-  const [form,setForm]=useState({tripType:"Round trip",origin:"",destination:"",departureDate:localDate(7),returnDate:localDate(14),cabin:"Economy",adults:"1",children:"0",infants:"0",stops:"Any",maximumBudget:"50000",dateFlexibility:"Exact dates",additionalPreferences:""});
+  const [form,setForm]=useState({tripType:"Round trip",origin:"",destination:"",departureDate:"",returnDate:"",cabin:"Economy",adults:"1",children:"0",infants:"0",stops:"Any",maximumBudget:"50000",dateFlexibility:"Exact dates",additionalPreferences:""});
   const [stage,setStage]=useState("form");
   const [outboundOptions,setOutboundOptions]=useState([]);
   const [returnOptions,setReturnOptions]=useState([]);
