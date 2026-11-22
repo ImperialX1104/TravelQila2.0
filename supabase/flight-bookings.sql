@@ -27,7 +27,7 @@ create table if not exists public.flight_bookings (
     base_fare numeric(12,2) not null default 0 check (base_fare >= 0),
     tax_amount numeric(12,2) not null default 0 check (tax_amount >= 0),
     demo_fare numeric(12,2) not null check (demo_fare >= 0),
-    status text not null default 'pending_confirmation' check (status in ('pending_confirmation','confirmed','cancelled')),
+    "status" text not null default 'pending_confirmation'::text check ("status" in ('pending_confirmation','confirmed','cancelled')),
     created_at timestamptz not null default now(),
     constraint flight_bookings_different_cities check (lower(origin) <> lower(destination)),
     constraint flight_bookings_return_date check (
