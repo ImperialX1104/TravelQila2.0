@@ -95,5 +95,5 @@ grant select, delete on public.flight_wishlists to authenticated;
 grant update (title,itinerary) on public.flight_wishlists to authenticated;
 grant insert (user_id,title,itinerary) on public.flight_wishlists to authenticated;
 
--- Customers cannot change booking status or modify an existing saved itinerary through the browser.
+-- Customers cannot change booking status. Saved itinerary updates/deletes are restricted to their own rows by RLS.
 -- Ticket confirmation, cancellation and live fare revalidation require trusted server-side integrations.
