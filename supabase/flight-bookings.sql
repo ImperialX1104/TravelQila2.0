@@ -46,6 +46,18 @@ alter table public.flight_bookings add column if not exists return_arrival_time 
 alter table public.flight_bookings add column if not exists base_fare numeric(12,2) not null default 0;
 alter table public.flight_bookings add column if not exists tax_amount numeric(12,2) not null default 0;
 
+-- Require a complete return leg on new round-trip requests, without rejecting legacy rows.
+do $
+begin
+  if not exists (select 1 from pg_constraint where conname = 'flight_bookings_return_leg_required') then
+    alter table public.flight_bookings add constraint flight_bookings_return_leg_required check (
+      (trip_type = 'One way' and return_airline is null and return_flight_number is null and return_departure_time is null and return_arrival_time is null)
+      or
+      (trip_type = 'Round trip' and return_date is not null and return_airline is not null and return_flight_number is not null and return_departure_time is not null and return_arrival_time is not null)
+    ) not valid;
+  end if;
+end $;
+
 -- Saved itineraries are snapshots, not confirmed reservations or live fare guarantees.
 create table if not exists public.flight_wishlists (
     id uuid primary key default gen_random_uuid(),
