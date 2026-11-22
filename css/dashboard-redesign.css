@@ -52,3 +52,21 @@
 .dashboard-booking-leg .dashboard-booking-route{padding:8px 0 4px}
 .dashboard-booking-leg .dashboard-booking-route small{display:block;font-size:11px;color:#718096;margin-top:3px}
 .dashboard-booking-return{border-top:1px dashed #d7e0ee;margin-top:8px;padding-top:14px}
+
+/* Dashboard uses the same brand header/footer, with a solid header because there is no hero behind it. */
+.dashboard-page .container-fluid.position-relative.p-0{background:#102d6b;z-index:20}
+.dashboard-page .navbar{position:relative!important;background:#102d6b!important;box-shadow:0 8px 24px rgba(9,27,61,.12)}
+.dashboard-page .navbar-light .navbar-nav .nav-link{color:rgba(255,255,255,.9)!important}
+.dashboard-page .navbar-light .navbar-nav .nav-link:hover,.dashboard-page .navbar-light .navbar-nav .nav-link.active{color:#fff!important}
+.dashboard-page .navbar-light .navbar-brand,.dashboard-page .navbar-light .navbar-brand h1{color:#fff!important}
+.dashboard-page .navbar-light .navbar-toggler{border-color:rgba(255,255,255,.55)!important;color:#fff!important}
+.dashboard-page .navbar-collapse{background:#102d6b}
+.dashboard-page .navbar .btn.btn-primary{background:#e9ad48!important;border-color:#e9ad48!important;color:#17233e!important}
+.dashboard-page .footer{width:100%;clear:both;margin-top:0}
+.dashboard-page .footer .footer-item a{overflow-wrap:anywhere}
+.dashboard-page .copyright{width:100%}
+.dashboard-wishlist-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}
+.dashboard-wishlist-actions .btn-link{text-decoration:none}
+.dashboard-wishlist-card .dashboard-booking-top{margin-bottom:9px}
+@media(max-width:991px){.dashboard-page .navbar-collapse{padding:12px 18px 18px}.dashboard-page .navbar .btn.btn-primary{margin:8px 0 0!important;display:inline-block}}
+@media(max-width:575px){.dashboard-wishlist-actions{align-items:stretch}.dashboard-wishlist-actions .btn{width:100%}.dashboard-page .footer .container{padding-left:22px;padding-right:22px}}
