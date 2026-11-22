@@ -31,14 +31,14 @@ function renderBooking(row){
 }
 async function loadCustomerBookings(){
  if(!bookingsList||!currentUser)return;
- const {data,error}=await supabase.from("flight_bookings").select("id,booking_reference,origin,destination,origin_code,destination_code,trip_type,departure_date,return_date,adults,children,infants,cabin_class,airline,flight_number,departure_time,arrival_time,return_airline,return_flight_number,return_departure_time,return_arrival_time,demo_fare,status,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false});
+ const {data,error}=await supabase.from("flight_bookings").select("id,booking_reference,origin,destination,origin_code,destination_code,trip_type,departure_date,return_date,adults,children,infants,cabin_class,additional_preferences,airline,flight_number,departure_time,arrival_time,return_airline,return_flight_number,return_departure_time,return_arrival_time,demo_fare,status,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false});
  if(error){console.error("[Travel Qila] Booking list load failed:",error.code||"unknown");bookingsList.innerHTML='<div class="alert alert-warning mb-0">Your booking requests could not be loaded. Please refresh or contact support.</div>';return;}
  const rows=data||[];if(bookingsCount)bookingsCount.textContent=String(rows.length);
  bookingsList.innerHTML=rows.length?rows.map(renderBooking).join(''):'<div class="dashboard-bookings-empty"><div class="empty-icon"><i class="fas fa-plane"></i></div><h3>No booking requests yet</h3><p>Your submitted flight requests and their status will appear here.</p><a href="services.html" class="btn btn-primary rounded-pill px-4 py-2">Search flights</a></div>';
 }
 function refreshSearchUrl(t,rowId){
  const q=new URLSearchParams({origin:(t.origin?.label||"")+(t.origin?.code?" ("+t.origin.code+")":""),destination:(t.destination?.label||"")+(t.destination?.code?" ("+t.destination.code+")":""),tripType:t.tripType||"One way",departureDate:t.departureDate||"",returnDate:t.returnDate||"",adults:String(t.passengers?.adults||1),children:String(t.passengers?.children||0),infants:String(t.passengers?.infants||0),cabin:t.cabin||"Economy"});
- q.set("wishlistId",rowId);return "services.html?"+q.toString();
+ q.set("wishlistId",rowId);q.set("stops",t.stops||"Any");q.set("maximumBudget",String(t.maximumBudget||50000));q.set("dateFlexibility",t.dateFlexibility||"Exact dates");q.set("additionalPreferences",t.additionalPreferences||"");return "services.html?"+q.toString();
 }
 function renderWishlist(row){
  const t=row.itinerary||{},p=t.pricing||{},round=t.tripType==="Round trip";
