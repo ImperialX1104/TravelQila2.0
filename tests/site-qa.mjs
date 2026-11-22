@@ -151,6 +151,22 @@ try {
       }
     }
 
+    if (route === "/hotels.html") {
+      if (await page.locator('form[data-service="hotel booking"]').count() !== 1) failures.push(`${route}: hotel enquiry form is missing`);
+      for (const selector of ["#hotelDestination", "#checkin", "#checkout", "#hotelRooms", "#hotelAdults", "#hotelCategory"]) {
+        if (await page.locator(selector).count() !== 1) failures.push(`${route}: required hotel field ${selector} is missing`);
+      }
+      if (await page.locator('button[type="submit"][value="whatsapp"]').count() !== 1 || await page.locator('button[type="submit"][value="email"]').count() !== 1) failures.push(`${route}: hotel form must offer WhatsApp and email submission`);
+    }
+
+    if (route === "/visa.html") {
+      if (await page.locator('form[data-service="visa assistance"]').count() !== 1) failures.push(`${route}: visa assistance form is missing`);
+      for (const selector of ["#visaCountry", "#visaNationality", "#visaPurpose", "#visaTravelDate", "#visaApplicants"]) {
+        if (await page.locator(selector).count() !== 1) failures.push(`${route}: required visa field ${selector} is missing`);
+      }
+      if (await page.locator('button[type="submit"][value="whatsapp"]').count() !== 1 || await page.locator('button[type="submit"][value="email"]').count() !== 1) failures.push(`${route}: visa form must offer WhatsApp and email submission`);
+    }
+
     if (runtimeErrors.length) failures.push(...runtimeErrors.map(e => `${route}: uncaught browser error: ${e}`));
     await page.close();
   }
