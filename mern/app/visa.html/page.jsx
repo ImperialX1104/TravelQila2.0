@@ -1,5 +1,5 @@
 import ServiceEnquiryForm from "@/components/service-enquiry-form";
-import "./service-enquiry.css";
+import "../service-enquiry.css";
 export const metadata = {
   title: "Visa Assistance | Tourist, Business & Travel Visas",
   description: "Get help understanding visa requirements and preparing your application. Share your destination, travel purpose and dates for personalised visa assistance.",
