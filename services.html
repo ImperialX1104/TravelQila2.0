@@ -21,8 +21,8 @@
 <style>
 :root{--flight-primary:#13357b;--flight-ink:#17233e;--flight-muted:#64708a;--flight-border:#e4eaf4}
 body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f9fd}
-.flight-hero{position:relative;overflow:hidden;padding:76px 0 128px;background:radial-gradient(circle at 84% 12%,rgba(113,153,232,.34),transparent 28%),linear-gradient(118deg,#091b40 0%,#13357b 62%,#345995 100%);color:#fff}
-.flight-hero:after{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-120px;bottom:-260px;box-shadow:0 0 0 42px rgba(255,255,255,.035),0 0 0 84px rgba(255,255,255,.025)}
+.flight-hero{position:relative;isolation:isolate;overflow:hidden;min-height:430px;display:flex;align-items:center;padding:88px 0 150px;background:linear-gradient(90deg,rgba(5,20,52,.88) 0%,rgba(9,34,79,.72) 48%,rgba(12,40,86,.18) 100%),url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=2200&q=85') center 48%/cover no-repeat;color:#fff}
+.flight-hero:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(0deg,rgba(5,20,52,.22),transparent 48%);pointer-events:none}
 .flight-eyebrow{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#c8d8ff}
 .flight-hero h1{font:700 clamp(2.25rem,5vw,3.8rem)/1.08 Jost,Roboto,sans-serif;color:#fff;max-width:760px}
 .flight-hero p{color:rgba(255,255,255,.84);max-width:650px;font-size:1.08rem}
@@ -52,7 +52,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
 .flight-faq p{color:var(--flight-muted);margin:12px 0 0;line-height:1.65}
 #flightStatus{display:none}
 #flightStatus.is-visible{display:block}
-@media(max-width:767px){.flight-hero{padding:54px 0 112px}.flight-shell{margin-top:-74px}.flight-card{border-radius:16px}.swap-wrap{align-items:center;padding:0}.swap-btn{transform:rotate(90deg)}}
+@media(max-width:767px){.flight-hero{min-height:390px;padding:58px 0 112px;background-position:58% center}.flight-shell{margin-top:-74px}.flight-card{border-radius:16px}.swap-wrap{align-items:center;padding:0}.swap-btn{transform:rotate(90deg)}}
 </style>
 </head>
 <body>
