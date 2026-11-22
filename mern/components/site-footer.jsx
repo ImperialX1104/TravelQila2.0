@@ -8,7 +8,7 @@ const footerGroups = [
 
 export default function SiteFooter() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer footer">
       <div className="container footer-grid">
         <div className="footer-about">
           <Link className="brand brand-light" href="/">

@@ -18,10 +18,10 @@ const HOTELS = [
 const currency = new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0});
 const localDate = () => {const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
 const nightsBetween = (a,b) => Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000);
-function quote(hotel,checkIn,checkOut) {const nights=nightsBetween(checkIn,checkOut);const base=hotel.rate*nights;const tax=Math.round(base*.12);return {nights,base,tax,total:base+tax};}
+function quote(hotel,checkIn,checkOut,rooms=1) {const nights=nightsBetween(checkIn,checkOut);const base=hotel.rate*nights*rooms;const tax=Math.round(base*.12);return {nights,base,tax,total:base+tax};}
 
 export default function HotelSearch() {
-  const [form,setForm]=useState({destination:"",checkIn:"",checkOut:"",guests:"2",stars:"0",maxPrice:""});
+  const [form,setForm]=useState({destination:"",checkIn:"",checkOut:"",guests:"2",rooms:"1",stars:"0",maxPrice:""});
   const [searched,setSearched]=useState(false);
   const [user,setUser]=useState(null);
   const [wishlist,setWishlist]=useState([]);
@@ -48,7 +48,7 @@ export default function HotelSearch() {
   function change(event) {const {name,value}=event.target;setForm(current=>({...current,[name]:value}));if(name==="checkIn"&&form.checkOut&&form.checkOut<=value)setForm(current=>({...current,checkOut:""}));}
   const found=useMemo(()=>{
     if(!searched||!form.destination||!form.checkIn||!form.checkOut||nightsBetween(form.checkIn,form.checkOut)<1)return [];
-    return HOTELS.filter(h=>(h.city+" "+h.area+" "+h.name).toLowerCase().includes(form.destination.toLowerCase())&&h.guests>=Number(form.guests)&&(!Number(form.stars)||h.stars>=Number(form.stars))).map(h=>({...h,quote:quote(h,form.checkIn,form.checkOut)})).filter(h=>!Number(form.maxPrice)||h.quote.total<=Number(form.maxPrice));
+    return HOTELS.filter(h=>(h.city+" "+h.area+" "+h.name).toLowerCase().includes(form.destination.toLowerCase())&&h.guests*Number(form.rooms)>=Number(form.guests)&&(!Number(form.stars)||h.stars>=Number(form.stars))).map(h=>({...h,quote:quote(h,form.checkIn,form.checkOut,Number(form.rooms))})).filter(h=>!Number(form.maxPrice)||h.quote.total<=Number(form.maxPrice));
   },[searched,form]);
 
   function submit(event) {
@@ -83,7 +83,7 @@ export default function HotelSearch() {
     if(!form.checkIn||!form.checkOut||nightsBetween(form.checkIn,form.checkOut)<1){setMessage({text:"Please choose valid check-in and check-out dates first.",kind:"error"});return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});setWhatsapp("");
     try{
-      const response=await fetch("/api/hotel-bookings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({hotelId:hotel.id,checkIn:form.checkIn,checkOut:form.checkOut,guests:Number(form.guests),rooms:1})});
+      const response=await fetch("/api/hotel-bookings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({hotelId:hotel.id,checkIn:form.checkIn,checkOut:form.checkOut,guests:Number(form.guests),rooms:Number(form.rooms)})});
       const result=await response.json();
       if(response.status===401){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
       if(!response.ok)throw new Error(result.error||"Request failed");
@@ -97,19 +97,19 @@ export default function HotelSearch() {
   return <div className="hotel-workspace">
     <section className="hotel-hero"><div className="container"><p className="eyebrow">Travel Qila · Hotel assistance</p><h1>Find the right stay for<br/><em>your next destination.</em></h1><p>Share your destination, dates and group details. Explore sample stays and request personalised hotel assistance.</p><div className="hotel-hero-points"><span>Curated stays</span><span>Clear price estimates</span><span>Personal support</span></div></div></section>
     <section className="container hotel-search-wrap"><div className="hotel-search-panel"><div className="hotel-panel-title"><div><p className="eyebrow eyebrow-blue">Start with your destination</p><h2>Search hotels</h2></div><span>Find a stay that fits your journey</span></div>
-      <form className="hotel-search-form" onSubmit={submit}>
-        <label>Destination<input name="destination" list="hotelDestinations" value={form.destination} onChange={change} placeholder="City, area or hotel" required maxLength={100}/><datalist id="hotelDestinations">{["Goa","Jaipur","Dubai","Bangkok","New Delhi","Manali"].map(city=><option key={city} value={city}/>)}</datalist></label>
-        <label>Check-in<input type="date" name="checkIn" min={minDate||undefined} value={form.checkIn} onChange={change} required/></label>
-        <label>Check-out<input type="date" name="checkOut" min={form.checkIn||minDate||undefined} value={form.checkOut} onChange={change} required/></label>
-        <label>Guests<select name="guests" value={form.guests} onChange={change}>{Array.from({length:12},(_,i)=><option key={i} value={i+1}>{i+1} guest(s)</option>)}</select></label>
-        <label>Minimum rating<select name="stars" value={form.stars} onChange={change}><option value="0">Any rating</option>{[3,4,5].map(n=><option key={n} value={n}>{n}+ stars</option>)}</select></label>
-        <label>Maximum total price<input name="maxPrice" type="number" min="0" step="500" value={form.maxPrice} onChange={change} placeholder="No limit"/></label>
-        <button className="button hotel-search-button" type="submit">Search stays <span aria-hidden="true">↗</span></button>
+      <form id="hotelSearchForm" data-service="hotel booking" className="hotel-search-form" onSubmit={submit}>
+        <label>Destination<input id="hotelDestination" name="destination" list="hotelDestinations" value={form.destination} onChange={change} placeholder="City, area or hotel" required maxLength={100}/><datalist id="hotelDestinations">{["Goa","Jaipur","Dubai","Bangkok","New Delhi","Manali"].map(city=><option key={city} value={city}/>)}</datalist></label>
+        <label>Check-in<input id="checkin" type="date" name="checkIn" min={minDate||undefined} value={form.checkIn} onChange={change} required/></label>
+        <label>Check-out<input id="checkout" type="date" name="checkOut" min={form.checkIn||minDate||undefined} value={form.checkOut} onChange={change} required/></label>
+        <label>Guests<select id="hotelAdults" name="guests" value={form.guests} onChange={change}>{Array.from({length:12},(_,i)=><option key={i} value={i+1}>{i+1} guest(s)</option>)}</select></label>
+        <label>Minimum rating<select id="hotelCategory" name="stars" value={form.stars} onChange={change}><option value="0">Any rating</option>{[3,4,5].map(n=><option key={n} value={n}>{n}+ stars</option>)}</select></label>
+        <label>Maximum total price<input id="maxPrice" name="maxPrice" type="number" min="0" step="500" value={form.maxPrice} onChange={change} placeholder="No limit"/></label>
+        <label>Rooms<select id="hotelRooms" name="rooms" value={form.rooms} onChange={change}>{Array.from({length:6},(_,i)=><option key={i} value={i+1}>{i+1} room(s)</option>)}</select></label><button className="button hotel-search-button" type="submit" value="search">Search stays <span aria-hidden="true">↗</span></button><div className="hotel-form-handoffs"><button type="submit" value="whatsapp">Send enquiry on WhatsApp</button><button type="submit" value="email">Send enquiry by email</button></div>
       </form>
-      {message.text&&<div className={`hotel-message is-${message.kind}`} role={message.kind==="error"?"alert":"status"}>{message.text}</div>}
-      {whatsapp&&<a className="hotel-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer">Continue on WhatsApp ↗</a>}
+      {message.text&&<div id="hotelStatus" className={`hotel-message is-${message.kind}`} role={message.kind==="error"?"alert":"status"}>{message.text}</div>}
+      {whatsapp&&<a id="hotelWhatsapp" className="hotel-whatsapp" href={whatsapp} target="_blank" rel="noopener noreferrer">Continue on WhatsApp ↗</a>}
     </div></section>
-    <section className="container hotel-results-section" id="hotelResultsHeading">
+    <section className="container hotel-results-section" id="hotelResultsHeading"><span id="hotelResults" />
       <div className="hotel-results-heading"><div><p className="eyebrow eyebrow-blue">Recommended stays</p><h2>{searched?found.length+" stay"+(found.length===1?"":"s")+" matching your search":"A few places to get inspired"}</h2></div><span>Rates shown in INR</span></div>
       {!searched?<div className="hotel-empty"><h3>Start with your destination</h3><p>Enter a city and valid check-in/check-out dates to explore stays.</p></div>:!found.length?<div className="hotel-empty"><h3>No stays match these filters</h3><p>Try a nearby destination, lower star rating or a higher budget.</p></div>:<div className="hotel-result-list">{found.map(hotel=><article className="hotel-result-card" key={hotel.id}>
         <div className="hotel-photo"><Image src={hotel.image} alt={hotel.name} fill sizes="(max-width: 700px) 100vw, 360px" /><span>{hotel.tag}</span></div>

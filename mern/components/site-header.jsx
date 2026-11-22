@@ -23,7 +23,7 @@ export default function SiteHeader() {
           </div>
         </div>
       </div>
-      <header className="site-header">
+      <header className="site-header navbar">
         <div className="container nav-inner">
           <Link className="brand" href="/" aria-label="Travel Qila home">
             <span className="brand-mark">TQ</span>
