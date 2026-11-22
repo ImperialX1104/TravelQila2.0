@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "next/link";\nimport Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
@@ -66,7 +66,7 @@ export function DestinationTabs() {
       {filters.map(item=><button key={item} type="button" className={filter===item?"active":""} aria-pressed={filter===item} onClick={()=>setFilter(item)}>{item}</button>)}
     </div>
     <div className="home-destination-grid">{visible.map(item=><Link className="home-destination-card" href={"/trip-enquiry.html?destination="+encodeURIComponent(item.place)} key={item.name}>
-      <img src={"/img/"+item.image} alt={item.name} loading="lazy"/><span className="home-destination-overlay"><strong>{item.name}</strong><small>{item.region}</small></span>
+      <Image src={"/img/"+item.image} alt={item.name} width={600} height={420}/><span className="home-destination-overlay"><strong>{item.name}</strong><small>{item.region}</small></span>
     </Link>)}</div>
   </>;
 }
@@ -92,7 +92,7 @@ export function ExploreTourTabs() {
       <button type="button" className={tab==="International"?"active":""} aria-pressed={tab==="International"} onClick={()=>setTab("International")}>International Tour Category</button>
     </div>
     <div className="home-tour-grid">{tourCards[tab].map(item=><Link className="home-tour-card" href={item.id==="goa-beach"?"/trip-enquiry.html?destination=Goa":"/package-details.html?id="+item.id} key={item.id}>
-      <img src={"/img/"+item.image} alt={item.name} loading="lazy"/><span className="home-tour-shade"/><span className="home-tour-caption"><small>{item.place}</small><strong>{item.name}</strong><em>Explore tour ↗</em></span>
+      <Image src={"/img/"+item.image} alt={item.name} width={600} height={420}/><span className="home-tour-shade"/><span className="home-tour-caption"><small>{item.place}</small><strong>{item.name}</strong><em>Explore tour ↗</em></span>
     </Link>)}</div>
   </>;
 }
