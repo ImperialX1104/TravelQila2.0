@@ -1,6 +1,7 @@
 import {
     supabase,
     authPageUrl,
+    safeReturnTo,
     setAuthMessage,
     clearAuthMessage
 } from "./auth-client.js";
@@ -115,7 +116,7 @@ async function handleLogin(event) {
         if (error) throw error;
         if (!data.session || !data.user) throw new Error("Authentication could not be completed.");
 
-        window.location.replace(authPageUrl("dashboard.html"));
+        window.location.replace(authPageUrl(safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"))));
     } catch (error) {
         showMessage(getSafeError(error), "error");
     } finally {
@@ -139,7 +140,7 @@ async function handleSocialLogin(event) {
     try {
         const { error } = await supabase.auth.signInWithOAuth({
             provider,
-            options: { redirectTo: authPageUrl("dashboard.html") }
+            options: { redirectTo: authPageUrl(safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"))) }
         });
         if (error) throw error;
         // Supabase owns the OAuth redirect.
