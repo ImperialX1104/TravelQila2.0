@@ -11,6 +11,8 @@ const bookingsList=document.querySelector("[data-bookings-list]");
 const bookingsCount=document.querySelector("[data-bookings-count]");
 const wishlistList=document.querySelector("[data-wishlist-list]");
 const wishlistCount=document.querySelector("[data-wishlist-count]");
+const hotelWishlist=document.querySelector("[data-hotel-wishlist]");
+const hotelBookings=document.querySelector("[data-hotel-bookings]");
 let currentUser=null,isSaving=false,isSigningOut=false;
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -73,8 +75,52 @@ async function handleWishlistActions(event){
   const ref=await createBookingFromItinerary(data.itinerary,currentUser);await loadCustomerBookings();button.textContent="Request sent";showMessage("Booking request "+ref+" was added to My Bookings. Live fare and availability still need confirmation.","success");
  }catch(e){console.error("[Travel Qila] Saved itinerary action failed:",e.code||"unknown");showMessage("We couldn't complete that action. Please refresh and try again.","error");button.disabled=false;}
 }
+
+function renderHotelWishlist(rows){
+ if(!hotelWishlist)return;
+ if(!rows.length){hotelWishlist.innerHTML='<div class="hotel-dashboard-empty">You have not saved any hotels yet. <a href="hotels.html">Explore stays</a> and tap “Save to wishlist”.</div>';return;}
+ hotelWishlist.innerHTML=rows.map(row=>'<article class="hotel-dashboard-row"><img src="'+esc(row.image_url||"img/destination-1.jpg")+'" alt="'+esc(row.hotel_name)+'" loading="lazy"><div><h3>'+esc(row.hotel_name)+'</h3><p><i class="fas fa-map-marker-alt me-1"></i>'+esc(row.destination)+' · '+Number(row.star_rating||0)+'-star</p><p>'+date(row.check_in)+' – '+date(row.check_out)+' · '+Number(row.guests||2)+' guests</p><div class="hotel-dashboard-price">'+money(row.total_price)+' <small class="text-muted fw-normal">estimated total incl. taxes</small></div></div><button class="hotel-dashboard-action" type="button" data-remove-hotel="'+esc(row.id)+'"><i class="fas fa-trash-alt me-1"></i>Remove</button></article>').join("");
+}
+function renderHotelBookings(rows){
+ if(!hotelBookings)return;
+ if(!rows.length){hotelBookings.innerHTML='<div class="hotel-dashboard-empty">No hotel booking requests yet. Your submitted hotel enquiries will appear here.</div>';return;}
+ hotelBookings.innerHTML=rows.map(row=>'<article class="hotel-dashboard-row"><div class="feature-icon"><i class="fas fa-hotel"></i></div><div><h3>'+esc(row.hotel_name)+'</h3><p>'+esc(row.destination)+' · '+date(row.check_in)+' – '+date(row.check_out)+' · '+Number(row.guests||1)+' guests</p><p>Request #'+esc(String(row.id).slice(0,8).toUpperCase())+' · Submitted '+date(row.created_at)+'</p><div class="hotel-dashboard-price">'+money(row.total_price)+' <small class="text-muted fw-normal">estimated incl. taxes</small></div></div><span class="hotel-dashboard-status">'+esc(String(row.status||"enquiry received").replace(/_/g," "))+'</span></article>').join("");
+}
+async function loadHotelActivity(){
+ if(!currentUser||(!hotelWishlist&&!hotelBookings))return;
+ try{
+  const [wishlistResult,bookingResult]=await Promise.all([
+   supabase.from("hotel_wishlists").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false}),
+   supabase.from("hotel_booking_requests").select("*").eq("user_id",currentUser.id).order("created_at",{ascending:false})
+  ]);
+  if(wishlistResult.error)throw wishlistResult.error;
+  if(bookingResult.error)throw bookingResult.error;
+  renderHotelWishlist(wishlistResult.data||[]);
+  renderHotelBookings(bookingResult.data||[]);
+ }catch(error){
+  console.error("[Travel Qila] Hotel dashboard data could not be loaded:",error.code||"unknown");
+  if(hotelWishlist)hotelWishlist.innerHTML='<div class="hotel-dashboard-empty">Hotel wishlist is temporarily unavailable. Apply supabase/hotel-bookings.sql and refresh.</div>';
+  if(hotelBookings)hotelBookings.innerHTML='<div class="hotel-dashboard-empty">Hotel requests are temporarily unavailable. Apply supabase/hotel-bookings.sql and refresh.</div>';
+ }
+}
+if(hotelWishlist)hotelWishlist.addEventListener("click",async event=>{
+ const button=event.target.closest("[data-remove-hotel]");
+ if(!button||!currentUser||button.disabled)return;
+ button.disabled=true;
+ try{
+  const {error}=await supabase.from("hotel_wishlists").delete().eq("id",button.dataset.removeHotel).eq("user_id",currentUser.id);
+  if(error)throw error;
+  showMessage("Hotel removed from your wishlist.","success");
+  await loadHotelActivity();
+ }catch(error){
+  console.error("[Travel Qila] Hotel wishlist removal failed:",error.code||"unknown");
+  showMessage("Unable to remove this hotel. Please try again.","error");
+  button.disabled=false;
+ }
+});
+
 async function initializeDashboard(){
- try{const {data,error}=await supabase.auth.getSession();if(error||!data.session){redirectToLogin();return;}const user=await getUser();currentUser=user;populateProfile(user);await Promise.all([loadCustomerBookings(),loadWishlist()]);}
+ try{const {data,error}=await supabase.auth.getSession();if(error||!data.session){redirectToLogin();return;}const user=await getUser();currentUser=user;populateProfile(user);await Promise.all([loadCustomerBookings(),loadWishlist(),loadHotelActivity()]);}
  catch(e){console.error("[Travel Qila] Dashboard initialization failed.");showMessage("Unable to load your account. Please sign in again.","error");redirectToLogin();}
 }
 async function handleProfileUpdate(event){
