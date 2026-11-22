@@ -49,7 +49,7 @@ export default function PackageAttractions({packageId}) {
       const description=placeDetails.wikipedia_extracts?.text||placeDetails.info?.descr||placeDetails.description||"Additional description is unavailable.";
       setDetails(current=>({...current,[xid]:description}));
     }catch{
-      setDetails(current=>({...current,[xid]:"Unable to load details. Please try again."}));
+      setDetails(current=>({...current,[xid]:{description:"Unable to load details. Please try again.",website:null}}));
     }finally{
       setLoading(current=>({...current,[xid]:false}));
     }
@@ -57,7 +57,7 @@ export default function PackageAttractions({packageId}) {
 
   return <section className="package-attractions" aria-labelledby="attractionsTitle">
     <div className="package-section-heading"><p className="eyebrow eyebrow-blue">Explore nearby places</p><h2 id="attractionsTitle">Explore Attractions <em>Nearby.</em></h2><p id="attractionsSubtitle">Discover interesting places around your destination.</p></div>
-    {status?<p id="attractionsStatus" className="attraction-status" role="status">{status}</p>:<div id="attractionsList" className="attraction-grid">{places.map(place=><article className="attraction-card" key={place.xid||place.name}><span className="attraction-pin" aria-hidden="true">⌖</span><h3>{place.name||"Unnamed attraction"}</h3><p className="attraction-category">{categoryLabel(place.kinds)}</p><p className="attraction-distance">{distanceLabel(place.dist)}</p><button type="button" className="attraction-toggle" onClick={()=>toggleDetails(place)} aria-expanded={Boolean(open[place.xid])} disabled={!place.xid}>{loading[place.xid]?"Loading…":open[place.xid]?"Hide details":"View details"}</button>{open[place.xid]&&<p className="attraction-details">{details[place.xid]||"Loading attraction information…"}</p>}</article>)}</div>}
+    {status?<p id="attractionsStatus" className="attraction-status" role="status">{status}</p>:<div id="attractionsList" className="attraction-grid">{places.map(place=><article className="attraction-card" key={place.xid||place.name}><span className="attraction-pin" aria-hidden="true">⌖</span><h3>{place.name||"Unnamed attraction"}</h3><p className="attraction-category">{categoryLabel(place.kinds)}</p><p className="attraction-distance">{distanceLabel(place.dist)}</p><button type="button" className="attraction-toggle" onClick={()=>toggleDetails(place)} aria-expanded={Boolean(open[place.xid])} disabled={!place.xid}>{loading[place.xid]?"Loading…":open[place.xid]?"Hide details":"View details"}</button>{open[place.xid]&&<p className="attraction-details">{details[place.xid]?.description||"Loading attraction information…"}</p>}{details[place.xid]?.website&&<a className="attraction-website" href={details[place.xid].website} target="_blank" rel="noopener noreferrer">Visit website ↗</a>}</article>)}</div>}
     <p className="attraction-source-note">Attraction information is provided by the destination information service. Distances are approximate and measured from the destination search centre.</p>
   </section>;
 }
