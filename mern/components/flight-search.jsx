@@ -11,9 +11,9 @@ const offers = [
   {airline:"Akasa Air",flight:"QP 1320",depart:"09:20",duration:150,stops:0,price:6990,baggage:"15 kg check-in"},
   {airline:"Air India Express",flight:"IX 1042",depart:"11:45",duration:205,stops:1,price:5980,baggage:"15 kg check-in"},
   {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},
-  {airline:"Air India",flight:"AI 321",depart:"15:05",duration:145,stops:0,price:8150,baggage:"15 kg check-in"},
-  {airline:"IndiGo",flight:"6E 5324",depart:"19:20",duration:225,stops:1,price:6250,baggage:"15 kg check-in"},
-  {airline:"Air India",flight:"AI 441",depart:"16:40",duration:180,stops:1,price:7550,baggage:"15 kg check-in"}
+  {airline:"Air India",flight:"AI 441",depart:"16:40",duration:225,stops:1,price:8250,baggage:"25 kg check-in"},
+  {airline:"Akasa Air",flight:"QP 1718",depart:"18:30",duration:155,stops:0,price:7590,baggage:"15 kg check-in"},
+  {airline:"IndiGo",flight:"6E 9912",depart:"21:15",duration:215,stops:1,price:6250,baggage:"15 kg check-in"}
 ];
 const money = value => "₹" + Number(value || 0).toLocaleString("en-IN");
 const localDate = offset => { const d=new Date();d.setDate(d.getDate()+offset);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10); };
@@ -24,7 +24,7 @@ const durationText = value => Math.floor(value/60)+"h "+value%60+"m";
 function parseAirport(value) { const raw=value.trim();const match=raw.match(/\(([A-Za-z]{3})\)\s*$/);const code=match?match[1].toUpperCase():"";const city=raw.replace(/\s*\([A-Za-z]{3}\)\s*$/,"");return {city:city||raw,code,label:code?(airportMap[code]||city):city}; }
 function buildOptions(origin,destination,date,seedText,tripFlex) {
   const seed=seedText.split("").reduce((sum,char)=>sum+char.charCodeAt(0),0);
-  const offsets=tripFlex==="1 day before or after"?[0,-1,1,0,0,0]:tripFlex==="3 days before or after"||tripFlex==="Flexible - lowest fare matters most"?[0,-1,1,-2,2,-3]:[0,0,0,0,0,0];
+  const offsets=tripFlex==="1 day before or after"?[0,-1,1,0,0,0,0,0]:tripFlex==="3 days before or after"||tripFlex==="Flexible - lowest fare matters most"?[0,-1,1,-2,2,-3,3,0]:[0,0,0,0,0,0,0,0];
   return offers.map((offer,index)=>{const shift=seed%7;const depart=addMinutes(offer.depart,shift*4);const duration=offer.duration+shift*3+(index%2?10:0);const offset=offsets[index]||0;return {...offer,id:`leg-${seed}-${index}`,depart,arrive:addMinutes(depart,duration),duration,price:Math.round((offer.price+(seed%13)*175+(index%3)*260+(offset<0?Math.abs(offset)*-80:offset*40))/10)*10,origin,destination,departureDate:shiftDate(date,offset)};});
 }
 
@@ -38,39 +38,13 @@ export default function FlightSearch() {
   const [filters,setFilters]=useState({stops:"any",airline:"all",sort:"price"});
   const [message,setMessage]=useState({text:"",kind:"info"});
   const [busy,setBusy]=useState("");
-  const [wishlistId,setWishlistId]=useState(null);
+  const [wishlistId,setWishlistId]=useState(initialSearch.wishlistId||null);
 
   useEffect(()=>{
-    const params = new URLSearchParams(window.location.search);
-    setWishlistId(params.get("wishlistId"));
-    const map = {
-      origin:"origin", destination:"destination", tripType:"tripType",
-      departureDate:"departureDate", returnDate:"returnDate", adults:"adults",
-      children:"children", infants:"infants", cabin:"cabin", stops:"stops",
-      maximumBudget:"maximumBudget", dateFlexibility:"dateFlexibility",
-      additionalPreferences:"additionalPreferences"
-    };
-    setForm(current => {
-      const next = { ...current };
-      for (const [key, param] of Object.entries(map)) {
-        const value = params.get(param);
-        if (value !== null) next[key] = value;
-      }
-      return next;
-    });
-    const origin = params.get("origin");
-    const destination = params.get("destination");
-    const departure = params.get("departureDate");
-    if (origin && destination && departure) {
-      const tripType = params.get("tripType") || "Round trip";
-      const from = parseAirport(origin);
-      const to = parseAirport(destination);
-      const flexibility = params.get("dateFlexibility") || "Exact dates";
-      setOutboundOptions(buildOptions(from, to, departure, from.code + to.code, flexibility));
-      setReturnOptions(tripType === "Round trip" && params.get("returnDate")
-        ? buildOptions(to, from, params.get("returnDate"), to.code + from.code, flexibility)
-        : []);
-      setStage("outbound");
+    const today=localDate(0);
+    setMinDate(today);
+    if(!initialSearch.departureDate){
+      setForm(current=>({...current,departureDate:localDate(7),returnDate:localDate(14)}));
     }
   },[]);
 
@@ -154,8 +128,8 @@ export default function FlightSearch() {
             <label>From<input id="origin" name="origin" list="airportSuggestions" value={form.origin} onChange={change} placeholder="City or airport" required maxLength={120}/></label>
             <button className="flight-swap" type="button" aria-label="Swap departure and destination" onClick={()=>setForm(f=>({...f,origin:f.destination,destination:f.origin}))}>⇄</button>
             <label>To<input id="destination" name="destination" list="airportSuggestions" value={form.destination} onChange={change} placeholder="City or airport" required maxLength={120}/></label>
-            <label>Departure<input id="departDate" type="date" name="departureDate" min={localDate(0)} value={form.departureDate} onChange={change} required/></label>
-            <label>Return<input id="returnDate" type="date" name="returnDate" min={form.departureDate} value={form.returnDate} onChange={change} required={form.tripType==="Round trip"}/></label>
+            <label>Departure<input id="departDate" type="date" name="departureDate" min={minDate||undefined} value={form.departureDate} onChange={change} required/></label>
+            <label id="returnDateWrap" hidden={form.tripType!=="Round trip"}>Return<input id="returnDate" type="date" name="returnDate" min={form.departureDate||minDate} value={form.returnDate} onChange={change} required={form.tripType==="Round trip"}/></label>
           </div>
           <div className="flight-secondary-grid">
             <label>Cabin class<select name="cabin" value={form.cabin} onChange={change}><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First Class</option></select></label>
@@ -178,8 +152,8 @@ export default function FlightSearch() {
       {stage!=="summary"?<>
         {stage==="return"&&<button className="flight-back" onClick={()=>{setStage("outbound");setReturning(null);}}>← Change departure flight</button>}
         <div className="flight-filters"><label>Stops<select value={filters.stops} onChange={e=>setFilters(f=>({...f,stops:e.target.value}))}><option value="any">Any stops</option><option value="nonstop">Non-stop</option><option value="one">Up to 1 stop</option></select></label><label>Airline<select value={filters.airline} onChange={e=>setFilters(f=>({...f,airline:e.target.value}))}><option value="all">All airlines</option><option>IndiGo</option><option>Air India</option><option>Akasa Air</option><option>Air India Express</option></select></label><label>Sort by<select value={filters.sort} onChange={e=>setFilters(f=>({...f,sort:e.target.value}))}><option value="price">Lowest fare</option><option value="duration">Shortest duration</option><option value="departure">Departure time</option></select></label></div>
-        <p className="flight-count">{filtered.length} illustrative option(s) matching your search</p>
-        <div className="flight-option-list">{filtered.map(option=><article className="flight-option flight-result-card" key={option.id}><div className="flight-option-top"><div><strong>{option.airline}</strong><small className="flight-flight-number">{option.flight} · {option.stops===0?"Non-stop":option.stops+" stop"}</small></div><div className="flight-option-price">{money(option.price)}<small>demo fare / passenger</small></div></div><div className="flight-route"><div><strong>{option.depart}</strong><span className="flight-city">{option.origin.label} ({option.origin.code||"—"})</span></div><div className="flight-route-middle"><small>{durationText(option.duration)}</small><span></span><small>{option.stops===0?"Non-stop":option.stops+" stop"}</small></div><div className="flight-route-end"><strong>{option.arrive}</strong><span className="flight-city">{option.destination.label} ({option.destination.code||"—"})</span></div></div><div className="flight-option-bottom"><span>{formatDate(option.departureDate)} · {option.baggage}</span><button data-select-leg={stage==="return"?"return":"outbound"} onClick={()=>{if(stage==="outbound"){setOutbound(option);if(form.tripType==="Round trip")setStage("return");else{setReturning(null);setStage("summary");}}else{setReturning(option);setStage("summary");}}}>Select this {stage==="return"?"return":"departure"} flight →</button></div></article>)}</div>
+        <p id="flightResultsCount" className="flight-count">{filtered.length} demo flight options</p>
+        <div id="flightResultsList" className="flight-option-list">{filtered.map(option=><article className="flight-option flight-result-card" key={option.id}><div className="flight-option-top"><div><strong>{option.airline}</strong><small className="flight-flight-number">{option.flight} · {option.stops===0?"Non-stop":option.stops+" stop"}</small></div><div className="flight-option-price">{money(option.price)}<small>demo fare / passenger</small></div></div><div className="flight-route"><div><strong>{option.depart}</strong><span className="flight-city">{option.origin.label} ({option.origin.code||"—"})</span></div><div className="flight-route-middle"><small>{durationText(option.duration)}</small><span></span><small>{option.stops===0?"Non-stop":option.stops+" stop"}</small></div><div className="flight-route-end"><strong>{option.arrive}</strong><span className="flight-city">{option.destination.label} ({option.destination.code||"—"})</span></div></div><div className="flight-option-bottom"><span>{formatDate(option.departureDate)} · {option.baggage}</span><button data-select-leg={stage==="return"?"return":"outbound"} onClick={()=>{if(stage==="outbound"){setOutbound(option);if(form.tripType==="Round trip")setStage("return");else{setReturning(null);setStage("summary");}}else{setReturning(option);setStage("summary");}}}>Select this {stage==="return"?"return":"departure"} flight →</button></div></article>)}</div>
         {!filtered.length&&<div className="flight-empty"><h3>No flights match these filters</h3><p>Try another airline, stop preference or a higher budget.</p></div>}
       </>:<div className="flight-summary-card">
         <div className="flight-summary-title"><div><span>YOUR ITINERARY</span><h3>{trip.origin.label} ↔ {trip.destination.label}</h3><p>{trip.tripType} · {passengers} passenger(s) · {trip.cabin}</p></div><button className="flight-reset" onClick={()=>setStage(form.tripType==="Round trip"?"return":"outbound")}>Edit flights</button></div>

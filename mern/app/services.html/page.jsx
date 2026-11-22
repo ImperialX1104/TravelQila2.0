@@ -5,4 +5,13 @@ export const metadata = {
   description: "Find your next flight with Travel Qila. Share your route, travel dates, passengers and budget to receive personalised domestic and international flight options.",
   alternates: { canonical: "/services.html" }
 };
-export default function FlightsPage() { return <main><FlightSearch /></main>; }
+export default async function FlightsPage({ searchParams }) {
+  const params = await searchParams;
+  const keys = ["origin","destination","tripType","departureDate","returnDate","adults","children","infants","cabin","stops","maximumBudget","dateFlexibility","additionalPreferences","wishlistId"];
+  const initialSearch = {};
+  for (const key of keys) {
+    const value = Array.isArray(params?.[key]) ? params[key][0] : params?.[key];
+    if (typeof value === "string") initialSearch[key] = value;
+  }
+  return <main><FlightSearch key={JSON.stringify(initialSearch)} initialSearch={initialSearch}/></main>;
+}
