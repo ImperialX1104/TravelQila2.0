@@ -29,7 +29,7 @@ import { supabase } from "./auth-client.js";
   function updateTripType(){const round=form.querySelector('input[name="tripType"]:checked').value==="Round trip",wrap=byId("returnDate"),container=byId("returnDateWrap");container.hidden=!round;wrap.required=round;if(!round)wrap.value="";}
   function makeOptions(origin,destination,date,seedText){
     const seed=seedText.split("").reduce((n,c)=>n+c.charCodeAt(0),0);
-    return sampleOffers.map((x,i)=>{const shift=seed%7,depart=addMinutes(x.depart,shift*4),duration=x.duration+shift*3+(i%2?10:0),price=Math.round((x.price+(seed%13)*175+(i%3)*260)/10)*10;return {id:"leg-"+seed+"-"+i,airline:x.airline,flight:x.flight,depart,arrive:addMinutes(x.depart,duration),duration,stops:x.stops,price,baggage:x.baggage,origin,destination,departureDate:date};});
+    return sampleOffers.map((x,i)=>{const shift=seed%7,depart=addMinutes(x.depart,shift*4),duration=x.duration+shift*3+(i%2?10:0),price=Math.round((x.price+(seed%13)*175+(i%3)*260)/10)*10;return {id:"leg-"+seed+"-"+i,airline:x.airline,flight:x.flight,depart,arrive:addMinutes(depart,duration),duration,stops:x.stops,price,baggage:x.baggage,origin,destination,departureDate:date};});
   }
   function passengers(){return search.adults+search.children+search.infants;}
   function pricing(){
