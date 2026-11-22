@@ -5,7 +5,7 @@ const routes = [
   "/packages.html", "/package-details.html?id=bali-discovery",
   "/destination.html", "/tour.html", "/trip-enquiry.html", "/contact.html",
   "/blog.html", "/gallery.html", "/guides.html", "/testimonial.html",
-  "/privacy.html", "/terms.html", "/404.html",
+  "/privacy.html", "/terms.html", "/404.html", "/login.html", "/register.html", "/forgot-password.html", "/reset-password.html",
   "/destinations/bali-tour-packages.html", "/destinations/dubai-tour-packages.html",
   "/destinations/europe-tour-packages.html", "/destinations/goa-tour-packages.html",
   "/destinations/kashmir-tour-packages.html", "/destinations/kerala-tour-packages.html",
