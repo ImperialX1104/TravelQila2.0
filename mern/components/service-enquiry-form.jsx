@@ -1,18 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const PACKAGES = {
-  "kashmir-escape": { name:"Kashmir Escape", destination:"Kashmir, India" },
-  "bali-discovery": { name:"Bali Discovery", destination:"Bali, Indonesia" },
-  "dubai-highlights": { name:"Dubai Highlights", destination:"Dubai, UAE" },
-  "kerala-backwaters": { name:"Kerala Backwaters", destination:"Kerala, India" },
-  "swiss-alpine": { name:"Swiss Alpine Journey", destination:"Switzerland" },
-  "thailand-explorer": { name:"Thailand Explorer", destination:"Thailand" }
-};
-const today = () => {const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10);};
-
-export default function ServiceEnquiryForm({ type }) {
+export default function ServiceEnquiryForm({ type, minDate, initialDestination = "", initialPackage = null }) {
   const isVisa=type==="visa";
   const [minDate,setMinDate]=useState("");
   const [packageInfo,setPackageInfo]=useState(null);
@@ -20,16 +10,7 @@ export default function ServiceEnquiryForm({ type }) {
   const [status,setStatus]=useState("");
   const [whatsapp,setWhatsapp]=useState("");
 
-  useEffect(()=>{
-    setMinDate(today());
-    if(!isVisa){
-      const params=new URLSearchParams(window.location.search);
-      const selected=PACKAGES[params.get("package")||""];
-      const destination=params.get("destination")||selected?.destination||"";
-      setPackageInfo(selected||null);
-      setFields(current=>({...current,destination}));
-    }
-  },[isVisa]);
+
 
   function change(event){const {name,value}=event.target;setFields(current=>({...current,[name]:value}));if(name==="departureDate"&&fields.returnDate&&fields.returnDate<value)setFields(current=>({...current,returnDate:""}));}
 
@@ -50,7 +31,7 @@ export default function ServiceEnquiryForm({ type }) {
       message="Hello Travel Qila, I would like to request a holiday quotation.\n\n"+entries.map(([key,value])=>key+": "+value).join("\n")+"\n\nPlease contact me to discuss availability and the final quotation. I understand this is an enquiry, not a confirmed booking.";
     }
     if(channel==="email"){
-      window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(message);
+      window.open("mailto:info@travelqila.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(message),"_self");
       setStatus("Your email app should open with the enquiry details pre-filled. Please press Send to submit your request.");
     }else{
       const url="https://wa.me/919871101345?text="+encodeURIComponent(message);
@@ -85,7 +66,7 @@ export default function ServiceEnquiryForm({ type }) {
         <label className="enquiry-wide">Travel style<select id="tripStyle" name="tripStyle" value={fields.tripStyle} onChange={change}><option value="">Please select</option>{["Family holiday","Honeymoon / couple","Friends / group","Solo travel","Corporate / MICE","Other"].map(x=><option key={x}>{x}</option>)}</select></label>
         <label className="enquiry-wide">Additional requirements<textarea id="requirements" name="requirements" rows="3" maxLength={1500} value={fields.requirements} onChange={change} placeholder="Destination preferences, sightseeing interests, children’s ages, or anything else we should know."/></label>
       </div>}
-      {!isVisa&&<input type="hidden" id="packageId" name="packageId" value={new URLSearchParams(typeof window!=="undefined"?window.location.search:"").get("package")||""}/>}\n      <div className="enquiry-actions"><button className="button" type="submit" value="whatsapp">Send on WhatsApp ↗</button><button className="button button-outline" type="submit" value="email">Send by email</button></div>
+      {!isVisa&&<input type="hidden" id="packageId" name="packageId" value={initialPackage?.id||""}/>}\n      <div className="enquiry-actions"><button className="button" type="submit" value="whatsapp">Send on WhatsApp ↗</button><button className="button button-outline" type="submit" value="email">Send by email</button></div>
       {status&&<p id="submissionMessage" data-form-status className="enquiry-status" role="status">{status} {whatsapp&&<a id="whatsappFallback" href={whatsapp} target="_blank" rel="noopener noreferrer">Open WhatsApp</a>}</p>}
       {isVisa&&<p className="enquiry-disclaimer">Visa decisions are made by the relevant embassy, consulate or immigration authority. Requirements, fees and processing times can change; no approval or processing time is guaranteed.</p>}
     </form>

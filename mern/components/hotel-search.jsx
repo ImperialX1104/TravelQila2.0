@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";\nimport { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -20,8 +20,8 @@ const localDate = () => {const d=new Date();d.setMinutes(d.getMinutes()-d.getTim
 const nightsBetween = (a,b) => Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/86400000);
 function quote(hotel,checkIn,checkOut,rooms=1) {const nights=nightsBetween(checkIn,checkOut);const base=hotel.rate*nights*rooms;const tax=Math.round(base*.12);return {nights,base,tax,total:base+tax};}
 
-export default function HotelSearch() {
-  const [form,setForm]=useState({destination:"",checkIn:"",checkOut:"",guests:"2",rooms:"1",stars:"0",maxPrice:""});
+export default function HotelSearch({ today }) {\n  const router = useRouter();
+  const [form,setForm]=useState({destination:"",checkIn:today,checkOut:"",guests:"2",rooms:"1",stars:"0",maxPrice:""});
   const [searched,setSearched]=useState(false);
   const [user,setUser]=useState(null);
   const [wishlist,setWishlist]=useState([]);
@@ -31,9 +31,6 @@ export default function HotelSearch() {
   const [busy,setBusy]=useState("");
 
   useEffect(()=>{
-    const today = localDate();
-    setMinDate(today);
-    setForm(current=>({...current,checkIn:today}));
     let active = true;
     try {
       getSupabaseBrowserClient().auth.getUser().then(async ({data,error})=>{
@@ -69,7 +66,7 @@ export default function HotelSearch() {
         setWhatsapp(url);window.open(url,"_blank","noopener,noreferrer");
         setMessage({text:"WhatsApp should open with your enquiry pre-filled. Please press Send to submit it.",kind:"success"});
       }else{
-        window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila hotel enquiry")+"&body="+encodeURIComponent(details);
+        window.open("mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila hotel enquiry")+"&body="+encodeURIComponent(details),"_self");
         setMessage({text:"Your email app should open with your enquiry pre-filled. Please press Send to submit it.",kind:"success"});
       }
       return;
@@ -78,7 +75,7 @@ export default function HotelSearch() {
   }
 
   async function toggleWishlist(hotel) {
-    if(!user){window.location.href="/login.html?returnTo=%2Fhotels.html";return;}
+    if(!user){router.push("/login.html?returnTo=%2Fhotels.html");return;}
     setBusy(hotel.id);setMessage({text:"",kind:"info"});
     const isSaved=wishlist.includes(hotel.id);
     const q=form.checkIn&&form.checkOut&&nightsBetween(form.checkIn,form.checkOut)>0?quote(hotel,form.checkIn,form.checkOut,Number(form.rooms)):{nights:1,base:hotel.rate*Number(form.rooms),tax:Math.round(hotel.rate*Number(form.rooms)*.12),total:Math.round(hotel.rate*Number(form.rooms)*1.12)};
@@ -119,8 +116,8 @@ export default function HotelSearch() {
     <section className="container hotel-search-wrap"><div className="hotel-search-panel"><div className="hotel-panel-title"><div><p className="eyebrow eyebrow-blue">Start with your destination</p><h2>Search hotels</h2></div><span>Find a stay that fits your journey</span></div>
       <form id="hotelSearchForm" data-service="hotel booking" className="hotel-search-form service-enquiry-form" onSubmit={submit}>
         <label>Destination<input id="hotelDestination" name="destination" list="hotelDestinations" value={form.destination} onChange={change} placeholder="City, area or hotel" required maxLength={100}/><datalist id="hotelDestinations">{["Goa","Jaipur","Dubai","Bangkok","New Delhi","Manali"].map(city=><option key={city} value={city}/>)}</datalist></label>
-        <label>Check-in<input id="checkin" type="date" name="checkIn" min={minDate||undefined} value={form.checkIn} onChange={change} required/></label>
-        <label>Check-out<input id="checkout" type="date" name="checkOut" min={form.checkIn||minDate||undefined} value={form.checkOut} onChange={change} required/></label>
+        <label>Check-in<input id="checkin" type="date" name="checkIn" min={today} value={form.checkIn} onChange={change} required/></label>
+        <label>Check-out<input id="checkout" type="date" name="checkOut" min={form.checkIn||today} value={form.checkOut} onChange={change} required/></label>
         <label>Guests<select id="hotelAdults" name="guests" value={form.guests} onChange={change}>{Array.from({length:12},(_,i)=><option key={i} value={i+1}>{i+1} guest(s)</option>)}</select></label>
         <label>Minimum rating<select id="hotelCategory" name="stars" value={form.stars} onChange={change}><option value="0">Any rating</option>{[3,4,5].map(n=><option key={n} value={n}>{n}+ stars</option>)}</select></label>
         <label>Maximum total price<input id="maxPrice" name="maxPrice" type="number" min="0" step="500" value={form.maxPrice} onChange={change} placeholder="No limit"/></label>

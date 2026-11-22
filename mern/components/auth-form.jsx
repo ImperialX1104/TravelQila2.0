@@ -58,23 +58,18 @@ export default function AuthForm({ mode }) {
   useEffect(() => {
     if (mode !== "reset") return;
     let active = true;
-    try {
-      getSupabaseBrowserClient().auth.getSession().then(({ data, error }) => {
-        if (!active) return;
-        if (error || !data.session) {
-          setResetReady(false);
-          setMessage({ text: "This reset link is invalid or has expired. Request a new password reset link.", kind: "error" });
-        } else setResetReady(true);
-      }).catch(() => {
-        if (active) {
-          setResetReady(false);
-          setMessage({ text: "We couldn't verify this reset link. Request a new one.", kind: "error" });
-        }
-      });
-    } catch {
-      setResetReady(false);
-      setMessage({ text: "Password reset is temporarily unavailable. Please try again later.", kind: "error" });
-    }
+    Promise.resolve().then(() => getSupabaseBrowserClient().auth.getSession()).then(({ data, error }) => {
+      if (!active) return;
+      if (error || !data.session) {
+        setResetReady(false);
+        setMessage({ text: "This reset link is invalid or has expired. Request a new password reset link.", kind: "error" });
+      } else setResetReady(true);
+    }).catch(() => {
+      if (active) {
+        setResetReady(false);
+        setMessage({ text: "We couldn't verify this reset link. Request a new one.", kind: "error" });
+      }
+    });
     return () => { active = false; };
   }, [mode]);
 

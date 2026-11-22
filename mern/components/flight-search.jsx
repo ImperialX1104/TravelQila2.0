@@ -1,34 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import { useMemo, useState } from "react";
+import Link from "next/link";\nimport { useRouter } from "next/navigation";\nimport { parseAirport, buildFlightOptions } from "@/lib/flight-catalog";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
-const airportMap = {DEL:"New Delhi",BOM:"Mumbai",BLR:"Bengaluru",HYD:"Hyderabad",MAA:"Chennai",CCU:"Kolkata",GOI:"Goa",AMD:"Ahmedabad",PNQ:"Pune",COK:"Kochi",JAI:"Jaipur",DXB:"Dubai",SIN:"Singapore",BKK:"Bangkok",LHR:"London",DOH:"Doha",AUH:"Abu Dhabi",KUL:"Kuala Lumpur",HKT:"Phuket",JFK:"New York"};
-const offers = [
-  {airline:"IndiGo",flight:"6E 2145",depart:"06:10",duration:135,stops:0,price:6450,baggage:"15 kg check-in"},
-  {airline:"Air India",flight:"AI 887",depart:"07:35",duration:150,stops:0,price:7850,baggage:"15 kg check-in"},
-  {airline:"Akasa Air",flight:"QP 1320",depart:"09:20",duration:150,stops:0,price:6990,baggage:"15 kg check-in"},
-  {airline:"Air India Express",flight:"IX 1042",depart:"11:45",duration:205,stops:1,price:5980,baggage:"15 kg check-in"},
-  {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},
-  {airline:"Air India",flight:"AI 441",depart:"16:40",duration:225,stops:1,price:8250,baggage:"25 kg check-in"},
-  {airline:"Akasa Air",flight:"QP 1718",depart:"18:30",duration:155,stops:0,price:7590,baggage:"15 kg check-in"},
-  {airline:"IndiGo",flight:"6E 9912",depart:"21:15",duration:215,stops:1,price:6250,baggage:"15 kg check-in"}
-];
 const money = value => "₹" + Number(value || 0).toLocaleString("en-IN");
 const localDate = offset => { const d=new Date();d.setDate(d.getDate()+offset);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10); };
-const addMinutes = (time,minutes) => { const [h,m]=time.split(":").map(Number);const n=(h*60+m+minutes)%1440;return String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0"); };
-const shiftDate = (date,offset) => { const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+offset);return d.toISOString().slice(0,10); };
 const formatDate = value => value ? new Date(value+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "";
 const durationText = value => Math.floor(value/60)+"h "+value%60+"m";
-function parseAirport(value) { const raw=value.trim();const match=raw.match(/\(([A-Za-z]{3})\)\s*$/);const code=match?match[1].toUpperCase():"";const city=raw.replace(/\s*\([A-Za-z]{3}\)\s*$/,"");return {city:city||raw,code,label:code?(airportMap[code]||city):city}; }
-function buildOptions(origin,destination,date,seedText,tripFlex) {
-  const seed=seedText.split("").reduce((sum,char)=>sum+char.charCodeAt(0),0);
-  const offsets=tripFlex==="1 day before or after"?[0,-1,1,0,0,0,0,0]:tripFlex==="3 days before or after"||tripFlex==="Flexible - lowest fare matters most"?[0,-1,1,-2,2,-3,3,0]:[0,0,0,0,0,0,0,0];
-  return offers.map((offer,index)=>{const shift=seed%7;const depart=addMinutes(offer.depart,shift*4);const duration=offer.duration+shift*3+(index%2?10:0);const offset=offsets[index]||0;return {...offer,id:`leg-${seed}-${index}`,depart,arrive:addMinutes(depart,duration),duration,price:Math.round((offer.price+(seed%13)*175+(index%3)*260+(offset<0?Math.abs(offset)*-80:offset*40))/10)*10,origin,destination,departureDate:shiftDate(date,offset)};});
-}
-
-export default function FlightSearch({ initialSearch = {} }) {
+export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const router = useRouter();
   const hasInitialSearch = Boolean(initialSearch.origin && initialSearch.destination && initialSearch.departureDate);
   const defaults = {
     tripType: "Round trip", origin: "", destination: "", departureDate: "", returnDate: "",
@@ -42,7 +22,7 @@ export default function FlightSearch({ initialSearch = {} }) {
     if (!hasInitialSearch) return [];
     const from = parseAirport(initialSearch.origin);
     const to = parseAirport(initialSearch.destination);
-    return buildOptions(from,to,initialSearch.departureDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
+    return buildFlightOptions(from,to,initialSearch.departureDate,from.code+to.code,initialSearch.dateFlexibility||"Exact dates");
   });
   const [returnOptions,setReturnOptions] = useState(() => {
     if (!hasInitialSearch || initialSearch.tripType === "One way" || !initialSearch.returnDate) return [];
@@ -57,13 +37,7 @@ export default function FlightSearch({ initialSearch = {} }) {
   const [busy,setBusy]=useState("");
   const [wishlistId,setWishlistId]=useState(initialSearch.wishlistId||null);
 
-  useEffect(()=>{
-    const today=localDate(0);
-    setMinDate(today);
-    if(!initialSearch.departureDate){
-      setForm(current=>({...current,departureDate:localDate(7),returnDate:localDate(14)}));
-    }
-  },[]);
+
 
   function change(event) { const {name,value}=event.target;setForm(current=>({...current,[name]:value})); }
   function submit(event) {
@@ -81,7 +55,7 @@ export default function FlightSearch({ initialSearch = {} }) {
   const passengers=Number(form.adults)+Number(form.children)+Number(form.infants);
   const selectedBase=(outbound?.price||0)+(returning?.price||0);
   const pricing={baseFare:selectedBase*passengers,taxAmount:Math.round(selectedBase*passengers*.05),totalFare:selectedBase*passengers+Math.round(selectedBase*passengers*.05)};
-  const trip=outbound?{version:1,origin:outbound.origin,destination:outbound.destination,tripType:form.tripType,departureDate:outbound.departureDate,returnDate:form.tripType==="Round trip"?(returning?.departureDate||form.returnDate):null,stops:form.stops,maximumBudget:Number(form.maximumBudget),dateFlexibility:form.dateFlexibility,additionalPreferences:form.additionalPreferences,passengers:{adults:Number(form.adults),children:Number(form.children),infants:Number(form.infants)},cabin:form.cabin,outbound,return:returning,pricing,priceSource:"illustrative_demo",savedAt:new Date().toISOString()} : null;
+  const trip=outbound?{version:1,origin:outbound.origin,destination:outbound.destination,tripType:form.tripType,departureDate:outbound.departureDate,returnDate:form.tripType==="Round trip"?(returning?.departureDate||form.returnDate):null,stops:form.stops,maximumBudget:Number(form.maximumBudget),dateFlexibility:form.dateFlexibility,searchDepartureDate:form.departureDate,searchReturnDate:form.tripType==="Round trip"?form.returnDate:null,additionalPreferences:form.additionalPreferences,passengers:{adults:Number(form.adults),children:Number(form.children),infants:Number(form.infants)},cabin:form.cabin,outbound,return:returning,pricing,priceSource:"illustrative_demo",savedAt:new Date().toISOString()} : null;
 
   const activeOptions=stage==="return"?returnOptions:outboundOptions;
   const filtered=useMemo(()=>{
@@ -101,7 +75,7 @@ export default function FlightSearch({ initialSearch = {} }) {
     setBusy("save");
     try {
       const supabase=getSupabaseBrowserClient();const {data:{user},error:userError}=await supabase.auth.getUser();
-      if(userError||!user){window.location.href="/login.html?returnTo=%2Fservices.html";return;}
+      if(userError||!user){router.push("/login.html?returnTo=%2Fservices.html");return;}
       const title=trip.origin.label+" to "+trip.destination.label;
       const result=wishlistId
         ? await supabase.from("flight_wishlists").update({title,itinerary:trip}).eq("id",wishlistId).eq("user_id",user.id).select("id").single()
@@ -130,7 +104,7 @@ export default function FlightSearch({ initialSearch = {} }) {
     if(!trip||!outbound)return;
     const lines=["Hello Travel Qila, I would like to request this flight itinerary.","Trip: "+trip.tripType,"Route: "+trip.origin.label+" ("+(trip.origin.code||"")+") to "+trip.destination.label+" ("+(trip.destination.code||"")+")","Departure: "+formatDate(trip.departureDate),trip.tripType==="Round trip"?"Return: "+formatDate(trip.returnDate):"","Passengers: "+passengers+" passenger(s)","Cabin: "+trip.cabin,"Outbound: "+outbound.airline+" "+outbound.flight+" | "+outbound.depart+"–"+outbound.arrive+" | "+formatDate(outbound.departureDate)+" | "+money(outbound.price)+" per passenger",returning?"Return flight: "+returning.airline+" "+returning.flight+" | "+returning.depart+"–"+returning.arrive+" | "+formatDate(returning.departureDate)+" | "+money(returning.price)+" per passenger":"","Base fare estimate: "+money(pricing.baseFare),"Illustrative tax estimate: "+money(pricing.taxAmount),"Estimated demo total: "+money(pricing.totalFare),trip.additionalPreferences?"Additional preferences: "+trip.additionalPreferences:"","Please reconfirm live availability, final fare, taxes and terms. I understand this is an enquiry, not a confirmed ticket."].filter(Boolean).join("\n");
     if(channel==="whatsapp")window.open("https://wa.me/919871101345?text="+encodeURIComponent(lines),"_blank","noopener,noreferrer");
-    else window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila - Flight booking enquiry")+"&body="+encodeURIComponent(lines);
+    else window.open("mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila - Flight booking enquiry")+"&body="+encodeURIComponent(lines),"_self");
   }
 
   return <div className="flight-workspace">
