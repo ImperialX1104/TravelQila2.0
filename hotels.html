@@ -56,7 +56,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
 
 :root{--hotel-blue:#13357b;--hotel-ink:#17233e;--hotel-muted:#68758d;--hotel-border:#e4eaf4}
 body{font-family:Roboto,Arial,sans-serif;color:var(--hotel-ink);background:#f6f8fc}
-.hotel-hero{padding:76px 0 125px;background:radial-gradient(circle at 82% 18%,rgba(134,168,230,.28),transparent 26%),linear-gradient(118deg,#091b40,#13357b 65%,#345995);color:#fff}
+.hotel-hero{position:relative;isolation:isolate;overflow:hidden;min-height:430px;display:flex;align-items:center;padding:88px 0 150px;background:linear-gradient(90deg,rgba(5,20,52,.88) 0%,rgba(9,34,79,.70) 48%,rgba(12,40,86,.18) 100%),url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=2200&q=85') center 48%/cover no-repeat;color:#fff}
 .hotel-hero .eyebrow{font-size:.75rem;letter-spacing:.16em;font-weight:700;color:#c8d8ff}
 .hotel-hero h1{font:700 clamp(2.2rem,5vw,3.7rem)/1.08 Jost,sans-serif;color:#fff;max-width:760px}
 .hotel-hero p{max-width:640px;color:rgba(255,255,255,.83);font-size:1.05rem}
@@ -95,7 +95,7 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--hotel-ink);background:#f6f8
 .hotel-empty i{font-size:2rem;color:#8da4ce}.hotel-empty h3{font:700 1.2rem Jost,sans-serif;color:#243654;margin:12px 0 6px}.hotel-empty p{margin:0;font-size:.88rem}
 .hotel-footer-note{font-size:.78rem;color:#7a879b;line-height:1.6}
 @media(max-width:991px){.hotel-result{grid-template-columns:210px minmax(0,1fr)}.hotel-price{grid-column:1/-1;border-left:0;border-top:1px solid #edf0f6;padding:14px 2px 2px;display:grid;grid-template-columns:1fr 1fr;gap:7px 14px}.hotel-book,.hotel-wish{grid-row:span 1}.hotel-breakdown{margin:0}}
-@media(max-width:600px){.hotel-hero{padding:54px 0 112px}.hotel-wrap{margin-top:-74px}.hotel-result{grid-template-columns:1fr;gap:12px}.hotel-photo{height:205px}.hotel-price{grid-template-columns:1fr 1fr}.hotel-results-head{align-items:start;flex-direction:column}}
+@media(max-width:600px){.hotel-hero{min-height:390px;padding:58px 0 112px;background-position:58% center}.hotel-wrap{margin-top:-74px}.hotel-result{grid-template-columns:1fr;gap:12px}.hotel-photo{height:205px}.hotel-price{grid-template-columns:1fr 1fr}.hotel-results-head{align-items:start;flex-direction:column}}
 
 </style>
 </head><body>
@@ -153,13 +153,6 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--hotel-ink);background:#f6f8
 </nav></div>
 
             </div>
-<header class="flight-hero">
- <div class="container position-relative" style="z-index:1">
-  <div class="flight-eyebrow mb-3"><i class="fas fa-plane me-2"></i>FLIGHTS • DOMESTIC & INTERNATIONAL</div>
-  <h1>Where would you like to fly next?</h1>
-  <p class="mt-3 mb-0">Compare your travel preferences with a real travel expert. Share your route, dates and budget, and our team will help you find the right flight.</p>
- </div>
-</header>
 
 <header class="service-page-hero hotel-hero"><div class="container"><div class="eyebrow mb-3"><i class="fas fa-hotel me-2"></i>STAYS FOR EVERY JOURNEY</div><h1>Find the right stay for your next destination.</h1><p class="mt-3 mb-0">Search by destination, compare hotel categories and see an estimated stay total with taxes before sending your booking request.</p></div></header>
 <main><section class="container hotel-wrap">
