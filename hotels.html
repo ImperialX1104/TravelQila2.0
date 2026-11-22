@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find Hotels & Stays | Travel Qila</title>
+<meta name="description" content="Discover hotels for your next trip. Compare stay options by destination, budget, star rating and guests with Travel Qila.">
+<meta name="theme-color" content="#13357B"><link rel="canonical" href="https://travelqila.com/hotels.html">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"><link href="css/bootstrap.min.css" rel="stylesheet"><link href="css/style.css" rel="stylesheet">
+<script src="js/auth-config.js"></script><script type="module" src="js/auth-nav.js"></script>
+<style>
+:root{--hotel-blue:#13357b;--hotel-ink:#17233e;--hotel-muted:#68758d;--hotel-border:#e4eaf4}
+body{font-family:Roboto,Arial,sans-serif;color:var(--hotel-ink);background:#f6f8fc}
+.hotel-hero{padding:76px 0 125px;background:radial-gradient(circle at 82% 18%,rgba(134,168,230,.28),transparent 26%),linear-gradient(118deg,#091b40,#13357b 65%,#345995);color:#fff}
+.hotel-hero .eyebrow{font-size:.75rem;letter-spacing:.16em;font-weight:700;color:#c8d8ff}
+.hotel-hero h1{font:700 clamp(2.2rem,5vw,3.7rem)/1.08 Jost,sans-serif;color:#fff;max-width:760px}
+.hotel-hero p{max-width:640px;color:rgba(255,255,255,.83);font-size:1.05rem}
+.hotel-wrap{margin-top:-82px;padding-bottom:70px;position:relative}
+.hotel-search-card{background:#fff;border:1px solid var(--hotel-border);border-radius:20px;padding:clamp(20px,3vw,32px);box-shadow:0 18px 55px rgba(13,39,88,.13)}
+.hotel-label{display:block;font-size:.82rem;font-weight:700;color:#34415d;margin-bottom:8px}
+.hotel-control{width:100%;min-height:50px;border:1px solid #dce3ef;border-radius:10px;padding:11px 13px;background:#fff;color:#17233e}
+.hotel-control:focus{outline:0;border-color:#7895d0;box-shadow:0 0 0 3px rgba(19,53,123,.1)}
+.hotel-search-btn{min-height:50px;font-weight:700}
+.hotel-disclaimer{background:#f0f5ff;border:1px solid #dce7fb;border-radius:11px;padding:12px 15px;color:#4a5c7b;font-size:.82rem;line-height:1.5}
+.hotel-results-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:34px 0 16px}
+.hotel-results-head h2{font:700 1.55rem Jost,sans-serif;margin:0;color:var(--hotel-ink)}
+.hotel-results-head p{font-size:.86rem;color:var(--hotel-muted);margin:5px 0 0}
+.hotel-result{display:grid;grid-template-columns:245px minmax(0,1fr) 245px;gap:22px;background:#fff;border:1px solid var(--hotel-border);border-radius:17px;padding:15px;margin-bottom:16px;box-shadow:0 5px 20px rgba(19,53,123,.035)}
+.hotel-photo{height:190px;position:relative;overflow:hidden;border-radius:12px;background:#edf2fa}
+.hotel-photo img{width:100%;height:100%;object-fit:cover}
+.hotel-photo span{position:absolute;left:10px;top:10px;background:#fff;border-radius:30px;padding:6px 10px;font-size:.7rem;font-weight:700;color:#173a7e}
+.hotel-info{padding:5px 0}
+.hotel-stars{color:#e5a43c;font-size:.9rem;letter-spacing:2px}.hotel-stars span{color:#61708a;letter-spacing:0;font-size:.75rem;margin-left:8px}
+.hotel-info h3{font:700 1.25rem Jost,sans-serif;margin:8px 0 5px}
+.hotel-location{font-size:.85rem;color:var(--hotel-muted);margin-bottom:15px}
+.hotel-amenities{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.hotel-amenities span{background:#f3f6fb;border-radius:30px;padding:5px 9px;color:#53617a;font-size:.72rem}
+.hotel-capacity{color:#697790;font-size:.78rem}
+.hotel-price{border-left:1px solid #edf0f6;padding:10px 5px 10px 20px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.hotel-rate{font:700 1.12rem Jost,sans-serif}.hotel-rate small,.hotel-total small{font:400 .75rem Roboto,sans-serif;color:#78859b}
+.hotel-total{font:700 1.35rem Jost,sans-serif;color:var(--hotel-blue);margin-top:8px}
+.hotel-breakdown{font-size:.72rem;line-height:1.5;color:#7a879b;margin:1px 0 13px}
+.hotel-book,.hotel-wish{width:100%;border-radius:8px;font-size:.82rem;font-weight:700;padding:10px}
+.hotel-book{background:var(--hotel-blue);border-color:var(--hotel-blue)}
+.hotel-wish{margin-top:8px;border:1px solid #dbe3f0;color:#53617a;background:#fff}
+.hotel-wish.saved{color:#b13b57;border-color:#f0cbd5;background:#fff8fa}
+.hotel-status{display:none;border-radius:10px;padding:12px 15px;margin-top:15px;font-size:.86rem}
+.hotel-status.is-visible{display:block}.hotel-status.success{background:#edf9f1;color:#17643a}.hotel-status.error{background:#fff0f0;color:#a52e2e}.hotel-status.info{background:#eff4ff;color:#294c8e}
+.hotel-empty{background:#fff;border:1px dashed #cfd9e8;border-radius:16px;padding:42px 20px;text-align:center;color:#68758d}
+.hotel-empty i{font-size:2rem;color:#8da4ce}.hotel-empty h3{font:700 1.2rem Jost,sans-serif;color:#243654;margin:12px 0 6px}.hotel-empty p{margin:0;font-size:.88rem}
+.hotel-footer-note{font-size:.78rem;color:#7a879b;line-height:1.6}
+@media(max-width:991px){.hotel-result{grid-template-columns:210px minmax(0,1fr)}.hotel-price{grid-column:1/-1;border-left:0;border-top:1px solid #edf0f6;padding:14px 2px 2px;display:grid;grid-template-columns:1fr 1fr;gap:7px 14px}.hotel-book,.hotel-wish{grid-row:span 1}.hotel-breakdown{margin:0}}
+@media(max-width:600px){.hotel-hero{padding:54px 0 112px}.hotel-wrap{margin-top:-74px}.hotel-result{grid-template-columns:1fr;gap:12px}.hotel-photo{height:205px}.hotel-price{grid-template-columns:1fr 1fr}.hotel-results-head{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>
+<div class="container-fluid bg-primary px-5 d-none d-lg-block"><div class="row gx-0"><div class="col-lg-8 text-center text-lg-start"><div class="d-inline-flex align-items-center" style="height:45px"><a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a><a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href="#"><i class="fab fa-instagram"></i></a></div></div><div class="col-lg-4 text-center text-lg-end"><div class="d-inline-flex align-items-center" style="height:45px"><a href="register.html"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a><a href="login.html"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a><a href="dashboard.html" class="text-light"><small><i class="fa fa-home me-2"></i>My Dashboard</small></a></div></div></div></div>
+<div class="container-fluid position-relative p-0"><nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0"><a href="index.html" class="navbar-brand p-0"><h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila</h1></a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"><span class="fa fa-bars"></span></button><div class="collapse navbar-collapse" id="navbarCollapse"><div class="navbar-nav ms-auto py-0"><a href="about.html" class="nav-item nav-link">About</a><a href="services.html" class="nav-item nav-link">Flights</a><a href="hotels.html" class="nav-item nav-link active">Hotels</a><a href="packages.html" class="nav-item nav-link">Packages</a><a href="contact.html" class="nav-item nav-link">Contact</a></div><a href="dashboard.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">My Dashboard</a></div></nav></div>
+<header class="hotel-hero"><div class="container"><div class="eyebrow mb-3"><i class="fas fa-hotel me-2"></i>STAYS FOR EVERY JOURNEY</div><h1>Find the right stay for your next destination.</h1><p class="mt-3 mb-0">Search by destination, compare hotel categories and see an estimated stay total with taxes before sending your booking request.</p></div></header>
+<main><section class="container hotel-wrap">
+<div class="hotel-search-card">
+ <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4"><div><span class="small text-primary fw-bold">PLAN YOUR STAY</span><h2 class="h3 fw-bold mt-1 mb-0">Search hotels</h2></div><a href="dashboard.html#hotel-wishlist" class="small fw-bold text-primary"><i class="fas fa-heart me-1"></i>My wishlist</a></div>
+ <form id="hotelSearchForm"><div class="row g-3 align-items-end">
+  <div class="col-lg-3 col-md-6"><label class="hotel-label" for="destination">Destination</label><input class="hotel-control" id="destination" name="destination" list="hotelDestinations" placeholder="City, area or hotel" required><datalist id="hotelDestinations"><option value="Goa"><option value="Jaipur"><option value="Dubai"><option value="Bangkok"><option value="New Delhi"><option value="Manali"></datalist></div>
+  <div class="col-lg-2 col-md-6"><label class="hotel-label" for="checkIn">Check-in</label><input class="hotel-control" id="checkIn" name="checkIn" type="date" required></div>
+  <div class="col-lg-2 col-md-6"><label class="hotel-label" for="checkOut">Check-out</label><input class="hotel-control" id="checkOut" name="checkOut" type="date" required></div>
+  <div class="col-lg-2 col-md-6"><label class="hotel-label" for="guests">Guests</label><select class="hotel-control" id="guests" name="guests"><option value="1">1 guest</option><option value="2" selected>2 guests</option><option value="3">3 guests</option></select></div>
+  <div class="col-lg-1 col-md-6"><label class="hotel-label" for="stars">Stars</label><select class="hotel-control" id="stars" name="stars"><option value="0">Any</option><option value="3">3+</option><option value="4">4+</option><option value="5">5</option></select></div>
+  <div class="col-lg-2 col-md-6"><label class="hotel-label" for="maxPrice">Max total (₹)</label><input class="hotel-control" id="maxPrice" name="maxPrice" type="number" min="0" step="500" placeholder="No limit"></div>
+  <div class="col-12"><button class="btn btn-primary hotel-search-btn w-100" type="submit"><i class="fas fa-search me-2"></i>Search available stays</button></div>
+ </div></form>
+ <div class="hotel-disclaimer mt-3"><i class="fas fa-info-circle me-2"></i>Displayed hotels and rates are illustrative catalogue estimates, not live inventory or confirmed offers. Final availability, taxes and price will be verified by the Travel Qila team before confirmation.</div>
+ <div id="hotelStatus" class="hotel-status" role="status" aria-live="polite"></div><a id="hotelWhatsapp" href="#" target="_blank" rel="noopener" class="btn btn-success mt-3" hidden><i class="fab fa-whatsapp me-2"></i>Continue on WhatsApp</a>
+</div>
+<div class="hotel-results-head" id="hotelResultsHeading"><div><h2>Recommended stays</h2><p>Choose a stay, review the full estimate and save it to your dashboard.</p></div><span id="resultCount" class="small text-muted"></span></div>
+<div id="hotelResults" aria-live="polite"><div class="hotel-empty"><i class="fas fa-search"></i><h3>Start with your destination</h3><p>Enter a city and valid dates to explore stays.</p></div></div>
+<p class="hotel-footer-note mt-4">Hotel estimates are shown in INR for one room. Taxes are estimated at 12% for comparison only; actual tax treatment and payable amount depend on the property and will be confirmed before booking.</p>
+</section></main>
+<div class="container-fluid footer py-5"><div class="container py-5"><div class="row g-5"><div class="col-md-6 col-lg-6 col-xl-3"><div class="footer-item d-flex flex-column"><h4 class="mb-4 text-white">Get In Touch</h4><a href="contact.html"><i class="fas fa-home me-2"></i>80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a><a href="mailto:info@travelqila.com"><i class="fas fa-envelope me-2"></i>info@travelqila.com</a><a href="tel:+919871101345"><i class="fas fa-phone me-2"></i>+91 9871101345</a></div></div><div class="col-md-6 col-lg-6 col-xl-3"><div class="footer-item d-flex flex-column"><h4 class="mb-4 text-white">Company</h4><a href="about.html">About</a><a href="packages.html">Packages</a><a href="services.html">Flights</a><a href="hotels.html">Hotels</a></div></div><div class="col-md-6 col-lg-6 col-xl-3"><div class="footer-item d-flex flex-column"><h4 class="mb-4 text-white">Support</h4><a href="contact.html">Contact</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms and Conditions</a></div></div><div class="col-md-6 col-lg-6 col-xl-3"><div class="footer-item"><h4 class="text-white mb-3">Travel Qila</h4><p class="text-white-50">Your journey, thoughtfully planned.</p></div></div></div></div></div>
+<div class="container-fluid copyright text-body py-4"><div class="container"><div class="row g-4 align-items-center"><div class="col-md-6 text-center text-md-end mb-md-0"><i class="fas fa-copyright me-2"></i><a class="text-white" href="index.html">Travel Qila</a>, All rights reserved.</div><div class="col-md-6 text-center text-md-start">Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a></div></div></div></div>
+<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script><script type="module" src="js/hotels.js"></script>
+</body></html>
