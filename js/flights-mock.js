@@ -71,7 +71,7 @@ import { supabase } from "./auth-client.js";
     const trip=itinerary(),p=trip.pricing;
     const leg=(o,label)=>'<div class="tq-summary-leg"><div class="tq-summary-leg-title">'+label+' · '+formatDate(o.departureDate)+'</div><strong>'+safe(o.airline)+' · '+safe(o.flight)+'</strong><div class="tq-summary-route">'+safe(o.origin.label)+' ('+safe(o.origin.code||"—")+') <i class="fas fa-arrow-right"></i> '+safe(o.destination.label)+' ('+safe(o.destination.code||"—")+')</div><div class="tq-summary-times">'+safe(o.depart)+' – '+safe(o.arrive)+' · '+durationText(o.duration)+'</div><div class="tq-summary-fare">'+money(o.price)+' per passenger</div></div>';
     const legs=leg(selectedOutbound,"Outbound")+(selectedReturn?leg(selectedReturn,"Return"):"");
-    const html='<div class="tq-booking-steps"><span class="is-done">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="is-done">2. Return</span>':'')+'<span class="is-active">Review & save</span></div><div class="tq-summary-card"><div class="tq-summary-heading"><div><span class="flight-eyebrow text-primary">YOUR ITINERARY</span><h3>'+safe(search.origin.label)+' ↔ '+safe(search.destination.label)+'</h3><p>'+search.tripType+' · '+passengers()+' passenger(s) · '+safe(search.cabin)+'</p></div><button type="button" class="btn btn-link" data-edit-flights>Edit flights</button></div>'+legs+'<div class="tq-price-breakdown"><div><span>Base fare · all passengers</span><strong>'+money(p.baseFare)+'</strong></div><div><span>Estimated taxes & fees (illustrative 5%)</span><strong>'+money(p.taxAmount)+'</strong></div><div class="tq-grand-total"><span>Estimated total</span><strong>'+money(p.totalFare)+'</strong></div><small>Demo estimate only. Actual airline taxes, convenience fees, fare rules and availability may change. A live fare check is required before payment.</small></div><div class="tq-summary-actions"><button type="button" class="btn btn-primary" data-book-itinerary><i class="fas fa-lock me-2"></i>Request booking</button><button type="button" class="btn btn-outline-primary" data-save-wishlist><i class="far fa-heart me-2"></i>'+(wishlistId?"Update saved trip":"Save to wishlist")+'</button></div><p class="small text-muted mt-3 mb-0" data-itinerary-message>Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.</p></div>';
+    const html='<div class="tq-booking-steps"><span class="is-done">1. Departure</span>'+(search.tripType==="Round trip"?'<span class="is-done">2. Return</span>':'')+'<span class="is-active">Review & save</span></div><div class="tq-summary-card"><div class="tq-summary-heading"><div><span class="flight-eyebrow text-primary">YOUR ITINERARY</span><h3>'+safe(search.origin.label)+' ↔ '+safe(search.destination.label)+'</h3><p>'+search.tripType+' · '+passengers()+' passenger(s) · '+safe(search.cabin)+'</p></div><button type="button" class="btn btn-link" data-edit-flights>Edit flights</button></div>'+legs+'<div class="tq-price-breakdown"><div><span>Base fare · all passengers</span><strong>'+money(p.baseFare)+'</strong></div><div><span>Estimated taxes & fees (illustrative 5%)</span><strong>'+money(p.taxAmount)+'</strong></div><div class="tq-grand-total"><span>Estimated total</span><strong>'+money(p.totalFare)+'</strong></div><small>Demo estimate only. Actual airline taxes, convenience fees, fare rules and availability may change. A live fare check is required before payment.</small></div><div class="tq-summary-actions"><button type="button" class="btn btn-primary" data-book-itinerary><i class="fas fa-lock me-2"></i>Request booking</button><button type="button" class="btn btn-outline-primary" data-save-wishlist><i class="far fa-heart me-2"></i>'+(wishlistId?"Update saved trip":"Save to wishlist")+'</button><button type="button" class="btn btn-outline-primary" data-share-itinerary="whatsapp"><i class="fab fa-whatsapp me-2"></i>WhatsApp</button><button type="button" class="btn btn-outline-primary" data-share-itinerary="email"><i class="far fa-envelope me-2"></i>Email</button></div><p class="small text-muted mt-3 mb-0" data-itinerary-message>Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.</p></div>';
     byId("flightResultsList").innerHTML=html;byId("flightResultsCount").textContent="Complete itinerary selected";byId("flightResultsEmpty").classList.remove("is-visible");byId("flightResultsList").hidden=false;
     heading("Review your trip",formatDate(search.departureDate)+(search.tripType==="Round trip"?" · Return "+formatDate(search.returnDate):" · One way"));
   }
@@ -100,6 +100,31 @@ import { supabase } from "./auth-client.js";
     const payload={user_id:user.id,origin:s.origin.label,destination:s.destination.label,origin_code:s.origin.code||null,destination_code:s.destination.code||null,trip_type:s.tripType,departure_date:s.departureDate,return_date:s.tripType==="Round trip"?s.returnDate:null,adults:s.passengers.adults,children:s.passengers.children,infants:s.passengers.infants,cabin_class:s.cabin,airline:o.airline,flight_number:o.flight,departure_time:o.depart,arrival_time:o.arrive,return_airline:r?.airline||null,return_flight_number:r?.flight||null,return_departure_time:r?.depart||null,return_arrival_time:r?.arrive||null,base_fare:p.baseFare,tax_amount:p.taxAmount,demo_fare:p.totalFare,additional_preferences:s.additionalPreferences||null};
     const {data,error}=await supabase.from("flight_bookings").insert(payload).select("booking_reference").single();if(error)throw error;return data.booking_reference;
   }
+  function shareItinerary(channel){
+    const trip=itinerary(),p=trip.pricing,o=trip.outbound,r=trip.return;
+    const lines=[
+      "Hello Travel Qila, I would like to request this flight itinerary.",
+      "Trip: "+trip.tripType,
+      "Route: "+trip.origin.label+" ("+(trip.origin.code||"")+") to "+trip.destination.label+" ("+(trip.destination.code||"")+")",
+      "Departure: "+formatDate(trip.departureDate),
+      trip.tripType==="Round trip"?"Return: "+formatDate(trip.returnDate):"",
+      "Passengers: "+trip.passengers.adults+" adult(s), "+trip.passengers.children+" child(ren), "+trip.passengers.infants+" infant(s)",
+      "Cabin: "+trip.cabin,
+      "Outbound: "+o.airline+" "+o.flight+" | "+o.depart+"–"+o.arrive+" | "+formatDate(o.departureDate)+" | "+money(o.price)+" per passenger",
+      r?"Return flight: "+r.airline+" "+r.flight+" | "+r.depart+"–"+r.arrive+" | "+formatDate(r.departureDate)+" | "+money(r.price)+" per passenger":"",
+      "Base fare estimate: "+money(p.baseFare),
+      "Illustrative tax estimate: "+money(p.taxAmount),
+      "Estimated demo total: "+money(p.totalFare),
+      trip.additionalPreferences?"Additional preferences: "+trip.additionalPreferences:"",
+      "Please reconfirm live availability, final fare, taxes and terms. I understand this is an enquiry, not a confirmed ticket."
+    ].filter(Boolean);
+    const message=lines.join("\n");
+    if(channel==="whatsapp"){
+      window.open("https://wa.me/919871101345?text="+encodeURIComponent(message),"_blank","noopener,noreferrer");
+    }else if(channel==="email"){
+      window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila - Flight booking enquiry")+"&body="+encodeURIComponent(message);
+    }
+  }
   async function bookCurrent(){
     const node=messageNode();const button=byId("book-itinerary");if(button){button.disabled=true;button.textContent="Submitting…";}
     try{const user=await signedInUser(),ref=await requestBooking(itinerary(),user);if(node)node.textContent="Booking request "+ref+" is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.";if(button)button.textContent="Request submitted";}
@@ -116,6 +141,7 @@ import { supabase } from "./auth-client.js";
     else if(target.hasAttribute("data-edit-flights")){stage=selectedOutbound&&search.tripType==="Round trip"?"return":"outbound";resetFilters();showStage();}
     else if(target.hasAttribute("data-save-wishlist")){target.id="save-wishlist";await saveWishlist();}
     else if(target.hasAttribute("data-book-itinerary")){target.id="book-itinerary";await bookCurrent();}
+    else if(target.hasAttribute("data-share-itinerary")){shareItinerary(target.dataset.shareItinerary);}
   });
   form.querySelectorAll('input[name="tripType"]').forEach(x=>x.addEventListener("change",updateTripType));
   byId("departDate").addEventListener("change",()=>{byId("returnDate").min=byId("departDate").value;});
