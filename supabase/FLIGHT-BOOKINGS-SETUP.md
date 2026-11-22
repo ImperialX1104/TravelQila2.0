@@ -25,6 +25,7 @@ The flight page and customer dashboard use two Supabase tables:
 - Review: displays each selected leg, base fare, illustrative taxes and total estimate for the selected passenger count.
 - Save to wishlist: stores the complete itinerary snapshot against the authenticated user's Supabase Auth UUID.
 - Request booking: creates a pending booking request. The dashboard stores and displays both legs and the request reference.
+- Recheck options: opens the search with saved criteria and the saved item ID. After selecting fresh options, **Update saved trip** replaces that customer's wishlist snapshot.
 - Remove from wishlist: deletes only the signed-in customer's saved item.
 
 ## Important current limitation
