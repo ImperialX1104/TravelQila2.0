@@ -68,7 +68,7 @@ In **Authentication → Providers → Email**:
 
 ## 4. Add the auth navigation script to existing pages
 
-On each existing public page that contains the shared top bar (`index.html`, `about.html`, `services.html`, `packages.html`, `blog.html`, `destination.html`, `tour.html`, `gallery.html`, `guides.html`, `testimonial.html`, `contact.html`, `terms.html`, `404.html`), add these two lines immediately before `</body>`:
+On each existing public page that contains the shared top bar (`index.html`, `about.html`, `services.html`, `hotels.html`, `visa.html`, `packages.html`, `blog.html`, `destination.html`, `tour.html`, `gallery.html`, `guides.html`, `testimonial.html`, `contact.html`, `terms.html`, `404.html`), add these two lines immediately before `</body>`:
 
 ```html
 <script src="js/auth-config.js"></script>
