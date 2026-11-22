@@ -12,7 +12,7 @@ const HOTELS = [
  {id:"jaipur-pink",name:"Pink City Residency",city:"Jaipur",area:"MI Road",stars:3,rate:2600,guests:2,amenities:["Restaurant","Wi-Fi","Parking"],image:"https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1000&q=85",tag:"Great value"},
  {id:"dubai-marina",name:"Marina View Hotel",city:"Dubai",area:"Dubai Marina",stars:5,rate:9800,guests:4,amenities:["Marina view","Pool","Gym"],image:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85",tag:"City & marina"},
  {id:"bangkok-riverside",name:"Riverside Grand Bangkok",city:"Bangkok",area:"Riverside",stars:5,rate:6800,guests:3,amenities:["River view","Pool","Spa"],image:"https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=85",tag:"Riverside retreat"},
- {id:"delhi-aero",name:"Aero Suites New Delhi",city:"New Delhi",area:"Aerocity",stars:4,rate:5400,guests:3,amenities:["Airport shuttle","Restaurant","Gym"],image:"https://images.unsplash.com/photo-1564501049411-0b1b9f6a0f70?auto=format&fit=crop&w=1000&q=85",tag:"Airport convenience"},
+ {id:"delhi-aero",name:"Aero Suites New Delhi",city:"New Delhi",area:"Aerocity",stars:4,rate:5400,guests:3,amenities:["Airport shuttle","Restaurant","Gym"],image:"https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1000&q=85",tag:"Airport convenience"},
  {id:"manali-pines",name:"Pine & Peak Retreat",city:"Manali",area:"Old Manali",stars:4,rate:3900,guests:3,amenities:["Mountain view","Cafe","Parking"],image:"https://images.unsplash.com/photo-1449158743715-0a90b84031e7?auto=format&fit=crop&w=1000&q=85",tag:"Mountain hideaway"}
 ];
 const currency = new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0});
@@ -26,11 +26,11 @@ export default function HotelSearch() {
   const [user,setUser]=useState(null);
   const [wishlist,setWishlist]=useState([]);
   const [message,setMessage]=useState({text:"",kind:"info"});
-  const [whatsapp,setWhatsapp]=useState("");
+  const [whatsapp,setWhatsapp]=useState("");\n  const [minDate,setMinDate]=useState("");
   const [busy,setBusy]=useState("");
 
   useEffect(()=>{
-    setForm(current=>({...current,checkIn:localDate()}));
+    setMinDate(localDate());\n    setForm(current=>({...current,checkIn:localDate()}));
     let active=true;
     getSupabaseBrowserClient().auth.getUser().then(async({data,error})=>{
       if(!active)return;
@@ -97,8 +97,8 @@ export default function HotelSearch() {
     <section className="container hotel-search-wrap"><div className="hotel-search-panel"><div className="hotel-panel-title"><div><p className="eyebrow eyebrow-blue">Start with your destination</p><h2>Search hotels</h2></div><span>Find a stay that fits your journey</span></div>
       <form className="hotel-search-form" onSubmit={submit}>
         <label>Destination<input name="destination" list="hotelDestinations" value={form.destination} onChange={change} placeholder="City, area or hotel" required maxLength={100}/><datalist id="hotelDestinations">{["Goa","Jaipur","Dubai","Bangkok","New Delhi","Manali"].map(city=><option key={city} value={city}/>)}</datalist></label>
-        <label>Check-in<input type="date" name="checkIn" min={localDate()} value={form.checkIn} onChange={change} required/></label>
-        <label>Check-out<input type="date" name="checkOut" min={form.checkIn||localDate()} value={form.checkOut} onChange={change} required/></label>
+        <label>Check-in<input type="date" name="checkIn" min={minDate||undefined} value={form.checkIn} onChange={change} required/></label>
+        <label>Check-out<input type="date" name="checkOut" min={form.checkIn||minDate||undefined} value={form.checkOut} onChange={change} required/></label>
         <label>Guests<select name="guests" value={form.guests} onChange={change}>{Array.from({length:12},(_,i)=><option key={i} value={i+1}>{i+1} guest(s)</option>)}</select></label>
         <label>Minimum rating<select name="stars" value={form.stars} onChange={change}><option value="0">Any rating</option>{[3,4,5].map(n=><option key={n} value={n}>{n}+ stars</option>)}</select></label>
         <label>Maximum total price<input name="maxPrice" type="number" min="0" step="500" value={form.maxPrice} onChange={change} placeholder="No limit"/></label>
