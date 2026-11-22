@@ -507,7 +507,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0">
-                        <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
+                        <a href="index.html" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="services.html" class="nav-item nav-link">Flights</a>
                         <a href="packages.html" class="nav-item nav-link">Packages</a>
@@ -526,7 +526,7 @@
                         <!-- </div> -->
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
-                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Search Flights</a>
                 </div>
             </nav>
 </div>
@@ -550,6 +550,7 @@
                     Overview
                 </a>
 
+                <a href="#wishlist" class="sidebar-link"><i class="far fa-heart"></i> Saved Flights</a>
                 <a href="#bookings" class="sidebar-link"><i class="fas fa-ticket-alt"></i> My Bookings</a>
                 <a href="#profile" class="sidebar-link">
                     <i class="fas fa-user-circle"></i>
@@ -701,6 +702,19 @@
 
                 </div>
 
+                <!-- SAVED FLIGHT WISHLIST -->
+                <div class="dashboard-section-heading" id="wishlist">
+                    <div><h2>Saved Flights</h2><p>Pick up where you left off. Your selected outbound and return flights stay together.</p></div>
+                    <a href="services.html" class="btn btn-outline-primary rounded-pill px-3 py-2 small">Find flights</a>
+                </div>
+                <section class="dashboard-bookings-panel" aria-live="polite">
+                    <div class="dashboard-bookings-header">
+                        <div><h2>Your wishlist</h2><p>Save complete itineraries and return to them whenever you're ready.</p></div>
+                        <div class="text-end"><div class="dashboard-stat-number" data-wishlist-count>0</div><div class="small text-secondary">Saved trips</div></div>
+                    </div>
+                    <div data-wishlist-list><p class="text-muted small mb-0">Loading your saved flights…</p></div>
+                </section>
+
                 <!-- CUSTOMER FLIGHT BOOKINGS -->
                 <div class="dashboard-section-heading" id="bookings">
                     <div><h2>My Flight Bookings</h2><p>Track your flight requests and booking references.</p></div>
@@ -712,7 +726,7 @@
                         <div class="text-end"><div class="dashboard-stat-number" data-bookings-count>0</div><div class="small text-secondary">Requests</div></div>
                     </div>
                     <div data-bookings-list><p class="text-muted small mb-0">Loading your booking requests…</p></div>
-                    <p class="dashboard-bookings-note">Mock flight requests are saved as pending confirmation. No ticket is issued and no fare is guaranteed until Travel Qila verifies live airline availability, fare rules and payment.</p>
+                    <p class="dashboard-bookings-note">A request is not a ticket. Travel Qila must confirm live inventory, the final fare, taxes and payment before ticketing.</p>
                 </section>
 
                 <!-- PROFILE -->
@@ -784,12 +798,7 @@
 
                 </section>
 
-                <p class="small text-secondary mt-4 mb-0">
-                    Your Travel Qila dashboard is evolving.
-                    Booking history, payments, saved destinations
-                    and notifications will become available as those
-                    features are developed.
-                </p>
+                <p class="small text-secondary mt-4 mb-0">Need help with a saved trip or booking request? <a href="contact.html">Contact our travel team</a>.</p>
 
             </div>
         </div>
@@ -802,6 +811,7 @@
 
 <script type="module" src="js/auth-pages.js"></script>
     <script type="module" src="js/dashboard.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
 
 
 <!-- Back to Top -->
