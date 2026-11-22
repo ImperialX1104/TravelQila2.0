@@ -34,7 +34,6 @@ export default function SiteHeader() {
     } catch {}
     const onScroll=()=>setScrolled(window.scrollY>70);
     window.addEventListener("scroll",onScroll,{passive:true});
-    onScroll();
     return ()=>{
       active=false;
       window.removeEventListener("scroll",onScroll);
@@ -66,10 +65,7 @@ export default function SiteHeader() {
           {!user ? <>
             <Link href="/register.html"><UserPlus size={13}/>Register</Link>
             <Link href="/login.html"><LogIn size={13}/>Login</Link>
-          </> : <>
-            <Link href="/dashboard.html">My Dashboard</Link>
-            <button type="button" onClick={signOut}><LogOut size={13}/>Log out</button>
-          </>}
+          </> : <button type="button" onClick={signOut}><LogOut size={13}/>Log out</button>}
           <Link href="/dashboard.html" className="site-dashboard-link">My Dashboard</Link>
         </div>
       </div>
@@ -78,8 +74,8 @@ export default function SiteHeader() {
       <div className="site-navbar-inner">
         <Link className="site-brand" href="/" aria-label="Travel Qila home"><MapPin size={33} strokeWidth={2.6}/><span>Travel Qila</span></Link>
         <button className="site-menu-toggle" type="button" aria-label={menuOpen?"Close navigation":"Open navigation"} aria-expanded={menuOpen} onClick={()=>setMenuOpen(value=>!value)}>{menuOpen?<X size={24}/>:<Menu size={24}/>}</button>
-        <nav className={`site-nav-links ${menuOpen?"is-open":""}`} aria-label="Main navigation">
-          {links.map(link=><Link key={link.href} href={link.href} className={pathname===link.href||(link.href==="/"&&pathname==="/")?"site-nav-link active":"site-nav-link"} onClick={()=>setMenuOpen(false)}>{link.label}</Link>)}
+        <nav className={`navbar site-nav-links ${menuOpen?"is-open":""}`} aria-label="Main navigation">
+          {links.map(link=><Link key={link.href} href={link.href} className={pathname===link.href||(link.href==="/"&&pathname==="/")||(link.href==="/packages.html"&&(/package-details|destinations|destination.html|tour.html/.test(pathname||"")))?"site-nav-link active":"site-nav-link"} onClick={()=>setMenuOpen(false)}>{link.label}</Link>)}
           <Link className="site-plan-button" href="/trip-enquiry.html" onClick={()=>setMenuOpen(false)}>Plan Your Trip</Link>
         </nav>
       </div>

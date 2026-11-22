@@ -1,4 +1,5 @@
-import "./globals.css";\nimport "./shared-shell.css";
+import "./globals.css";
+import "./shared-shell.css";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
 
