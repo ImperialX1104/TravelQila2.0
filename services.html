@@ -1,45 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book Flights | Domestic & International Air Tickets | Travel Qila</title>
+<meta name="description" content="Find your next flight with Travel Qila. Share your route, travel dates, passengers and budget to receive personalised domestic and international flight options.">
+<meta name="theme-color" content="#13357B">
+<link rel="canonical" href="https://travelqila.com/services.html">
+<meta name="robots" content="index, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+<link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style>
+:root{--flight-primary:#13357b;--flight-ink:#17233e;--flight-muted:#64708a;--flight-border:#e4eaf4}
+body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f9fd}
+.flight-hero{position:relative;overflow:hidden;padding:76px 0 128px;background:radial-gradient(circle at 84% 12%,rgba(113,153,232,.34),transparent 28%),linear-gradient(118deg,#091b40 0%,#13357b 62%,#345995 100%);color:#fff}
+.flight-hero:after{content:"";position:absolute;width:420px;height:420px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-120px;bottom:-260px;box-shadow:0 0 0 42px rgba(255,255,255,.035),0 0 0 84px rgba(255,255,255,.025)}
+.flight-eyebrow{font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:#c8d8ff}
+.flight-hero h1{font:700 clamp(2.25rem,5vw,3.8rem)/1.08 Jost,Roboto,sans-serif;color:#fff;max-width:760px}
+.flight-hero p{color:rgba(255,255,255,.84);max-width:650px;font-size:1.08rem}
+.flight-shell{position:relative;z-index:2;margin-top:-82px;padding-bottom:70px}
+.flight-card{background:#fff;border:1px solid var(--flight-border);border-radius:20px;box-shadow:0 18px 55px rgba(13,39,88,.13);padding:clamp(20px,3vw,34px)}
+.trip-toggle{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.trip-toggle label{cursor:pointer;border:1px solid #dce4f2;border-radius:30px;padding:9px 17px;font-weight:600;color:#43516d;display:flex;align-items:center;gap:8px}
+.trip-toggle input{accent-color:var(--flight-primary)}
+.flight-label{font-size:.84rem;font-weight:700;color:#34415d;margin-bottom:8px}
+.flight-control{min-height:52px;border:1px solid #dce3ef;border-radius:10px;padding:12px 13px;width:100%;color:#17233e;background:#fff;outline:none}
+.flight-control:focus{border-color:#7895d0;box-shadow:0 0 0 3px rgba(19,53,123,.1)}
+.flight-field{height:100%}
+.field-hint{font-size:.76rem;color:#8290a8;margin-top:6px}
+.swap-wrap{display:flex;align-items:end;justify-content:center;padding-bottom:6px}
+.swap-btn{width:42px;height:42px;border-radius:50%;border:1px solid #dce3ef;background:#f5f7fc;color:var(--flight-primary)}
+.flight-divider{border:0;border-top:1px solid #edf0f6;margin:25px 0}
+.filter-title{font:700 1.12rem Jost,Roboto,sans-serif;color:#17233e}
+.price-output{font-weight:700;color:var(--flight-primary)}
+.flight-submit{min-height:54px;font-weight:700;letter-spacing:.01em}
+.flight-note{background:#f0f5ff;border:1px solid #dce7fb;border-radius:12px;padding:14px 16px;color:#445574;font-size:.88rem}
+.flight-feature{height:100%;background:#fff;border:1px solid var(--flight-border);border-radius:16px;padding:24px}
+.flight-feature i{font-size:1.35rem;color:var(--flight-primary);background:#edf3ff;width:48px;height:48px;display:grid;place-items:center;border-radius:14px;margin-bottom:16px}
+.flight-feature h3{font:700 1.18rem Jost,Roboto,sans-serif}
+.flight-feature p{color:var(--flight-muted);margin:0;font-size:.92rem;line-height:1.65}
+.flight-faq{border-bottom:1px solid var(--flight-border);padding:18px 0}
+.flight-faq summary{cursor:pointer;font-weight:700;color:#263653}
+.flight-faq p{color:var(--flight-muted);margin:12px 0 0;line-height:1.65}
+#flightStatus{display:none}
+#flightStatus.is-visible{display:block}
+@media(max-width:767px){.flight-hero{padding:54px 0 112px}.flight-shell{margin-top:-74px}.flight-card{border-radius:16px}.swap-wrap{align-items:center;padding:0}.swap-btn{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<!-- Spinner Start -->
+<div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div>
+</div>
+<!-- Spinner End -->
 
-    <head>
-        <meta charset="utf-8">
-        <title>Travel Qila</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
-
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet"> 
-
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Template Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-
-    <body>
-
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <!-- Spinner End -->
-
-        <!-- Topbar Start -->
+<!-- Topbar Start -->
         <div class="container-fluid bg-primary px-5 d-none d-lg-block">
             <div class="row gx-0">
                 <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
@@ -53,8 +75,8 @@
                 </div>
                 <div class="col-lg-4 text-center text-lg-end">
                     <div class="d-inline-flex align-items-center" style="height: 45px;">
-                        <a href="#"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
-                        <a href="#"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
+                        <a href="register.html"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
+                        <a href="login.html"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
                         <div class="dropdown">
                             <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
                             <div class="dropdown-menu rounded">
@@ -71,10 +93,10 @@
         </div>
         <!-- Topbar End -->
 
-        <!-- Navbar & Hero Start -->
+<!-- Navbar & Hero Start -->
         <div class="container-fluid position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="" class="navbar-brand p-0">
+                <a href="index.html" class="navbar-brand p-0">
                     <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila </h1>
                     <!-- <img src="img/logo.png" alt="Logo"> -->
                 </a>
@@ -85,7 +107,8 @@
                     <div class="navbar-nav ms-auto py-0">
                         <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
                         <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="services.html" class="nav-item nav-link">Services</a>
+                        <a href="services.html" class="nav-item nav-link active">Flights</a>
+                        <a href="hotels.html" class="nav-item nav-link">Hotels</a>
                         <a href="packages.html" class="nav-item nav-link">Packages</a>
                         <a href="blog.html" class="nav-item nav-link">Blog</a>
                         <!-- <div class="nav-item dropdown">
@@ -102,330 +125,144 @@
                         <!-- </div> -->
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
-                    <a href="/contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
                 </div>
             </nav>
 
-            <!-- Carousel Start -->
-            <div class="carousel-header">
-                <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
-                    <ol class="carousel-indicators">
-                        <li data-bs-target="#carouselId" data-bs-slide-to="0" class="active"></li>
-                        <li data-bs-target="#carouselId" data-bs-slide-to="1"></li>
-                        <li data-bs-target="#carouselId" data-bs-slide-to="2"></li>
-                    </ol>
-                    <div class="carousel-inner" role="listbox">
-                        <div class="carousel-item active">
-                            <img src="img/carousel-2.jpg" class="img-fluid" alt="Image">
-                            <div class="carousel-caption">
-                                <div class="p-3" style="max-width: 900px;">
-                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>
-                                    <h1 class="display-2 text-capitalize text-white mb-4">Let's The World Together!</h1>
-                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-                                    </p>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="img/carousel-1.jpg" class="img-fluid" alt="Image">
-                            <div class="carousel-caption">
-                                <div class="p-3" style="max-width: 900px;">
-                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>
-                                    <h1 class="display-2 text-capitalize text-white mb-4">Find Your Perfect Tour At Travel</h1>
-                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-                                    </p>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <img src="img/carousel-3.jpg" class="img-fluid" alt="Image">
-                            <div class="carousel-caption">
-                                <div class="p-3" style="max-width: 900px;">
-                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>
-                                    <h1 class="display-2 text-capitalize text-white mb-4">You Like To Go?</h1>
-                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-                                    </p>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon btn bg-primary" aria-hidden="false"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-                        <span class="carousel-control-next-icon btn bg-primary" aria-hidden="false"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
             </div>
-            <!-- Carousel End -->
-        </div>
-        <div class="container-fluid search-bar position-relative" style="top: -50%; transform: translateY(-50%);">
-            <div class="container">
-                <div class="position-relative rounded-pill w-100 mx-auto p-5" style="background: rgba(19, 53, 123, 0.8);">
-                    <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Eg: Thailand">
-                    <button type="button" class="btn btn-primary rounded-pill py-2 px-4 position-absolute me-2" style="top: 50%; right: 46px; transform: translateY(-50%);">Search</button>
-                </div>
-            </div>
-        </div>
-        <!-- Navbar & Hero End -->
-
-        <!-- Header Start -->
-        <div class="container-fluid bg-breadcrumb">
-            <div class="container text-center py-5" style="max-width: 900px;">
-                <h3 class="text-white display-3 mb-4">Our Services</h1>
-                <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
-                    <li class="breadcrumb-item active text-white">Services</li>
-                </ol>    
-            </div>
-        </div>
-        <!-- Header End -->
-
-        <!-- Services Start -->
-        <div class="container-fluid bg-light service py-5">
-            <div class="container py-5">
-                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-                    <h5 class="section-title px-3">Searvices</h5>
-                    <h1 class="mb-0">Our Services</h1>
-                </div>
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 pe-0">
-                                    <div class="service-content text-end">
-                                        <h5 class="mb-4">WorldWide Tours</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-globe fa-4x text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center  bg-white border border-primary rounded p-4 pe-0">
-                                    <div class="service-content text-end">
-                                        <h5 class="mb-4">Hotel Reservation</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-hotel fa-4x text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 pe-0">
-                                    <div class="service-content text-end">
-                                        <h5 class="mb-4">Travel Guides</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-user fa-4x text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 pe-0">
-                                    <div class="service-content text-end">
-                                        <h5 class="mb-4">Event Management</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-cog fa-4x text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-globe fa-4x text-primary"></i>
-                                    </div>
-                                    <div class="service-content">
-                                        <h5 class="mb-4">WorldWide Tours</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-hotel fa-4x text-primary"></i>
-                                    </div>
-                                    <div class="service-content">
-                                        <h5 class="mb-4">Hotel Reservation</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-user fa-4x text-primary"></i>
-                                    </div>
-                                    <div class="service-content">
-                                        <h5 class="mb-4">Travel Guides</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
-                                    <div class="service-icon p-4">
-                                        <i class="fa fa-cog fa-4x text-primary"></i>
-                                    </div>
-                                    <div class="service-content">
-                                        <h5 class="mb-4">Event Management</h5>
-                                        <p class="mb-0">Dolor sit amet consectetur adipisicing elit. Non alias eum, suscipit expedita corrupti officiis debitis possimus nam laudantium beatae quidem dolore consequuntur voluptate rem reiciendis, omnis sequi harum earum.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="text-center">
-                            <a class="btn btn-primary rounded-pill py-3 px-5 mt-2" href="">Service More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Services End -->
-
-        <!-- Testimonial Start -->
-        <div class="container-fluid testimonial py-5">
-            <div class="container py-5">
-                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-                    <h5 class="section-title px-3">Testimonial</h5>
-                    <h1 class="mb-0">Our Clients Say!!!</h1>
-                </div>
-                <div class="testimonial-carousel owl-carousel">
-                    <div class="testimonial-item text-center rounded pb-4">
-                        <div class="testimonial-comment bg-light rounded p-4">
-                            <p class="text-center mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nostrum cupiditate, eligendi repellendus saepe illum earum architecto dicta quisquam quasi porro officiis. Vero reiciendis,
-                            </p>
-                        </div>
-                        <div class="testimonial-img p-1">
-                            <img src="img/testimonial-1.jpg" class="img-fluid rounded-circle" alt="Image">
-                        </div>
-                        <div style="margin-top: -35px;">
-                            <h5 class="mb-0">John Abraham</h5>
-                            <p class="mb-0">New York, USA</p>
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item text-center rounded pb-4">
-                        <div class="testimonial-comment bg-light rounded p-4">
-                            <p class="text-center mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nostrum cupiditate, eligendi repellendus saepe illum earum architecto dicta quisquam quasi porro officiis. Vero reiciendis,
-                            </p>
-                        </div>
-                        <div class="testimonial-img p-1">
-                            <img src="img/testimonial-2.jpg" class="img-fluid rounded-circle" alt="Image">
-                        </div>
-                        <div style="margin-top: -35px;">
-                            <h5 class="mb-0">John Abraham</h5>
-                            <p class="mb-0">New York, USA</p>
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item text-center rounded pb-4">
-                        <div class="testimonial-comment bg-light rounded p-4">
-                            <p class="text-center mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nostrum cupiditate, eligendi repellendus saepe illum earum architecto dicta quisquam quasi porro officiis. Vero reiciendis,
-                            </p>
-                        </div>
-                        <div class="testimonial-img p-1">
-                            <img src="img/testimonial-3.jpg" class="img-fluid rounded-circle" alt="Image">
-                        </div>
-                        <div style="margin-top: -35px;">
-                            <h5 class="mb-0">John Abraham</h5>
-                            <p class="mb-0">New York, USA</p>
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item text-center rounded pb-4">
-                        <div class="testimonial-comment bg-light rounded p-4">
-                            <p class="text-center mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nostrum cupiditate, eligendi repellendus saepe illum earum architecto dicta quisquam quasi porro officiis. Vero reiciendis,
-                            </p>
-                        </div>
-                        <div class="testimonial-img p-1">
-                            <img src="img/testimonial-4.jpg" class="img-fluid rounded-circle" alt="Image">
-                        </div>
-                        <div style="margin-top: -35px;">
-                            <h5 class="mb-0">John Abraham</h5>
-                            <p class="mb-0">New York, USA</p>
-                            <div class="d-flex justify-content-center">
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                                <i class="fas fa-star text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Testimonial End -->
-
-        <!-- Subscribe Start -->
-        <div class="container-fluid subscribe py-5">
-            <div class="container text-center py-5">
-                <div class="mx-auto text-center" style="max-width: 900px;">
-                    <h5 class="subscribe-title px-3">Subscribe</h5>
-                    <h1 class="text-white mb-4">Our Newsletter</h1>
-                    <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
-                    </p>
-                    <div class="position-relative mx-auto">
-                        <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                        <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Subscribe End -->
-
-        <!-- Footer Start -->
+<header class="flight-hero">
+ <div class="container position-relative" style="z-index:1">
+  <div class="flight-eyebrow mb-3"><i class="fas fa-plane me-2"></i>FLIGHTS • DOMESTIC & INTERNATIONAL</div>
+  <h1>Where would you like to fly next?</h1>
+  <p class="mt-3 mb-0">Compare your travel preferences with a real travel expert. Share your route, dates and budget, and our team will help you find the right flight.</p>
+ </div>
+</header>
+<main>
+<section class="container flight-shell">
+ <div class="flight-card">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+   <div><div class="flight-eyebrow text-primary">YOUR JOURNEY STARTS HERE</div><h2 class="h3 fw-bold mt-1 mb-0">Search flights</h2></div>
+   <span class="small text-muted"><i class="fas fa-shield-alt text-primary me-1"></i>Personalised booking assistance</span>
+  </div>
+  <form id="flightSearchForm" novalidate>
+   <div class="trip-toggle" role="radiogroup" aria-label="Trip type">
+    <label><input type="radio" name="tripType" value="Round trip" checked> Round trip</label>
+    <label><input type="radio" name="tripType" value="One way"> One way</label>
+   </div>
+   <div class="row g-3 align-items-end">
+    <div class="col-lg-5">
+     <div class="row g-2 align-items-end">
+      <div class="col-12 col-sm-5"><label class="flight-label" for="origin">From</label><input class="flight-control" id="origin" name="origin" list="airportSuggestions" placeholder="City or airport" autocomplete="off" required><div class="field-hint">Departure city / airport</div></div>
+      <div class="col-12 col-sm-2 swap-wrap"><button type="button" class="swap-btn" id="swapCities" aria-label="Swap departure and destination"><i class="fas fa-exchange-alt"></i></button></div>
+      <div class="col-12 col-sm-5"><label class="flight-label" for="destination">To</label><input class="flight-control" id="destination" name="destination" list="airportSuggestions" placeholder="City or airport" autocomplete="off" required><div class="field-hint">Arrival city / airport</div></div>
+     </div>
+     <datalist id="airportSuggestions"><option value="New Delhi (DEL)"><option value="Mumbai (BOM)"><option value="Bengaluru (BLR)"><option value="Hyderabad (HYD)"><option value="Chennai (MAA)"><option value="Kolkata (CCU)"><option value="Dubai (DXB)"><option value="Singapore (SIN)"><option value="Bangkok (BKK)"><option value="London (LHR)"></datalist>
+    </div>
+    <div class="col-sm-6 col-lg-2"><label class="flight-label" for="departDate">Departure</label><input class="flight-control" type="date" id="departDate" name="departureDate" required><div class="field-hint">Journey start date</div></div>
+    <div class="col-sm-6 col-lg-2" id="returnDateWrap"><label class="flight-label" for="returnDate">Return</label><input class="flight-control" type="date" id="returnDate" name="returnDate" required><div class="field-hint">Journey return date</div></div>
+    <div class="col-sm-6 col-lg-3"><label class="flight-label" for="cabin">Cabin class</label><select class="flight-control" id="cabin" name="cabin"><option>Economy</option><option>Premium Economy</option><option>Business</option><option>First Class</option></select></div>
+   </div>
+   <hr class="flight-divider">
+   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3"><h3 class="filter-title mb-0">Passengers & preferences</h3><span class="small text-muted">Select everyone travelling</span></div>
+   <div class="row g-3">
+    <div class="col-6 col-md-3"><label class="flight-label" for="adults">Adults (12+ years)</label><select class="flight-control" id="adults" name="adults"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select></div>
+    <div class="col-6 col-md-3"><label class="flight-label" for="children">Children (2–11 years)</label><select class="flight-control" id="children" name="children"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+    <div class="col-6 col-md-3"><label class="flight-label" for="infants">Infants (under 2)</label><select class="flight-control" id="infants" name="infants"><option selected>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+    <div class="col-6 col-md-3"><label class="flight-label" for="stops">Stops</label><select class="flight-control" id="stops" name="stops"><option value="Any">Any</option><option value="Non-stop only">Non-stop only</option><option value="1 stop or fewer">1 stop or fewer</option></select></div>
+   </div>
+   <hr class="flight-divider">
+   <div class="row g-3 align-items-end">
+    <div class="col-md-6">
+     <label class="flight-label" for="maxPrice">Maximum budget per passenger</label>
+     <div class="d-flex justify-content-between align-items-center mb-2"><span class="small text-muted">Flexible budget</span><output id="priceOutput" class="price-output" for="maxPrice">₹50,000</output></div>
+     <input class="form-range" type="range" id="maxPrice" name="maximumBudget" min="5000" max="200000" step="5000" value="50000">
+     <div class="d-flex justify-content-between field-hint"><span>₹5,000</span><span>₹2,00,000+</span></div>
+    </div>
+    <div class="col-md-6">
+     <label class="flight-label" for="flexibility">Date flexibility</label>
+     <select class="flight-control" id="flexibility" name="dateFlexibility"><option>Exact dates</option><option>1 day before or after</option><option>3 days before or after</option><option>Flexible - lowest fare matters most</option></select>
+    </div>
+    <div class="col-12"><label class="flight-label" for="notes">Additional preferences <span class="text-muted fw-normal">(optional)</span></label><textarea class="flight-control" id="notes" name="additionalPreferences" rows="2" maxlength="600" placeholder="Preferred airline, baggage needs, meal preference, child/infant details or any special request"></textarea></div>
+    <div class="col-12 d-flex flex-column flex-sm-row gap-3 mt-2">
+     <button class="btn btn-primary rounded-pill px-4 py-3 flight-submit flex-grow-1" type="submit" name="channel" value="whatsapp"><i class="fab fa-whatsapp me-2"></i>Request flight options on WhatsApp</button>
+     <button class="btn btn-outline-primary rounded-pill px-4 py-3 flight-submit" type="submit" name="channel" value="email"><i class="far fa-envelope me-2"></i>Send by email</button>
+    </div>
+    <div class="col-12"><div id="flightStatus" class="flight-note" role="status" aria-live="polite"></div></div>
+   </div>
+  </form>
+ </div>
+ <div class="flight-note mt-4"><i class="fas fa-info-circle me-2 text-primary"></i><strong>How this works:</strong> This page currently collects your flight requirements and sends them to our team. Live airline fares, seat availability and instant ticketing will be connected after the flight API provider is selected. No fare or booking is confirmed by submitting this request.</div>
+</section>
+<section class="container pb-5">
+ <div class="text-center mb-4"><div class="flight-eyebrow text-primary">THE TRAVEL QILA DIFFERENCE</div><h2 class="display-6 fw-bold mt-2">Flight planning, with people who care</h2><p class="text-muted mx-auto" style="max-width:650px">Get help with the details that make your journey smoother, from choosing a route to understanding the fare conditions.</p></div>
+ <div class="row g-3">
+  <div class="col-md-4"><article class="flight-feature"><i class="fas fa-route"></i><h3>Route guidance</h3><p>Share your preferred route and timing. Our team can help you explore practical flight options.</p></article></div>
+  <div class="col-md-4"><article class="flight-feature"><i class="fas fa-wallet"></i><h3>Budget-aware options</h3><p>Tell us your fare range and cabin preference so recommendations match your travel budget.</p></article></div>
+  <div class="col-md-4"><article class="flight-feature"><i class="fas fa-headset"></i><h3>Human assistance</h3><p>Speak with our travel team for booking support and clarification before you confirm.</p></article></div>
+ </div>
+</section>
+<section class="container pb-5">
+ <div class="row g-4">
+  <div class="col-lg-5"><div class="flight-eyebrow text-primary">GOOD TO KNOW</div><h2 class="display-6 fw-bold mt-2">Flight booking FAQs</h2><p class="text-muted">A few helpful details before you send your request.</p></div>
+  <div class="col-lg-7">
+   <details class="flight-faq"><summary>Are the fares shown live?</summary><p>Not yet. Live fare and seat availability integration will be added once the airline or travel inventory API is selected. For now, submit your requirements and our team will respond with available options.</p></details>
+   <details class="flight-faq"><summary>Does submitting this form confirm my ticket?</summary><p>No. This is an enquiry only. Your booking is confirmed only after you review the final itinerary, fare rules and payment instructions and receive confirmation from Travel Qila.</p></details>
+   <details class="flight-faq"><summary>Can I request flights for children and infants?</summary><p>Yes. Select the correct passenger counts. Our team may contact you for passenger names and dates of birth before ticketing.</p></details>
+   <details class="flight-faq"><summary>Can I ask for a specific airline or baggage allowance?</summary><p>Yes. Add your preferred airline or baggage requirements in the additional preferences field.</p></details>
+  </div>
+ </div>
+</section>
+</main>
+<script>
+(function(){
+ const form=document.getElementById('flightSearchForm');
+ const tripRadios=form.querySelectorAll('input[name="tripType"]');
+ const returnWrap=document.getElementById('returnDateWrap');
+ const returnDate=document.getElementById('returnDate');
+ const departDate=document.getElementById('departDate');
+ const price=document.getElementById('maxPrice');
+ const priceOutput=document.getElementById('priceOutput');
+ const status=document.getElementById('flightStatus');
+ const today=new Date(); today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
+ const todayValue=today.toISOString().slice(0,10);
+ departDate.min=todayValue; returnDate.min=todayValue;
+ function updateTripType(){
+  const roundTrip=form.querySelector('input[name="tripType"]:checked').value==='Round trip';
+  returnWrap.hidden=!roundTrip; returnDate.required=roundTrip;
+  if(!roundTrip) returnDate.value='';
+ }
+ tripRadios.forEach(r=>r.addEventListener('change',updateTripType));
+ departDate.addEventListener('change',function(){returnDate.min=this.value||todayValue;if(returnDate.value&&returnDate.value<this.value)returnDate.value='';});
+ price.addEventListener('input',function(){priceOutput.textContent=Number(this.value)>=200000?'₹2,00,000+':'₹'+Number(this.value).toLocaleString('en-IN');});
+ document.getElementById('swapCities').addEventListener('click',function(){const a=document.getElementById('origin'),b=document.getElementById('destination');const v=a.value;a.value=b.value;b.value=v;});
+ form.addEventListener('submit',function(event){
+  event.preventDefault();
+  updateTripType();
+  if(!form.reportValidity())return;
+  const origin=document.getElementById('origin').value.trim(), destination=document.getElementById('destination').value.trim();
+  if(origin.toLowerCase()===destination.toLowerCase()){document.getElementById('destination').setCustomValidity('Departure and destination must be different.');document.getElementById('destination').reportValidity();document.getElementById('destination').setCustomValidity('');return;}
+  if(Number(document.getElementById('infants').value)>Number(document.getElementById('adults').value)){document.getElementById('infants').setCustomValidity('Infants cannot exceed the number of adults.');document.getElementById('infants').reportValidity();document.getElementById('infants').setCustomValidity('');return;}
+  const data=new FormData(form), lines=[];
+  for(const [key,value] of data.entries()){if(key!=='channel'&&String(value).trim())lines.push(key.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase())+': '+String(value).trim());}
+  const message='Hello Travel Qila, I would like to request flight options.\n\n'+lines.join('\n')+'\n\nPlease share available flights, final fare, baggage allowance and fare rules. I understand this is an enquiry and not a confirmed booking.';
+  const subject='Flight enquiry | '+origin+' to '+destination;
+  const channel=event.submitter&&event.submitter.value==='email'?'email':'whatsapp';
+  status.classList.add('is-visible');
+  if(channel==='email'){
+   status.textContent='Your email app will open with your flight request pre-filled. Please review and press Send.';
+   window.location.href='mailto:info@travelqila.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(message);
+  }else{
+   const url='https://wa.me/919871101345?text='+encodeURIComponent(message);
+   status.innerHTML='Your WhatsApp request is ready. If WhatsApp does not open automatically, <a class="fw-bold" target="_blank" rel="noopener noreferrer" href="'+url+'">open your pre-filled message here</a>. Please press Send in WhatsApp to submit it.';
+   const win=window.open(url,'_blank','noopener,noreferrer');
+   if(!win)status.innerHTML='Your browser blocked the new tab. <a class="fw-bold" target="_blank" rel="noopener noreferrer" href="'+url+'">Click here to open WhatsApp</a> and send your request.';
+  }
+ });
+ updateTripType();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Footer Start -->
         <div class="container-fluid footer py-5">
             <div class="container py-5">
                 <div class="row g-5">
@@ -459,10 +296,10 @@
                     <div class="col-md-6 col-lg-6 col-xl-3">
                         <div class="footer-item d-flex flex-column">
                             <h4 class="mb-4 text-white">Support</h4>
-                            <a href=""><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
                             <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
-                            <a href="/TravelQila2.0/privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
-                            <a href="/TravelQila2.0/terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
                             <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
                             <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
                         </div>
@@ -473,26 +310,26 @@
                                 <div class="col-xl-6">
                                     <form>
                                         <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
+                                            <select class="form-select bg-dark border" id="footerLanguage">
                                                 <option value="1">Arabic</option>
                                                 <option value="2">German</option>
                                                 <option value="3">Greek</option>
                                                 <option value="3">New York</option>
                                             </select>
-                                            <label for="select1">English</label>
+                                            <label for="footerLanguage">English</label>
                                         </div>
                                     </form>
                                 </div>
                                 <div class="col-xl-6">
                                     <form>
                                         <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="select1">
+                                            <select class="form-select bg-dark border" id="footerCurrency">
                                                 <option value="1">USD</option>
                                                 <option value="2">EUR</option>
                                                 <option value="3">INR</option>
                                                 <option value="3">GBP</option>
                                             </select>
-                                            <label for="select1">$</label>
+                                            <label for="footerCurrency">$</label>
                                         </div>
                                     </form>
                                 </div>
@@ -524,31 +361,21 @@
                         <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
                         <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
                         <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
-                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a> </a>
-                    </div>
+                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Copyright End -->
+<!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
-
-        
-        <!-- JavaScript Libraries -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="lib/lightbox/js/lightbox.min.js"></script>
-        
-
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
-        <script src="js/auth-config.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="lib/lightbox/js/lightbox.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-config.js"></script>
 <script type="module" src="js/auth-nav.js"></script>
-    </body>
-
-</html>
+</body></html>

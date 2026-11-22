@@ -1,6 +1,6 @@
--- Travel Qila account profile table.
--- Run this script in Supabase Dashboard > SQL Editor.
--- It deliberately does not create bookings, payments, or admin roles.
+-- Travel Qila account profiles.
+-- Apply in Supabase Dashboard > SQL Editor.
+-- This migration intentionally does not create bookings, payments, or admin roles.
 
 create table if not exists public.profiles (
     id uuid primary key references auth.users (id) on delete cascade,
@@ -27,9 +27,8 @@ create policy "Users can update their own profile"
     using ((select auth.uid()) = id)
     with check ((select auth.uid()) = id);
 
--- No client-side INSERT policy: profile rows are created by the trusted trigger.
-revoke all on public.profiles from anon;
-revoke all on public.profiles from authenticated;
+-- Profile rows are inserted only by the auth-user trigger.
+revoke all on public.profiles from anon, authenticated;
 grant select on public.profiles to authenticated;
 grant update (full_name, phone) on public.profiles to authenticated;
 
@@ -59,8 +58,8 @@ begin
     insert into public.profiles (id, full_name, phone)
     values (
         new.id,
-        coalesce(new.raw_user_meta_data ->> 'full_name', ''),
-        nullif(new.raw_user_meta_data ->> 'phone', '')
+        left(btrim(coalesce(new.raw_user_meta_data ->> 'full_name', '')), 100),
+        nullif(left(btrim(coalesce(new.raw_user_meta_data ->> 'phone', '')), 30), '')
     )
     on conflict (id) do nothing;
 
@@ -68,16 +67,19 @@ begin
 end;
 $$;
 
+-- The trigger can invoke this function; browser roles must not invoke it directly.
+revoke all on function public.handle_new_travelqila_user() from public, anon, authenticated;
+
 drop trigger if exists on_auth_user_created_travelqila on auth.users;
 create trigger on_auth_user_created_travelqila
     after insert on auth.users
-    for each row execute procedure public.handle_new_travelqila_user();
+    for each row execute function public.handle_new_travelqila_user();
 
--- Backfill profile rows for users who already existed before this trigger was installed.
+-- Backfill profiles for users created before the trigger existed.
 insert into public.profiles (id, full_name, phone)
 select
     u.id,
-    coalesce(u.raw_user_meta_data ->> 'full_name', ''),
-    nullif(u.raw_user_meta_data ->> 'phone', '')
+    left(btrim(coalesce(u.raw_user_meta_data ->> 'full_name', '')), 100),
+    nullif(left(btrim(coalesce(u.raw_user_meta_data ->> 'phone', '')), 30), '')
 from auth.users as u
 on conflict (id) do nothing;

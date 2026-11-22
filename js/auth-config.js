@@ -1,12 +1,19 @@
-/*
- * Travel Qila public authentication configuration.
- * Replace the two placeholders with values from Supabase > Project Settings > API.
- * The publishable/anon key is intended for browser use. NEVER put a secret/service_role key here.
- */
-window.TRAVELQILA_AUTH_CONFIG = Object.freeze({
-    supabaseUrl: "https://stjhubpzshzyjqkscjty.supabase.co",
-    supabasePublishableKey: "sb_publishable_MHOsXjYvXj5Ah6_WFEl6HQ_ObHg8bro",
-    // Set to your canonical deployed origin, without a trailing slash.
-    // Local example: http://127.0.0.1:5500
-    siteUrl: window.location.origin
-});
+
+(() => {
+    "use strict";
+
+    const PRODUCTION_HOST = "imperialx1104.github.io";
+    const PROJECT_PATH = "/TravelQila2.0";
+
+    const siteUrl =
+        window.location.hostname === PRODUCTION_HOST
+            ? `${window.location.origin}${PROJECT_PATH}`
+            : window.location.origin;
+
+    window.TRAVELQILA_AUTH_CONFIG = Object.freeze({
+        supabaseUrl: "https://stjhubpzshzyjqkscjty.supabase.co",
+        supabasePublishableKey: "sb_publishable_MHOsXjYvXj5Ah6_WFEl6HQ_ObHg8bro",
+        siteUrl
+    });
+
+})();

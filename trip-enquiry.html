@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Plan Your Holiday | Travel Qila</title>
+    <meta name="description" content="Share your travel dates, destination and group details with Travel Qila. Request a personalised holiday quotation.">
+    <meta name="theme-color" content="#13357B">
+    <link rel="canonical" href="https://travelqila.com/trip-enquiry.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+<link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        :root { --tq-primary:#13357B; --tq-dark:#14141F; --tq-light:#F5F7FC; }
+        body { font-family:'Roboto',sans-serif; color:#555; background:#f7f8fc; }
+        .enquiry-hero { padding:76px 0 65px; color:#fff; background:linear-gradient(120deg,rgba(9,27,65,.96),rgba(19,53,123,.88)),url('img/carousel-2.jpg') center/cover; }
+        .enquiry-card { background:#fff; border:1px solid #e9edf6; border-radius:18px; padding:clamp(22px,4vw,42px); box-shadow:0 14px 45px rgba(19,53,123,.09); margin-top:-38px; position:relative; }
+        .form-label { color:#252b3a; font-weight:600; }
+        .form-control,.form-select { min-height:48px; border-radius:9px; border-color:#dfe4ef; }
+        textarea.form-control { min-height:125px; }
+        .form-control:focus,.form-select:focus { border-color:#6f8fcf; box-shadow:0 0 0 .2rem rgba(19,53,123,.1); }
+        .btn-primary { background:var(--tq-primary); border-color:var(--tq-primary); }
+        .package-summary { background:#f1f5ff; border:1px solid #dce6fb; border-radius:12px; padding:16px 18px; }
+        .notice { background:#fff8e7; color:#755a18; border:1px solid #f2dfae; border-radius:10px; padding:13px 15px; font-size:13px; }
+        @media(max-width:767px) { .enquiry-hero { padding:55px 0 58px; } .enquiry-card { margin-top:-28px; } }
+    </style>
+
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- Spinner Start -->
+<div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"><span class="sr-only">Loading...</span></div>
+</div>
+<!-- Spinner End -->
+
+<!-- Topbar Start -->
+        <div class="container-fluid bg-primary px-5 d-none d-lg-block">
+            <div class="row gx-0">
+                <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-twitter fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-instagram fw-normal"></i></a>
+                        <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href=""><i class="fab fa-youtube fw-normal"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <div class="d-inline-flex align-items-center" style="height: 45px;">
+                        <a href="register.html"><small class="me-3 text-light"><i class="fa fa-user me-2"></i>Register</small></a>
+                        <a href="login.html"><small class="me-3 text-light"><i class="fa fa-sign-in-alt me-2"></i>Login</small></a>
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown"><small><i class="fa fa-home me-2"></i> My Dashboard</small></a>
+                            <div class="dropdown-menu rounded">
+                                <a href="#" class="dropdown-item"><i class="fas fa-user-alt me-2"></i> My Profile</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-comment-alt me-2"></i> Inbox</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-bell me-2"></i> Notifications</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-cog me-2"></i> Account Settings</a>
+                                <a href="#" class="dropdown-item"><i class="fas fa-power-off me-2"></i> Log Out</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Topbar End -->
+<div class="container-fluid position-relative p-0">
+<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travel Qila </h1>
+                    <!-- <img src="img/logo.png" alt="Logo"> -->
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <!-- <a href="index.html" class="nav-item nav-link active">Home</a> -->
+                        <a href="about.html" class="nav-item nav-link">About</a>
+                        <a href="services.html" class="nav-item nav-link">Flights</a>
+                        <a href="packages.html" class="nav-item nav-link">Packages</a>
+                        <a href="blog.html" class="nav-item nav-link">Blog</a>
+                        <!-- <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="destination.html" class="dropdown-item">Destination</a>
+                                <a href="tour.html" class="dropdown-item">Explore Tour</a>
+                                <a href="booking.html" class="dropdown-item">Travel Booking</a>
+                                <a href="gallery.html" class="dropdown-item">Our Gallery</a>
+                                <a href="guides.html" class="dropdown-item">Travel Guides</a>
+                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="404.html" class="dropdown-item">404 Page</a>
+                            </div> -->
+                        <!-- </div> -->
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <a href="contact.html" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>
+                </div>
+            </nav>
+</div>
+<header class="enquiry-hero">
+        <div class="container text-center">
+            <p class="text-uppercase fw-bold mb-2" style="letter-spacing:2px">Let's plan something memorable</p>
+            <h1 class="display-4 fw-bold mb-3">Request Your Holiday Quotation</h1>
+            <p class="lead mb-0">Tell us a little about your trip. Our team will follow up to understand your requirements.</p>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+        <section class="enquiry-card">
+            <div class="package-summary mb-4" id="packageSummary" hidden>
+                <div class="small text-primary fw-bold text-uppercase mb-1">Your selected holiday</div>
+                <h2 class="h4 mb-1" id="selectedPackageName">Custom trip</h2>
+                <p class="mb-0 text-muted" id="selectedPackageDestination"></p>
+            </div>
+
+            <div class="notice mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                Sending this enquiry does not confirm a booking or lock a price. Travel Qila will confirm availability, inclusions and the final quotation with you.
+            </div>
+
+            <form id="tripEnquiryForm">
+                <input type="hidden" id="packageId" name="packageId">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="fullName" class="form-label">Full name *</label>
+                        <input id="fullName" name="fullName" class="form-control" autocomplete="name" required maxlength="100" placeholder="Your full name">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email address *</label>
+                        <input id="email" name="email" type="email" class="form-control" autocomplete="email" required maxlength="150" placeholder="you@example.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">WhatsApp / phone number *</label>
+                        <input id="phone" name="phone" type="tel" class="form-control" autocomplete="tel" required maxlength="20" pattern="[0-9+() .-]{7,20}" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="departureCity" class="form-label">Departure city *</label>
+                        <input id="departureCity" name="departureCity" class="form-control" required maxlength="100" placeholder="e.g. New Delhi">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="destination" class="form-label">Destination *</label>
+                        <input id="destination" name="destination" class="form-control" required maxlength="120" placeholder="Where would you like to go?">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="travellers" class="form-label">Number of travellers *</label>
+                        <select id="travellers" name="travellers" class="form-select" required>
+                            <option value="">Select travellers</option>
+                            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="departureDate" class="form-label">Departure date *</label>
+                        <input id="departureDate" name="departureDate" type="date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="returnDate" class="form-label">Return date</label>
+                        <input id="returnDate" name="returnDate" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="budget" class="form-label">Approximate budget per person</label>
+                        <select id="budget" name="budget" class="form-select">
+                            <option value="">Not decided</option>
+                            <option>Below ₹25,000</option><option>₹25,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>₹1,00,000–₹2,00,000</option><option>Above ₹2,00,000</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tripStyle" class="form-label">Travel style</label>
+                        <select id="tripStyle" name="tripStyle" class="form-select">
+                            <option value="">Please select</option>
+                            <option>Family holiday</option><option>Honeymoon / couple</option><option>Friends / group</option><option>Solo travel</option><option>Corporate / MICE</option><option>Other</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label for="requirements" class="form-label">Additional requirements</label>
+                        <textarea id="requirements" name="requirements" class="form-control" maxlength="1500" placeholder="Destination preferences, sightseeing interests, children’s ages, or anything else we should know."></textarea>
+                    </div>
+                    <div class="col-12 d-flex flex-wrap gap-3 align-items-center mt-4">
+                        <button type="submit" name="channel" value="whatsapp" class="btn btn-success rounded-pill py-3 px-4">
+                            <i class="fab fa-whatsapp me-2"></i>Send via WhatsApp
+                        </button>
+                        <button type="submit" name="channel" value="email" class="btn btn-outline-primary rounded-pill py-3 px-4">
+                            <i class="fas fa-envelope me-2"></i>Send by email
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="submissionMessage" class="alert alert-success mt-4" role="status" hidden>
+                Your enquiry is ready. If WhatsApp did not open automatically, use the WhatsApp link below to send it to our team.
+                <div class="mt-2"><a id="whatsappFallback" href="#" target="_blank" rel="noopener noreferrer" hidden>Open WhatsApp to send your enquiry</a></div>
+            </div>
+        </section>
+    </main>
+
+    
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+ const packages = {
+  "kashmir-escape": { name: "Kashmir Escape", destination: "Kashmir, India" },
+  "bali-discovery": { name: "Bali Discovery", destination: "Bali, Indonesia" },
+  "dubai-highlights": { name: "Dubai Highlights", destination: "Dubai, UAE" },
+  "kerala-backwaters": { name: "Kerala Backwaters", destination: "Kerala, India" },
+  "swiss-alpine": { name: "Swiss Alpine Journey", destination: "Switzerland" },
+  "thailand-explorer": { name: "Thailand Explorer", destination: "Thailand" }
+ };
+ const params=new URLSearchParams(window.location.search);
+ const packageId=params.get("package")||"";
+ const selected=packages[packageId];
+ const summary=document.getElementById("packageSummary");
+ const destinationInput=document.getElementById("destination");
+ (()=>{const yearNode=document.getElementById("currentYear");if(yearNode)yearNode.textContent=new Date().getFullYear()})();
+ document.getElementById("packageId").value=packageId;
+ if(selected){summary.hidden=false;document.getElementById("selectedPackageName").textContent=selected.name;document.getElementById("selectedPackageDestination").textContent=selected.destination;destinationInput.value=selected.destination;document.title="Enquire About "+selected.name+" | Travel Qila";}
+ else if(params.get("type")==="custom"){document.title="Plan a Custom Trip | Travel Qila";const requested=params.get("destination");if(requested)destinationInput.value=requested;}
+ const departure=document.getElementById("departureDate"),returnDate=document.getElementById("returnDate");
+ const now=new Date(),today=new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+ departure.min=today;returnDate.min=today;
+ departure.addEventListener("change",function(){returnDate.min=departure.value||today;if(returnDate.value&&departure.value&&returnDate.value<departure.value)returnDate.value="";});
+ document.getElementById("tripEnquiryForm").addEventListener("submit",function(event){
+  event.preventDefault();if(!this.reportValidity())return;
+  if(returnDate.value&&departure.value&&returnDate.value<departure.value){returnDate.setCustomValidity("Return date must be on or after the departure date.");returnDate.reportValidity();returnDate.setCustomValidity("");return;}
+  const values=new FormData(this);
+  const fields=[
+   ["Package",selected?selected.name:"Custom trip"],["Name",values.get("fullName")],["Email",values.get("email")],["Phone / WhatsApp",values.get("phone")],["Departure city",values.get("departureCity")],["Destination",values.get("destination")],["Travellers",values.get("travellers")],["Departure date",values.get("departureDate")],["Return date",values.get("returnDate")||"Flexible / not specified"],["Budget per person",values.get("budget")||"Not specified"],["Travel style",values.get("tripStyle")||"Not specified"],["Additional requirements",values.get("requirements")||"None"]
+  ];
+  const message="Hello Travel Qila, I would like to request a holiday quotation.\n\n"+fields.map(f=>f[0]+": "+f[1]).join("\n")+"\n\nPlease contact me to discuss availability and the final quotation. I understand this is an enquiry, not a confirmed booking.";
+  const status=document.getElementById("submissionMessage"),fallback=document.getElementById("whatsappFallback");
+  if(event.submitter&&event.submitter.value==="email"){
+   window.location.href="mailto:info@travelqila.com?subject="+encodeURIComponent("Travel Qila holiday enquiry")+"&body="+encodeURIComponent(message);
+   status.hidden=false;status.firstChild.textContent="Your email app should open with the enquiry details pre-filled. Please press Send to submit your request.";
+  }else{
+   const url="https://wa.me/919871101345?text="+encodeURIComponent(message);
+   fallback.href=url;fallback.hidden=false;status.hidden=false;
+   status.firstChild.textContent="WhatsApp should open with your enquiry pre-filled. Please press Send in WhatsApp to submit your request.";
+   window.open(url,"_blank","noopener,noreferrer");
+  }
+ });
+});
+    </script>
+<!-- Footer Start -->
+        <div class="container-fluid footer py-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Get In Touch</h4>
+                            <a href=""><i class="fas fa-home me-2"></i> 80-D, 3rd Floor, Block-ED, Madhuban Chowk, Pitam Pura, New Delhi-110034</a>
+                            <a href=""><i class="fas fa-envelope me-2"></i> info@travelqila.com</a>
+                            <a href=""><i class="fas fa-phone me-2"></i> +91 9871101345</a>
+                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +91 9871101345</a>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-share fa-2x text-white me-2"></i>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Company</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Support</h4>
+                            <a href="contact.html"><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                            <a href="privacy.html"><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href="terms.html"><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item">
+                            <div class="row gy-3 gx-2 mb-4">
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="footerLanguage">
+                                                <option value="1">Arabic</option>
+                                                <option value="2">German</option>
+                                                <option value="3">Greek</option>
+                                                <option value="3">New York</option>
+                                            </select>
+                                            <label for="footerLanguage">English</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="footerCurrency">
+                                                <option value="1">USD</option>
+                                                <option value="2">EUR</option>
+                                                <option value="3">INR</option>
+                                                <option value="3">GBP</option>
+                                            </select>
+                                            <label for="footerCurrency">$</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4 class="text-white mb-3">Payments</h4>
+                            <div class="footer-bank-card">
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright text-body py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-end mb-md-0">
+                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Qila </a>, All right reserved.
+                    </div>
+                    <div class="col-md-6 text-center text-md-start">
+                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                        <!--/*** you can purchase the Credit Removal License from "https://github.com/ImperialX1104/credit-removal". ***/-->
+                        Designed By <a class="text-white" href="https://github.com/ImperialX1104">Imperial Technologies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+<!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="lib/lightbox/js/lightbox.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/auth-config.js"></script>
+<script type="module" src="js/auth-nav.js"></script>
+</body>
+</html>
