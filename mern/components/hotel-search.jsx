@@ -17,7 +17,6 @@ export default function HotelSearch({ today }) {
   const [wishlist,setWishlist]=useState([]);
   const [message,setMessage]=useState({text:"",kind:"info"});
   const [whatsapp,setWhatsapp]=useState("");
-  const [minDate,setMinDate]=useState("");
   const [busy,setBusy]=useState("");
 
   useEffect(()=>{
