@@ -136,6 +136,16 @@ try {
         await page.locator('.flight-result-card [data-select-leg="outbound"]').first().click();
         await page.locator('.flight-result-card [data-select-leg="return"]').first().click();
         if (!(await page.locator("[data-save-wishlist]").textContent()).includes("Update saved trip")) failures.push(`${route}: rechecking a saved itinerary should offer an update-in-place action`);
+        const queryUrl = base + "/services.html?tripType=Round+trip&origin=Chennai+(MAA)&destination=New+Delhi+(DEL)&departureDate=" + future(20) + "&returnDate=" + future(28) + "&cabin=Economy&adults=1&children=0&infants=0&stops=Non-stop+only&maximumBudget=50000&dateFlexibility=1+day+before+or+after&additionalPreferences=Window+seat";
+        await page.goto(queryUrl, { waitUntil:"domcontentloaded" });
+        await page.locator("#flightResults").waitFor({ state:"visible" });
+        if (await page.locator("#origin").inputValue() !== "Chennai (MAA)" || await page.locator("#destination").inputValue() !== "New Delhi (DEL)") failures.push(`${route}: query URL did not restore airport fields`);
+        if (await page.locator("#stops").inputValue() !== "Non-stop only" || await page.locator("#maxPrice").inputValue() !== "50000") failures.push(`${route}: query URL did not restore stop and budget preferences`);
+        if (await page.locator("#flexibility").inputValue() !== "1 day before or after" || await page.locator("#notes").inputValue() !== "Window seat") failures.push(`${route}: query URL did not restore flexibility and additional preferences`);
+        const filtered = await page.locator(".flight-result-card").count();
+        if (filtered !== 5) failures.push(`${route}: non-stop preference should return five sample non-stop options, received ${filtered}`);
+        if (await page.locator(".flight-result-card .flight-flight-number").evaluateAll(nodes => nodes.some(n => !n.textContent.includes("Non-stop")))) failures.push(`${route}: non-stop preference returned a connecting flight`);
+
       } catch (error) {
         failures.push(`${route}: flight search interaction test failed: ${error.message}`);
       }
