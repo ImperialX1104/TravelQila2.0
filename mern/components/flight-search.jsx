@@ -1,14 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";\nimport { useRouter } from "next/navigation";\nimport { parseAirport, buildFlightOptions } from "@/lib/flight-catalog";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AIRPORT_MAP, parseAirport, buildFlightOptions } from "@/lib/flight-catalog";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const money = value => "₹" + Number(value || 0).toLocaleString("en-IN");
-const localDate = offset => { const d=new Date();d.setDate(d.getDate()+offset);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10); };
 const formatDate = value => value ? new Date(value+"T12:00:00").toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}) : "";
 const durationText = value => Math.floor(value/60)+"h "+value%60+"m";
-export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const router = useRouter();
+export default function FlightSearch({ initialSearch = {}, minDate }) {
+  const router = useRouter();
   const hasInitialSearch = Boolean(initialSearch.origin && initialSearch.destination && initialSearch.departureDate);
   const defaults = {
     tripType: "Round trip", origin: "", destination: "", departureDate: "", returnDate: "",
@@ -16,7 +18,6 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const
     maximumBudget: "50000", dateFlexibility: "Exact dates", additionalPreferences: ""
   };
   const [form,setForm] = useState(() => ({ ...defaults, ...initialSearch, tripType: initialSearch.tripType || defaults.tripType }));
-  const [minDate,setMinDate] = useState("");
   const [stage,setStage] = useState(() => hasInitialSearch ? "outbound" : "form");
   const [outboundOptions,setOutboundOptions] = useState(() => {
     if (!hasInitialSearch) return [];
@@ -114,12 +115,12 @@ export default function FlightSearch({ initialSearch = {}, minDate }) {\n  const
         <div className="flight-panel-heading"><div><p className="eyebrow eyebrow-blue">Start planning</p><h2>Search flights</h2></div><span>Personalised travel assistance</span></div>
         <form id="flightSearchForm" className="flight-form" onSubmit={submit}>
           <div className="trip-type"><label><input type="radio" name="tripType" value="Round trip" checked={form.tripType==="Round trip"} onChange={change}/> Round trip</label><label><input type="radio" name="tripType" value="One way" checked={form.tripType==="One way"} onChange={change}/> One way</label></div>
-          <datalist id="airportSuggestions">{Object.entries(airportMap).map(([code,city])=><option key={code} value={city+" ("+code+")"}/>)}</datalist>
+          <datalist id="airportSuggestions">{Object.entries(AIRPORT_MAP).map(([code,city])=><option key={code} value={city+" ("+code+")"}/>)}</datalist>
           <div className="flight-field-grid">
             <label>From<input id="origin" name="origin" list="airportSuggestions" value={form.origin} onChange={change} placeholder="City or airport" required maxLength={120}/></label>
             <button className="flight-swap" type="button" aria-label="Swap departure and destination" onClick={()=>setForm(f=>({...f,origin:f.destination,destination:f.origin}))}>⇄</button>
             <label>To<input id="destination" name="destination" list="airportSuggestions" value={form.destination} onChange={change} placeholder="City or airport" required maxLength={120}/></label>
-            <label>Departure<input id="departDate" type="date" name="departureDate" min={minDate||undefined} value={form.departureDate} onChange={change} required/></label>
+            <label>Departure<input id="departDate" type="date" name="departureDate" min={minDate} value={form.departureDate} onChange={change} required/></label>
             <label id="returnDateWrap" hidden={form.tripType!=="Round trip"}>Return<input id="returnDate" type="date" name="returnDate" min={form.departureDate||minDate} value={form.returnDate} onChange={change} required={form.tripType==="Round trip"}/></label>
           </div>
           <div className="flight-secondary-grid">

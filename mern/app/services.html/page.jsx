@@ -1,4 +1,5 @@
-import FlightSearch from "@/components/flight-search";\nimport { indiaToday, addDays } from "@/lib/date";
+import FlightSearch from "@/components/flight-search";
+import { indiaToday, addDays } from "@/lib/date";
 import "./services.css";
 export const metadata = {
   title: "Book Flights | Domestic & International Air Tickets",
@@ -13,5 +14,8 @@ export default async function FlightsPage({ searchParams }) {
     const value = Array.isArray(params?.[key]) ? params[key][0] : params?.[key];
     if (typeof value === "string") initialSearch[key] = value;
   }
-  const today = indiaToday();\n  if (!initialSearch.departureDate) initialSearch.departureDate = addDays(today, 7);\n  if (initialSearch.tripType !== "One way" && !initialSearch.returnDate) initialSearch.returnDate = addDays(initialSearch.departureDate, 7);\n  return <main><FlightSearch key={JSON.stringify(initialSearch)} initialSearch={initialSearch} minDate={today}/></main>;
+  const today = indiaToday();
+  if (!initialSearch.departureDate) initialSearch.departureDate = addDays(today, 7);
+  if (initialSearch.tripType !== "One way" && !initialSearch.returnDate) initialSearch.returnDate = addDays(initialSearch.departureDate, 7);
+  return <main><FlightSearch key={JSON.stringify(initialSearch)} initialSearch={initialSearch} minDate={today}/></main>;
 }
