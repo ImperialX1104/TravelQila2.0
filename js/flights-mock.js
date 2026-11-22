@@ -75,7 +75,19 @@ import { supabase } from "./auth-client.js";
   async function signedInUser(){const {data,error}=await supabase.auth.getUser();if(error)throw error;if(!data.user){throw new Error("Please sign in to save or request this itinerary.");}return data.user;}
   function messageNode(){return byId("itinerary-message")||document.querySelector("[data-itinerary-message]");}
   async function saveWishlist(){
-    const node=messageNode();try{const user=await signedInUser();const trip=itinerary();const {data,error}=await supabase.from("flight_wishlists").insert({user_id:user.id,title:search.origin.label+" to "+search.destination.label,itinerary:trip}).select("id").single();if(error)throw error;if(node)node.textContent="Saved to your wishlist. You can find it in your dashboard and request it later.";const btn=byId("save-wishlist");if(btn){btn.textContent="Saved to wishlist";btn.disabled=true;}}catch(e){if(node)node.innerHTML=safe(e.message)+" <a href=\"login.html\">Sign in</a>";}}
+    const node=messageNode(),btn=byId("save-wishlist"),original=btn?.innerHTML;
+    if(btn){btn.disabled=true;btn.textContent="Saving to wishlist…";}
+    try{
+      const user=await signedInUser(),trip=itinerary();
+      const {error}=await supabase.from("flight_wishlists").insert({user_id:user.id,title:search.origin.label+" to "+search.destination.label,itinerary:trip});
+      if(error)throw error;
+      if(node)node.textContent="Saved to your wishlist. Find it in your dashboard whenever you're ready.";
+      if(btn){btn.textContent="Saved to wishlist";btn.disabled=true;}
+    }catch(e){
+      if(node)node.innerHTML=safe(e.message)+(e.message.includes("sign in")?' <a href="login.html">Sign in</a>':"");
+      if(btn){btn.disabled=false;btn.innerHTML=original;}
+    }
+  }
   async function requestBooking(trip,user){
     const o=trip.outbound,r=trip.return,p=trip.pricing,s=trip;
     const payload={user_id:user.id,origin:s.origin.label,destination:s.destination.label,origin_code:s.origin.code||null,destination_code:s.destination.code||null,trip_type:s.tripType,departure_date:s.departureDate,return_date:s.tripType==="Round trip"?s.returnDate:null,adults:s.passengers.adults,children:s.passengers.children,infants:s.passengers.infants,cabin_class:s.cabin,airline:o.airline,flight_number:o.flight,departure_time:o.depart,arrival_time:o.arrive,return_airline:r?.airline||null,return_flight_number:r?.flight||null,return_departure_time:r?.depart||null,return_arrival_time:r?.arrive||null,base_fare:p.baseFare,tax_amount:p.taxAmount,demo_fare:p.totalFare};
@@ -83,7 +95,7 @@ import { supabase } from "./auth-client.js";
   }
   async function bookCurrent(){
     const node=messageNode();const button=byId("book-itinerary");if(button){button.disabled=true;button.textContent="Submitting…";}
-    try{const user=await signedInUser(),ref=await requestBooking(itinerary(),user);if(node)node.textContent="Booking request "+ref+" is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.";}
+    try{const user=await signedInUser(),ref=await requestBooking(itinerary(),user);if(node)node.textContent="Booking request "+ref+" is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.";if(button)button.textContent="Request submitted";}
     catch(e){if(node)node.innerHTML=safe(e.message)+(e.message.includes("sign in")?' <a href="login.html">Sign in</a>':"");if(button){button.disabled=false;button.innerHTML='<i class="fas fa-lock me-2"></i>Request booking';}}
   }
   results.addEventListener("click",async event=>{
