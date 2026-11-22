@@ -1,10 +1,10 @@
 export const HOTEL_CATALOG = [
-  { id: "goa-seabreeze", name: "Seabreeze Resort & Spa", city: "Goa", rate: 7200, maxGuests: 4 },
-  { id: "goa-palm", name: "Palm Grove Boutique Hotel", city: "Goa", rate: 4300, maxGuests: 3 },
-  { id: "jaipur-royal", name: "The Royal Courtyard", city: "Jaipur", rate: 6100, maxGuests: 4 },
-  { id: "jaipur-pink", name: "Pink City Residency", city: "Jaipur", rate: 2600, maxGuests: 2 },
-  { id: "dubai-marina", name: "Marina View Hotel", city: "Dubai", rate: 9800, maxGuests: 4 },
-  { id: "bangkok-riverside", name: "Riverside Grand Bangkok", city: "Bangkok", rate: 6800, maxGuests: 3 },
-  { id: "delhi-aero", name: "Aero Suites New Delhi", city: "New Delhi", rate: 5400, maxGuests: 3 },
-  { id: "manali-pines", name: "Pine & Peak Retreat", city: "Manali", rate: 3900, maxGuests: 3 }
+  {id:"goa-seabreeze",name:"Seabreeze Resort & Spa",city:"Goa",area:"Candolim Beach",stars:5,rate:7200,maxGuests:4,guests:4,amenities:["Beach access","Pool","Breakfast"],image:"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=85",tag:"Beachfront escape"},
+  {id:"goa-palm",name:"Palm Grove Boutique Hotel",city:"Goa",area:"Calangute",stars:4,rate:4300,maxGuests:3,guests:3,amenities:["Pool","Restaurant","Wi-Fi"],image:"https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=85",tag:"Guest favourite"},
+  {id:"jaipur-royal",name:"The Royal Courtyard",city:"Jaipur",area:"Civil Lines",stars:5,rate:6100,maxGuests:4,guests:4,amenities:["Heritage stay","Pool","Breakfast"],image:"https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=85",tag:"Heritage luxury"},
+  {id:"jaipur-pink",name:"Pink City Residency",city:"Jaipur",area:"MI Road",stars:3,rate:2600,maxGuests:2,guests:2,amenities:["Restaurant","Wi-Fi","Parking"],image:"https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1000&q=85",tag:"Great value"},
+  {id:"dubai-marina",name:"Marina View Hotel",city:"Dubai",area:"Dubai Marina",stars:5,rate:9800,maxGuests:4,guests:4,amenities:["Marina view","Pool","Gym"],image:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85",tag:"City & marina"},
+  {id:"bangkok-riverside",name:"Riverside Grand Bangkok",city:"Bangkok",area:"Riverside",stars:5,rate:6800,maxGuests:3,guests:3,amenities:["River view","Pool","Spa"],image:"https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=85",tag:"Riverside retreat"},
+  {id:"delhi-aero",name:"Aero Suites New Delhi",city:"New Delhi",area:"Aerocity",stars:4,rate:5400,maxGuests:3,guests:3,amenities:["Airport shuttle","Restaurant","Gym"],image:"https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1000&q=85",tag:"Airport convenience"},
+  {id:"manali-pines",name:"Pine & Peak Retreat",city:"Manali",area:"Old Manali",stars:4,rate:3900,maxGuests:3,guests:3,amenities:["Mountain view","Cafe","Parking"],image:"https://images.unsplash.com/photo-1449158743715-0a90b84031e7?auto=format&fit=crop&w=1000&q=85",tag:"Mountain hideaway"}
 ];

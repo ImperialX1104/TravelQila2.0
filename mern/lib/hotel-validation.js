@@ -25,7 +25,7 @@ export function validateHotelRequest(input) {
   if (!Number.isInteger(guests) || guests < 1 || guests > 12 || !Number.isInteger(rooms) || rooms < 1 || rooms > 6 || guests > hotel.maxGuests * rooms) {
     throw new TypeError("The selected guest and room count is not valid for this stay.");
   }
-  const base = hotel.rate * nights;
+  const base = hotel.rate * nights * rooms;
   const taxes = Math.round(base * 0.12);
   return {
     hotel,

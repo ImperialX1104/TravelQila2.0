@@ -30,6 +30,20 @@ test("package details include the nearby attractions section", async ({ page }) 
   await expect(page.locator("#attractionsStatus")).toBeVisible();
 });
 
+test("homepage destination filters, tour tabs and package search work", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#homeDestination").fill("Bali");
+  await page.getByRole("button",{name:"Search",exact:true}).click();
+  await expect(page).toHaveURL(/packages\.html\?search=Bali/);
+  await expect(page.getByLabel("Search packages")).toHaveValue("Bali");
+  await page.goto("/");
+  await page.getByRole("button",{name:"Canada",exact:true}).click();
+  await expect(page.locator(".home-destination-card")).toHaveCount(2);
+  await expect(page.getByText("Toronto")).toBeVisible();
+  await page.getByRole("button",{name:"International Tour Category"}).click();
+  await expect(page.getByText("Bali Discovery")).toBeVisible();
+});
+
 test("protected dashboard sends signed-out visitor to sign in", async ({ page }) => {
   await page.goto("/dashboard.html");
   await expect(page).toHaveURL(/login\.html/);
@@ -61,7 +75,7 @@ test("package filters and gallery lightbox are interactive", async ({ page }) =>
   await expect(page.getByText("Bali Discovery")).toBeVisible();
   await expect(page.getByText("Kashmir Escape")).toHaveCount(0);
   await page.goto("/gallery.html");
-  await page.getByRole("button", { name: "Open travel gallery image 1" }).click();
+  await page.locator(".gallery-grid .gallery-tile").first().click();
   await expect(page.getByRole("dialog", { name: "Travel photo viewer" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
