@@ -98,7 +98,7 @@ export default function AuthForm({ mode }) {
         const invalid = passwordError(values.password);
         if (invalid) throw new Error(invalid);
         if (!values.terms) throw new Error("Please accept the Terms and Privacy Policy.");
-        const redirect = new URL("/login.html?verified=1", window.location.origin).href;
+        const callback = new URL("/auth/callback", window.location.origin); callback.searchParams.set("next", "/login.html?verified=1");\n        const redirect = callback.href;
         const { data, error } = await supabase.auth.signUp({
           email: values.email.trim(), password: values.password,
           options: { emailRedirectTo: redirect, data: { full_name: values.full_name.trim(), phone: values.phone.trim() } }
@@ -114,7 +114,7 @@ export default function AuthForm({ mode }) {
         }
       } else if (mode === "forgot") {
         if (!values.email.trim()) throw new Error("Enter the email address linked to your account.");
-        const { error } = await supabase.auth.resetPasswordForEmail(values.email.trim(), { redirectTo: new URL("/reset-password.html", window.location.origin).href });
+        const { error } = await supabase.auth.resetPasswordForEmail(values.email.trim(), { redirectTo: (() => { const callback = new URL("/auth/callback", window.location.origin); callback.searchParams.set("next", "/reset-password.html"); return callback.href; })() });
         if (error) throw error;
         setMessage({ text: "If an account exists for that email, a password reset link will arrive shortly. Check your inbox and spam folder.", kind: "success" });
         setValues(current => ({ ...current, email: "" }));
@@ -145,7 +145,7 @@ export default function AuthForm({ mode }) {
     try {
       const { error } = await getSupabaseBrowserClient().auth.signInWithOAuth({
         provider,
-        options: { redirectTo: new URL(returnTo(), window.location.origin).href }
+        options: { redirectTo: (() => { const callback = new URL("/auth/callback", window.location.origin); callback.searchParams.set("next", returnTo()); return callback.href; })() }
       });
       if (error) throw error;
     } catch (error) {
