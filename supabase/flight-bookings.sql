@@ -26,6 +26,7 @@ create table if not exists public.flight_bookings (
     return_arrival_time text,
     base_fare numeric(12,2) not null default 0 check (base_fare >= 0),
     tax_amount numeric(12,2) not null default 0 check (tax_amount >= 0),
+    additional_preferences text check (additional_preferences is null or char_length(additional_preferences) <= 600),
     demo_fare numeric(12,2) not null check (demo_fare >= 0),
     "status" text not null default 'pending_confirmation'::text check ("status" in ('pending_confirmation','confirmed','cancelled')),
     created_at timestamptz not null default now(),
@@ -45,6 +46,7 @@ alter table public.flight_bookings add column if not exists return_departure_tim
 alter table public.flight_bookings add column if not exists return_arrival_time text;
 alter table public.flight_bookings add column if not exists base_fare numeric(12,2) not null default 0;
 alter table public.flight_bookings add column if not exists tax_amount numeric(12,2) not null default 0;
+alter table public.flight_bookings add column if not exists additional_preferences text;
 
 -- Require a complete return leg on new round-trip requests, without rejecting legacy rows.
 do $$
@@ -88,7 +90,7 @@ create policy "Customers can update their own saved flights" on public.flight_wi
 
 revoke all on public.flight_bookings from anon, authenticated;
 grant select on public.flight_bookings to authenticated;
-grant insert (user_id,origin,destination,origin_code,destination_code,trip_type,departure_date,return_date,adults,children,infants,cabin_class,airline,flight_number,departure_time,arrival_time,return_airline,return_flight_number,return_departure_time,return_arrival_time,base_fare,tax_amount,demo_fare) on public.flight_bookings to authenticated;
+grant insert (user_id,origin,destination,origin_code,destination_code,trip_type,departure_date,return_date,adults,children,infants,cabin_class,airline,flight_number,departure_time,arrival_time,return_airline,return_flight_number,return_departure_time,return_arrival_time,base_fare,tax_amount,demo_fare,additional_preferences) on public.flight_bookings to authenticated;
 
 revoke all on public.flight_wishlists from anon, authenticated;
 grant select, delete on public.flight_wishlists to authenticated;
