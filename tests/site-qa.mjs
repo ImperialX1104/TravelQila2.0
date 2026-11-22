@@ -120,11 +120,15 @@ try {
         if (await page.locator(".tq-summary-leg").count() !== 1) failures.push(`${route}: one-way review must include exactly one selected leg`);
         if (await page.locator(".tq-summary-leg-title").allTextContents().then(x => x.some(t => t.includes("Return")))) failures.push(`${route}: one-way review unexpectedly includes a return leg`);
         if (await page.locator("[data-save-wishlist]").count() !== 1 || await page.locator("[data-book-itinerary]").count() !== 1) failures.push(`${route}: one-way review must provide booking and wishlist actions`);
-        const recheckUrl = base + "/services.html?origin=New%20Delhi%20(DEL)&destination=Mumbai%20(BOM)&tripType=Round%20trip&departureDate=" + future(12) + "&returnDate=" + future(16) + "&adults=2&children=0&infants=0&cabin=Economy";
+        const recheckUrl = base + "/services.html?origin=New%20Delhi%20(DEL)&destination=Mumbai%20(BOM)&tripType=Round%20trip&departureDate=" + future(12) + "&returnDate=" + future(16) + "&adults=2&children=0&infants=0&cabin=Economy&wishlistId=test-saved-id";
         await page.goto(recheckUrl, { waitUntil:"domcontentloaded" });
         if (await page.locator("#origin").inputValue() !== "New Delhi (DEL)" || await page.locator("#destination").inputValue() !== "Mumbai (BOM)") failures.push(`${route}: saved-flight recheck did not prefill the route`);
         if (await page.locator('input[name="tripType"][value="Round trip"]').isChecked() !== true) failures.push(`${route}: saved-flight recheck did not restore round-trip selection`);
         if (await page.locator("#returnDate").inputValue() !== future(16)) failures.push(`${route}: saved-flight recheck did not restore return date`);
+        await page.locator("#flightSearchForm button[type=submit]").click();
+        await page.locator('.flight-result-card [data-select-leg="outbound"]').first().click();
+        await page.locator('.flight-result-card [data-select-leg="return"]').first().click();
+        if (!(await page.locator("[data-save-wishlist]").textContent()).includes("Update saved trip")) failures.push(`${route}: rechecking a saved itinerary should offer an update-in-place action`);
       } catch (error) {
         failures.push(`${route}: flight search interaction test failed: ${error.message}`);
       }
