@@ -43,3 +43,31 @@
 .flight-leg-airline{font-size:.78rem;font-weight:700;color:#65728a;margin-bottom:9px}
 .flight-return-divider{border-top:1px dashed #d7e0ee;margin:17px 0 5px}
 @media(max-width:575px){.flight-leg-heading{margin-top:12px}.flight-return-divider{margin:14px 0 4px}}
+
+/* Guided flight selection and itinerary review */
+.tq-booking-steps{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.tq-booking-steps span{border:1px solid #dce5f2;border-radius:30px;padding:7px 12px;color:#718096;font-size:.76rem;font-weight:700}
+.tq-booking-steps span.is-active{background:#13357b;border-color:#13357b;color:#fff}
+.tq-booking-steps span.is-done{background:#eaf6ef;border-color:#cce8d6;color:#187647}
+.flight-select-leg{border:0;border-radius:30px;padding:10px 17px;background:#13357b;color:#fff;font-weight:700;font-size:.82rem;cursor:pointer}
+.flight-select-leg:hover{background:#1d4b9c}
+.tq-summary-card{background:#fff;border:1px solid #e4eaf4;border-radius:16px;padding:22px;box-shadow:0 5px 20px rgba(13,39,88,.045)}
+.tq-summary-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
+.tq-summary-heading h3{font:700 1.25rem Jost,Roboto,sans-serif;color:#17233e;margin:5px 0}
+.tq-summary-heading p{font-size:.8rem;color:#718096;margin:0}
+.tq-summary-leg{border-top:1px solid #edf0f6;padding:15px 0}
+.tq-summary-leg-title{font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#244b8c;margin-bottom:5px}
+.tq-summary-leg strong{color:#17233e;font-size:.9rem}
+.tq-summary-route{font-size:.84rem;color:#34445d;margin-top:7px}
+.tq-summary-route i{color:#244b8c;margin:0 7px}
+.tq-summary-times,.tq-summary-fare{font-size:.78rem;color:#718096;margin-top:4px}
+.tq-summary-fare{font-weight:700;color:#17233e}
+.tq-price-breakdown{border-top:1px solid #e8edf5;padding-top:15px;margin-top:5px}
+.tq-price-breakdown>div{display:flex;justify-content:space-between;gap:15px;padding:5px 0;font-size:.85rem;color:#64738a}
+.tq-price-breakdown strong{color:#17233e;white-space:nowrap}
+.tq-price-breakdown .tq-grand-total{border-top:1px dashed #d6dfed;margin-top:9px;padding-top:13px;font-size:1rem;font-weight:800;color:#17233e}
+.tq-price-breakdown .tq-grand-total strong{font-size:1.25rem;color:#13357b}
+.tq-price-breakdown small{display:block;color:#8a96a9;font-size:.72rem;line-height:1.55;margin-top:9px}
+.tq-summary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.tq-summary-actions .btn{border-radius:30px;padding:11px 18px;font-weight:700}
+@media(max-width:575px){.tq-summary-card{padding:15px}.tq-summary-actions{display:grid}.tq-summary-actions .btn{width:100%}.tq-summary-heading{align-items:flex-start}}
