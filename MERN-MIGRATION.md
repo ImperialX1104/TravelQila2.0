@@ -2,71 +2,69 @@
 
 ## Mission
 
-The `MERN` branch is a clean application rebuild, not a migration wrapper around the legacy website. The QA branch is the behavioural and product reference only. Its existing HTML pages, vanilla JavaScript, CSS framework implementation, and page scripts must not be copied into the new application.
+The `MERN` branch is a clean application rebuild, not a React wrapper around the legacy website. The QA branch is the behavioural and visual reference only. Its HTML pages, vanilla JavaScript page controllers, and legacy stylesheet/framework implementation must not be copied into the new application.
 
-The replacement must provide feature parity with the QA website while implementing the application in React and the supported backend/data stack.
+## Target architecture
 
-## Approved stack
+- **Frontend:** Next.js App Router + React.
+- **Runtime/backend:** Node.js via Next.js server components, route handlers, and server actions where appropriate. Add a separate Express service only if a real requirement justifies it.
+- **Database and authentication:** the existing Supabase project using `@supabase/ssr` and `@supabase/supabase-js`.
+- **Dependencies:** npm.
+- **Styling:** newly authored React-app styles (CSS modules or global design tokens). CSS is necessary to render a faithful responsive browser UI; legacy CSS/framework files are not to be imported.
+- **Language:** JavaScript/JSX for the application unless a later, consistent TypeScript conversion is approved.
 
-- **Frontend:** React with Next.js (preferred for routing, metadata, and server rendering) or React + Vite if a verified technical constraint makes it the better fit. Use one framework consistently; do not mix React and Vue.
-- **Backend:** Node.js. Use Next.js server handlers/server actions where suitable; add Express only for independently useful API services.
-- **Data and identity:** the existing Supabase project, using its supported client/server libraries and the existing Auth, tables, grants, triggers, and RLS policies.
-- **Dependencies and scripts:** npm.
-- **UI styling:** component-scoped CSS, CSS modules, or a utility framework. Styling is necessary for a browser UI; this does not permit copying the legacy stylesheet/page architecture.
-- **Language:** JavaScript/JSX or TypeScript/TSX within the selected React framework. No legacy standalone page scripts.
+## What “no legacy HTML/CSS/JS stack” means
 
-## What “no HTML/CSS/JS legacy stack” means
-
-- No legacy root-level `.html` pages as application routes.
-- No vanilla JavaScript page controllers or direct-DOM application logic.
-- No Bootstrap/jQuery/OwlCarousel/lightbox legacy UI runtime.
-- No embedding old page markup into React using `dangerouslySetInnerHTML`.
-- React components and React state own rendering and interactions.
-- The framework's required document shell and browser-rendered HTML are normal; styling files are also required to implement the design.
-- Existing image/media assets may be reused after review. Their presence does not mean the old frontend stack is being reused.
+- No legacy root-level `.html` files as application pages.
+- No vanilla JavaScript page controllers or direct DOM mutation for application features.
+- No Bootstrap, jQuery, OwlCarousel, or Lightbox runtime.
+- No copied legacy stylesheet or `dangerouslySetInnerHTML` migration.
+- React components, state, forms, routing, and server operations own the product.
+- The Next.js document shell and browser-rendered HTML are normal framework behaviour; authored CSS is required for visual parity.
+- Reviewed image/media assets may be reused. Asset reuse does not mean reusing the legacy frontend implementation.
 
 ## QA parity contract
 
-QA is the source of truth for existing user-visible behaviour. Inventory and reproduce, at minimum:
+Every existing QA route, visible feature, form, navigation destination, state transition, and backend interaction must have an equivalent tested implementation. Current known feature groups include:
 
-- Every public route, destination route, content/legal page, metadata requirement, and navigation destination.
-- Homepage discovery and calls to action.
-- Flight search, itinerary/results interaction, request/booking enquiry, and saved-flight wishlist.
-- Hotel search/filter/results, hotel detail/enquiry, and hotel wishlist.
-- Visa information and enquiry flow.
-- Packages, package details, destinations, and trip enquiry.
-- Registration, email confirmation, login, logout, password recovery/reset, protected dashboard, profile, bookings, and saved items.
-- Contact and other existing forms, validation, success/error states, and contact handoffs.
-- Shared header/footer, responsive layouts, and accessible interactions.
+- Homepage, shared navigation/footer, responsive layouts, metadata and SEO.
+- About, blog, contact, gallery, guides, testimonials, tour content, and legal pages.
+- All destination pages, package listings, package details, and trip enquiry.
+- Flight search, sample itinerary/results, filters, selection/review, enquiry/save flow, and saved-flight wishlist.
+- Hotel search, filters, results, quote breakdown, booking enquiry, WhatsApp handoff, and hotel wishlist.
+- Visa information and email/WhatsApp enquiry handoff.
+- Registration, email confirmation, login, logout, Google/Apple OAuth where enabled, password recovery/reset, protected dashboard, profile, bookings, and saved items.
+- Correct route/URL compatibility for existing `.html` URLs unless an explicit redirect plan is tested.
 
-The exact contracts must be derived from the QA source, its test suite, Supabase SQL, and current integration documentation. Do not assume a feature is optional because it is not visible in a landing-page mockup.
+The exact contracts must be derived from the QA source, its browser tests, Supabase SQL, and integration documentation. Do not silently drop a feature because it is absent from the first homepage slice.
 
 ## Data and security rules
 
-1. Keep the existing Supabase project and schema behaviour unless a reviewed, separately approved migration is necessary.
-2. Use only the public Supabase publishable/anon key in browser code. Never expose service-role keys or private credentials.
-3. Preserve and test Auth PKCE/recovery redirects, RLS, grants, ownership checks, and profile triggers.
-4. Treat all browser-submitted prices, totals, inventory, and booking metadata as untrusted. Validate on a trusted server before any operation that relies on them.
+1. Retain the existing Supabase project, schema, Auth behaviour, grants, triggers, and RLS unless a reviewed migration is separately approved.
+2. Browser code may use only the public publishable/anon key. Never expose service-role credentials.
+3. Preserve PKCE, email confirmation/recovery redirects, session refresh, RLS ownership, and profile-trigger behaviour.
+4. Treat browser-submitted prices, totals, inventory, and booking metadata as untrusted. Validate trusted operations server-side.
 5. Never claim a demo fare, hotel quote, enquiry, or request is a confirmed booking or payment.
-6. Do not put secrets in source control. Provide an environment example containing names/placeholders only.
+6. Never commit real secrets. Use placeholder-only environment examples.
 
-## Rebuild gates
+## Delivery gates
 
 - [ ] Complete QA route, interaction, API, Supabase, and asset inventory.
-- [ ] Record desktop/tablet/mobile reference behaviour and screenshots.
-- [ ] Choose and document the single React framework and application structure.
-- [ ] Build the shared design system, header, navigation, footer, and routing.
-- [ ] Implement all public pages and route/SEO compatibility.
-- [ ] Implement flight, hotel, visa, package, enquiry, and contact flows.
-- [ ] Implement Supabase Auth, protected dashboard, profile, booking history, and wishlists.
+- [ ] Capture reference screenshots at desktop, tablet, and mobile widths.
+- [ ] Implement shared React design system, navigation, footer, and responsive shell.
+- [ ] Port every public route and preserve SEO/canonical metadata.
+- [ ] Port flight, hotel, visa, package, contact, and all other enquiry flows.
+- [ ] Port Supabase Auth, protected dashboard, profile, booking history, and wishlists.
 - [ ] Add trusted server-side validation and safe notification handoffs.
-- [ ] Add unit, integration, browser E2E, responsive, accessibility, security, and visual regression tests.
-- [ ] Verify CI is green and test against a dedicated staging Supabase project with disposable accounts.
-- [ ] Verify every QA route and interaction has an equivalent passing test.
-- [ ] Only after all gates pass, remove the legacy website files from the MERN branch and prepare a deployment/rollback plan.
+- [ ] Add unit, integration, browser E2E, visual regression, accessibility, and security tests.
+- [ ] Run CI successfully and test against a dedicated staging Supabase project with disposable identities.
+- [ ] Verify route-by-route and interaction-by-interaction parity against QA.
+- [ ] Remove legacy website pages and scripts from MERN only after all replacement routes pass.
+- [ ] Configure production hosting, environment variables, redirects, monitoring, and rollback plan.
+- [ ] Cut over only after user approval and all production gates pass.
 
 ## Current status (2026-11-22)
 
-**Not production-ready.** The existing `mern/` Vite/Express files are only an early scaffold and do not implement the Travel Qila application. The legacy website files are still present in this branch. They are retained temporarily as a migration reference/rollback aid and must not be treated as the final architecture.
+The MERN workspace has now been switched from the initial Vite/React Router scaffold to a clean Next.js App Router + React workspace. It includes a first homepage/shared-shell implementation, Supabase browser/server client factories, basic validation helpers/tests, and a Next.js CI workflow.
 
-No feature-parity, visual-regression, live Supabase integration, authenticated isolation, or production deployment certification has been completed. Do not switch production traffic to this branch.
+**This is an initial implementation slice, not a completed website and not production-ready.** Most QA routes, the complete flight/hotel/visa flows, authentication UI/session middleware, dashboard, and comprehensive automated parity tests remain to be implemented and verified. The 34 legacy QA HTML pages are still present in the MERN branch as a temporary reference; they are not part of the new Next.js application. Do not point production traffic at this branch.
