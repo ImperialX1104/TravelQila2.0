@@ -6,7 +6,8 @@ import "../dashboard.css";
 export const metadata = { title: "My Dashboard", description: "Manage your Travel Qila profile and travel requests.", robots: { index: false, follow: false } };
 
 export default async function DashboardPage() {
-  const supabase = await getSupabaseServerClient();
+  let supabase;
+  try { supabase = await getSupabaseServerClient(); } catch { redirect("/login.html?setup=required"); }
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) redirect("/login.html?returnTo=%2Fdashboard.html");
 
