@@ -829,9 +829,22 @@ import { supabase } from "./auth-client.js";
 document.addEventListener(
   "travelqila:currency-changed",
   () => {
-    if (search) {
-      showStage();
+    // Refresh budget display without calling showStage().
+    const budget = byId("maxPrice");
+    const budgetOutput = byId("priceOutput");
+
+    if (budget && budgetOutput) {
+      budgetOutput.textContent = money(budget.value);
     }
+
+    // Refresh currently displayed flight prices.
+    if (typeof renderSummary === "function" && stage === "summary") {
+      renderSummary();
+    } else if (typeof renderLegStage === "function" && search) {
+      renderLegStage();
+    }
+  }
+);
 
     // Refresh the budget display too.
     const budget = byId("maxPrice");
