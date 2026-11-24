@@ -103,7 +103,6 @@ import { supabase } from "./auth-client.js";
   let wishlistId = null;
 
   // Persistent filter state.
-  // This prevents filters resetting whenever results rerender.
   let resultFilters = {
     stops: "any",
     airline: "all",
@@ -529,7 +528,6 @@ import { supabase } from "./auth-client.js";
       return proposedAverage <= max;
     });
 
-    // Sort using numeric values, with deterministic tie-breakers.
     if (sort === "duration") {
       out.sort((a, b) =>
         (a.duration - b.duration) ||
@@ -621,7 +619,6 @@ import { supabase } from "./auth-client.js";
     byId("flightResultsEmpty").classList.remove("is-visible");
     byId("flightResultsList").hidden = false;
 
-    // Capture the selected values before rerendering.
     ["resultStops", "resultAirline", "resultSort"].forEach(id => {
       byId(id)?.addEventListener("change", () => {
         resultFilters = {
@@ -859,9 +856,26 @@ import { supabase } from "./auth-client.js";
         wishlistId = data.id;
       }
 
+      // Show the success message and direct wishlist link.
       if (node) {
-        node.textContent =
-          "Your itinerary and passenger fare breakdown have been saved.";
+        node.replaceChildren(
+          document.createTextNode(
+            "Your itinerary and passenger fare breakdown have been saved. "
+          )
+        );
+
+        const viewWishlistLink = document.createElement("a");
+
+        viewWishlistLink.href = "dashboard.html#wishlist";
+        viewWishlistLink.className =
+          "btn btn-sm btn-outline-primary ms-2";
+        viewWishlistLink.textContent = "View Wishlist";
+        viewWishlistLink.setAttribute(
+          "aria-label",
+          "View your saved flight wishlist"
+        );
+
+        node.appendChild(viewWishlistLink);
       }
 
       if (button) {
