@@ -1,87 +1,673 @@
+
 import { supabase, authPageUrl } from "./auth-client.js";
 
-const HOTEL_DATA = [
- {id:"goa-seabreeze",name:"Seabreeze Resort & Spa",city:"Goa",area:"Candolim Beach",stars:5,rate:7200,guests:4,amenities:["Beach access","Pool","Breakfast"],image:"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1000&q=85",tag:"Beachfront escape"},
- {id:"goa-palm",name:"Palm Grove Boutique Hotel",city:"Goa",area:"Calangute",stars:4,rate:4300,guests:3,amenities:["Pool","Restaurant","Wi-Fi"],image:"https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=85",tag:"Guest favourite"},
- {id:"jaipur-royal",name:"The Royal Courtyard",city:"Jaipur",area:"Civil Lines",stars:5,rate:6100,guests:4,amenities:["Heritage stay","Pool","Breakfast"],image:"https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1000&q=85",tag:"Heritage luxury"},
- {id:"jaipur-pink",name:"Pink City Residency",city:"Jaipur",area:"MI Road",stars:3,rate:2600,guests:2,amenities:["Restaurant","Wi-Fi","Parking"],image:"https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1000&q=85",tag:"Great value"},
- {id:"dubai-marina",name:"Marina View Hotel",city:"Dubai",area:"Dubai Marina",stars:5,rate:9800,guests:4,amenities:["Marina view","Pool","Gym"],image:"https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1000&q=85",tag:"City & marina"},
- {id:"bangkok-riverside",name:"Riverside Grand Bangkok",city:"Bangkok",area:"Riverside",stars:5,rate:6800,guests:3,amenities:["River view","Pool","Spa"],image:"https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=85",tag:"Riverside retreat"},
- {id:"delhi-aero",name:"Aero Suites New Delhi",city:"New Delhi",area:"Aerocity",stars:4,rate:5400,guests:3,amenities:["Airport shuttle","Restaurant","Gym"],image:"https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1000&q=85",tag:"Airport convenience"},
- {id:"manali-pines",name:"Pine & Peak Retreat",city:"Manali",area:"Old Manali",stars:4,rate:3900,guests:3,amenities:["Mountain view","Cafe","Parking"],image:"https://images.unsplash.com/photo-1449158743715-0a90b84031e7?auto=format&fit=crop&w=1000&q=85",tag:"Mountain hideaway"}
-];
+const HOTEL_FUNCTION = "search-hotels";
+const WHATSAPP_NUMBER = "919871101345";
 
-const form=document.querySelector("#hotelSearchForm");
-const results=document.querySelector("#hotelResults");
-const statusBox=document.querySelector("#hotelStatus");
-const resultCount=document.querySelector("#resultCount");
-const currency=new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0});
-let user=null;
-let wishlistIds=new Set();
+const form = document.querySelector("#hotelSearchForm");
+const results = document.querySelector("#hotelResults");
+const statusBox = document.querySelector("#hotelStatus");
+const resultCount = document.querySelector("#resultCount");
 
-function message(text,type="info"){statusBox.className="hotel-status is-visible "+type;statusBox.textContent=text;}
-function clearMessage(){statusBox.className="hotel-status";statusBox.textContent="";}
-function dateNights(start,end){return Math.round((new Date(end+"T00:00:00")-new Date(start+"T00:00:00"))/86400000);}
-function searchState(){
- const d=new FormData(form);
- return {destination:String(d.get("destination")||"").trim().toLowerCase(),checkIn:d.get("checkIn"),checkOut:d.get("checkOut"),guests:Number(d.get("guests")),stars:Number(d.get("stars")),maxPrice:Number(d.get("maxPrice")||0)};
+let user = null;
+let wishlistIds = new Set();
+let hotels = new Map();
+let searchSequence = 0;
+
+function message(text, type = "info") {
+  if (!statusBox) return;
+  statusBox.className = "hotel-status is-visible " + type;
+  statusBox.textContent = text;
 }
-function quote(h,s){
- const nights=dateNights(s.checkIn,s.checkOut),base=h.rate*nights,tax=Math.round(base*.12);
- return {nights,base,tax,total:base+tax};
+
+function clearMessage() {
+  if (!statusBox) return;
+  statusBox.className = "hotel-status";
+  statusBox.textContent = "";
 }
-function safe(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function renderHotels(){
- const s=searchState();
- if(!s.destination||!s.checkIn||!s.checkOut||dateNights(s.checkIn,s.checkOut)<1){results.innerHTML='<div class="hotel-empty"><i class="fas fa-search"></i><h3>Start with your destination</h3><p>Enter a city and valid check-in/check-out dates to explore stays.</p></div>';resultCount.textContent="";return;}
- const found=HOTEL_DATA.filter(h=>(h.city+" "+h.area+" "+h.name).toLowerCase().includes(s.destination)&&h.guests>=s.guests&&(!s.stars||h.stars>=s.stars)).map(h=>({...h,quote:quote(h,s)})).filter(h=>!s.maxPrice||h.quote.total<=s.maxPrice);
- resultCount.textContent=found.length+" stay"+(found.length===1?"":"s")+" matching your search";
- if(!found.length){results.innerHTML='<div class="hotel-empty"><i class="fas fa-map-marked-alt"></i><h3>No stays match these filters</h3><p>Try a nearby destination, lower star rating or a higher budget.</p></div>';return;}
- results.innerHTML=found.map(h=>`<article class="hotel-result">
-  <div class="hotel-photo"><img src="${safe(h.image)}" alt="${safe(h.name)}" loading="lazy"><span>${safe(h.tag)}</span></div>
-  <div class="hotel-info"><div class="hotel-stars">${"★".repeat(h.stars)}<span>${h.stars}-star stay</span></div><h3>${safe(h.name)}</h3><p class="hotel-location"><i class="fas fa-map-marker-alt"></i> ${safe(h.area)}, ${safe(h.city)}</p><div class="hotel-amenities">${h.amenities.map(a=>`<span>${safe(a)}</span>`).join("")}</div><small class="hotel-capacity"><i class="fas fa-user-friends"></i> Up to ${h.guests} guests</small></div>
-  <div class="hotel-price"><div class="hotel-rate">${currency.format(h.rate)} <small>/ night</small></div><div class="hotel-total">${currency.format(h.quote.total)} <small>total incl. taxes</small></div><div class="hotel-breakdown">${h.quote.nights} nights · ${currency.format(h.quote.base)} room + ${currency.format(h.quote.tax)} taxes (12%)</div><button class="btn btn-primary hotel-book" data-book="${h.id}">Book now</button><button class="btn hotel-wish ${wishlistIds.has(h.id)?"saved":""}" data-wish="${h.id}"><i class="fas fa-heart"></i> ${wishlistIds.has(h.id)?"Saved to wishlist":"Save to wishlist"}</button></div>
- </article>`).join("");
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
 }
-async function loadWishlist(){
- if(!user)return;
- const {data,error}=await supabase.from("hotel_wishlists").select("hotel_id").eq("user_id",user.id);
- if(error){console.warn("[Travel Qila] Wishlist could not be loaded:",error.message);return;}
- wishlistIds=new Set((data||[]).map(x=>x.hotel_id));
+
+function dateNights(start, end) {
+  if (!start || !end) return 0;
+
+  return Math.round(
+    (new Date(`${end}T00:00:00`) -
+      new Date(`${start}T00:00:00`)) / 86400000
+  );
 }
-async function toggleWishlist(id){
- if(!user){window.location.href=authPageUrl("login.html")+"?returnTo=hotels.html";return;}
- const h=HOTEL_DATA.find(x=>x.id===id);if(!h)return;
- const s=searchState();const q=s.checkIn&&s.checkOut&&dateNights(s.checkIn,s.checkOut)>0?quote(h,s):{base:h.rate,tax:Math.round(h.rate*.12),total:Math.round(h.rate*1.12)};
- if(wishlistIds.has(id)){
-  const {error}=await supabase.from("hotel_wishlists").delete().eq("user_id",user.id).eq("hotel_id",id);
-  if(error){message("We couldn't remove this hotel. Please try again.","error");return;}
-  wishlistIds.delete(id);message("Hotel removed from your wishlist.","success");
- }else{
-  const {error}=await supabase.from("hotel_wishlists").insert({user_id:user.id,hotel_id:id,hotel_name:h.name,destination:h.city,star_rating:h.stars,nightly_rate:h.rate,taxes:q.tax,total_price:q.total,currency:"INR",image_url:h.image,check_in:s.checkIn||null,check_out:s.checkOut||null,guests:s.guests||2});
-  if(error){message(error.code==="23505"?"This hotel is already in your wishlist.":"We couldn't save this hotel. Please try again.","error");return;}
-  wishlistIds.add(id);message("Hotel saved to your dashboard wishlist.","success");
- }
- renderHotels();
+
+function searchState() {
+  const data = new FormData(form);
+
+  return {
+    destination: String(data.get("destination") || "").trim(),
+    checkIn: String(data.get("checkIn") || ""),
+    checkOut: String(data.get("checkOut") || ""),
+    guests: Math.max(1, Number(data.get("guests")) || 1),
+    stars: Number(data.get("stars")) || 0,
+    maxPrice: Number(data.get("maxPrice")) || 0
+  };
 }
-async function bookHotel(id){
- if(!user){window.location.href=authPageUrl("login.html")+"?returnTo=hotels.html";return;}
- const s=searchState(),h=HOTEL_DATA.find(x=>x.id===id);
- if(!h||!s.checkIn||!s.checkOut||dateNights(s.checkIn,s.checkOut)<1){message("Please choose valid check-in and check-out dates first.","error");return;}
- const q=quote(h,s);
- const name=user.user_metadata?.full_name||user.user_metadata?.name||"Traveller";
- const {data,error}=await supabase.from("hotel_booking_requests").insert({user_id:user.id,hotel_id:h.id,hotel_name:h.name,destination:h.city,check_in:s.checkIn,check_out:s.checkOut,guests:s.guests,rooms:1,nightly_rate:h.rate,taxes:q.tax,total_price:q.total,currency:"INR",customer_name:name,customer_email:user.email||"Not provided",customer_phone:user.user_metadata?.phone||""}).select("id").single();
- if(error){message("Your request could not be saved. Please try again or contact our team.","error");return;}
- message("Your hotel enquiry has been saved to your dashboard. Our team will contact you to confirm live availability and the final rate.","success");
- const wa="https://wa.me/919871101345?text="+encodeURIComponent("Hello Travel Qila, I would like to book this hotel.\nHotel: "+h.name+"\nDestination: "+h.city+"\nCheck-in: "+s.checkIn+"\nCheck-out: "+s.checkOut+"\nGuests: "+s.guests+"\nEstimated total incl. taxes: "+currency.format(q.total)+"\nEnquiry ID: "+data.id);
- const link=document.querySelector("#hotelWhatsapp");link.href=wa;link.hidden=false;
+
+function formatMoney(amount, currencyCode = "INR") {
+  const value = Number(amount);
+
+  if (!Number.isFinite(value)) return "Price unavailable";
+
+  try {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: currencyCode,
+      maximumFractionDigits: 0
+    }).format(value);
+  } catch {
+    return `${currencyCode} ${Math.round(value).toLocaleString("en-IN")}`;
+  }
 }
-form?.addEventListener("submit",e=>{e.preventDefault();clearMessage();const s=searchState();if(!s.destination||!s.checkIn||!s.checkOut||dateNights(s.checkIn,s.checkOut)<1){message("Enter a destination and a check-out date after check-in.","error");return;}renderHotels();document.querySelector("#hotelResultsHeading").scrollIntoView({behavior:"smooth",block:"start"});});
-results?.addEventListener("click",e=>{const wish=e.target.closest("[data-wish]");const book=e.target.closest("[data-book]");if(wish)toggleWishlist(wish.dataset.wish);if(book)bookHotel(book.dataset.book);});
-(async()=>{
- const today=new Date();today.setMinutes(today.getMinutes()-today.getTimezoneOffset());const min=today.toISOString().slice(0,10);
- document.querySelector("#checkIn").min=min;document.querySelector("#checkOut").min=min;
- document.querySelector("#checkIn").addEventListener("change",e=>{document.querySelector("#checkOut").min=e.target.value;});
- const {data}=await supabase.auth.getUser();user=data?.user||null;
- await loadWishlist();renderHotels();
+
+function validImage(value) {
+  if (typeof value !== "string") return "";
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function mapHotel(item, fallbackCurrency = "INR") {
+  const price = item.price || {};
+  const location = item.location || {};
+  const fees = price.fees || {};
+
+  const numeric = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) && number >= 0 ? number : 0;
+  };
+
+  const id = String(
+    item.id ||
+    `${item.platform || "provider"}_${item.platformListingId || item.name}`
+  );
+
+  const images = Array.isArray(item.images) ? item.images : [];
+  const amenities = Array.isArray(item.amenities)
+    ? item.amenities
+    : [];
+
+  const feeCleaning = numeric(fees.cleaning);
+  const feeService = numeric(fees.service);
+  const feeTaxes = numeric(fees.taxes);
+
+  return {
+    id,
+    name: item.name || "Unnamed accommodation",
+    city: location.city || location.address || "",
+    region: location.region || "",
+    country: location.country || "",
+    address: location.address || "",
+    propertyType: item.propertyType || "accommodation",
+    stars: item.starRating == null ? null : numeric(item.starRating),
+    guestRating: item.guestRating == null
+      ? null
+      : numeric(item.guestRating),
+    ratingScale: numeric(item.ratingScale) || 5,
+    reviewCount: numeric(item.reviewCount),
+    guests: numeric(item.maxOccupancy),
+    bedrooms: numeric(item.bedrooms),
+    bathrooms: numeric(item.bathrooms),
+    amenities,
+    image: validImage(images[0]),
+    platform: item.platform || price.platform || "provider",
+    url: validImage(item.url) ? item.url : "",
+    currency: String(price.currency || fallbackCurrency).toUpperCase(),
+    nightlyRate: numeric(price.nightlyPrice),
+    providerTotal: numeric(price.totalPrice),
+    nights: numeric(price.nights),
+    feeCleaning,
+    feeService,
+    feeTaxes,
+    feeTotal: feeCleaning + feeService + feeTaxes
+  };
+}
+
+function quote(hotel, state) {
+  const nights = dateNights(state.checkIn, state.checkOut);
+  const base = hotel.providerTotal > 0
+    ? hotel.providerTotal
+    : hotel.nightlyRate * nights;
+
+  const total = base + hotel.feeTotal;
+
+  return {
+    nights,
+    base,
+    cleaning: hotel.feeCleaning,
+    service: hotel.feeService,
+    taxes: hotel.feeTaxes,
+    fees: hotel.feeTotal,
+    total,
+    currency: hotel.currency
+  };
+}
+
+function propertyLabel(type) {
+  const labels = {
+    hotel: "Hotel",
+    apartment: "Apartment",
+    house: "House",
+    villa: "Villa",
+    guesthouse: "Guesthouse",
+    resort: "Resort"
+  };
+
+  return labels[String(type || "").toLowerCase()] || "Stay";
+}
+
+function renderEmpty(title, description) {
+  results.innerHTML = `
+    <div class="hotel-empty">
+      <i class="fas fa-search"></i>
+      <h3>${safe(title)}</h3>
+      <p>${safe(description)}</p>
+    </div>
+  `;
+  resultCount.textContent = "";
+}
+
+function renderHotels() {
+  const state = searchState();
+
+  if (!state.destination || !state.checkIn || !state.checkOut) {
+    renderEmpty(
+      "Start with your destination",
+      "Enter a city and valid check-in/check-out dates to explore stays."
+    );
+    return;
+  }
+
+  const nights = dateNights(state.checkIn, state.checkOut);
+
+  if (nights < 1) {
+    renderEmpty(
+      "Choose valid stay dates",
+      "Your check-out date must be after your check-in date."
+    );
+    return;
+  }
+
+  const found = [...hotels.values()]
+    .filter((hotel) => {
+      if (hotel.guests && hotel.guests < state.guests) return false;
+
+      if (
+        state.stars &&
+        (hotel.stars === null || hotel.stars < state.stars)
+      ) {
+        return false;
+      }
+
+      const total = quote(hotel, state).total;
+
+      if (state.maxPrice && total > state.maxPrice) return false;
+
+      return true;
+    })
+    .map((hotel) => ({
+      ...hotel,
+      quote: quote(hotel, state)
+    }));
+
+  resultCount.textContent =
+    `${found.length} stay${found.length === 1 ? "" : "s"} matching your search`;
+
+  if (!found.length) {
+    renderEmpty(
+      "No stays match these filters",
+      "Try a lower star rating, a higher budget or different guest count."
+    );
+    return;
+  }
+
+  results.innerHTML = found.map((hotel) => {
+    const saved = wishlistIds.has(hotel.id);
+    const image = hotel.image
+      ? `<img src="${safe(hotel.image)}" alt="${safe(hotel.name)}"
+           loading="lazy"
+           onerror="this.style.display='none'">`
+      : "";
+
+    const rating = hotel.guestRating !== null
+      ? `<span>★ ${safe(hotel.guestRating)} / ${safe(hotel.ratingScale)}
+          (${hotel.reviewCount} reviews)</span>`
+      : `<span>Guest rating unavailable</span>`;
+
+    const stars = hotel.stars
+      ? `${"★".repeat(Math.min(5, hotel.stars))} <span>${hotel.stars}-star property</span>`
+      : `<span>Star classification unavailable</span>`;
+
+    const location = [
+      hotel.address || hotel.city,
+      hotel.region,
+      hotel.country
+    ].filter(Boolean).join(", ");
+
+    const amenities = hotel.amenities.slice(0, 6).map((item) =>
+      `<span>${safe(String(item).replaceAll("_", " "))}</span>`
+    ).join("");
+
+    const nightly = hotel.nightlyRate > 0
+      ? `${formatMoney(hotel.nightlyRate, hotel.currency)} <small>/ night</small>`
+      : "Nightly rate unavailable";
+
+    const total = hotel.quote.total > 0
+      ? formatMoney(hotel.quote.total, hotel.currency)
+      : "Price unavailable";
+
+    const feeLines = [
+      hotel.quote.cleaning > 0
+        ? `Cleaning: ${formatMoney(hotel.quote.cleaning, hotel.currency)}`
+        : "",
+      hotel.quote.service > 0
+        ? `Service: ${formatMoney(hotel.quote.service, hotel.currency)}`
+        : "",
+      hotel.quote.taxes > 0
+        ? `Taxes: ${formatMoney(hotel.quote.taxes, hotel.currency)}`
+        : ""
+    ].filter(Boolean).join(" · ");
+
+    return `
+      <article class="hotel-result">
+        <div class="hotel-photo">
+          ${image}
+          <span>${safe(propertyLabel(hotel.propertyType))}</span>
+        </div>
+
+        <div class="hotel-info">
+          <div class="hotel-stars">${stars}</div>
+          <h3>${safe(hotel.name)}</h3>
+
+          <p class="hotel-location">
+            <i class="fas fa-map-marker-alt"></i>
+            ${safe(location || "Location details unavailable")}
+          </p>
+
+          <div class="hotel-amenities">${amenities}</div>
+
+          <small class="hotel-capacity">
+            <i class="fas fa-user-friends"></i>
+            ${hotel.guests
+              ? `Up to ${hotel.guests} guests`
+              : "Guest capacity unavailable"}
+          </small>
+
+          <small class="hotel-capacity">${rating}</small>
+
+          <small class="hotel-capacity">
+            Provider: ${safe(hotel.platform)}
+          </small>
+        </div>
+
+        <div class="hotel-price">
+          <div class="hotel-rate">${nightly}</div>
+
+          <div class="hotel-total">
+            ${total}
+            <small>estimated total</small>
+          </div>
+
+          <div class="hotel-breakdown">
+            ${hotel.quote.nights} nights
+            ${feeLines ? ` · ${safe(feeLines)}` : ""}
+            <br>Provider-reported prices; final charges may vary.
+          </div>
+
+          <button class="btn btn-primary hotel-book"
+            data-book="${safe(hotel.id)}"
+            ${hotel.quote.total <= 0 ? "disabled" : ""}>
+            Send booking enquiry
+          </button>
+
+          <button class="btn hotel-wish ${saved ? "saved" : ""}"
+            data-wish="${safe(hotel.id)}">
+            <i class="fas fa-heart"></i>
+            ${saved ? "Saved to wishlist" : "Save to wishlist"}
+          </button>
+
+          ${hotel.url
+            ? `<a class="hotel-provider-link"
+                 href="${safe(hotel.url)}"
+                 target="_blank"
+                 rel="noopener noreferrer">View provider listing</a>`
+            : ""}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+async function searchHotels() {
+  const state = searchState();
+
+  if (!state.destination || !state.checkIn || !state.checkOut) {
+    message("Enter a destination and both stay dates.", "error");
+    return;
+  }
+
+  if (dateNights(state.checkIn, state.checkOut) < 1) {
+    message("Check-out must be after check-in.", "error");
+    return;
+  }
+
+  const currentRequest = ++searchSequence;
+
+  clearMessage();
+  hotels.clear();
+  resultCount.textContent = "";
+  results.innerHTML = `
+    <div class="hotel-empty">
+      <i class="fas fa-spinner fa-spin"></i>
+      <h3>Searching available stays...</h3>
+      <p>Getting accommodation results from our hotel provider.</p>
+    </div>
+  `;
+
+  const { data, error } = await supabase.functions.invoke(
+    HOTEL_FUNCTION,
+    {
+      body: {
+        location: state.destination,
+        checkIn: state.checkIn,
+        checkOut: state.checkOut,
+        adults: state.guests,
+        rooms: 1,
+        currency: "INR",
+        limit: 40
+      }
+    }
+  );
+
+  if (currentRequest !== searchSequence) return;
+
+  if (error) {
+    console.error("[Travel Qila] Hotel search error:", error);
+    renderEmpty(
+      "Hotel search is temporarily unavailable",
+      "Please try again in a moment."
+    );
+    message(
+      error.message || "Unable to contact the hotel search service.",
+      "error"
+    );
+    return;
+  }
+
+  const listings = Array.isArray(data?.data) ? data.data : [];
+
+  if (!listings.length) {
+    renderEmpty(
+      "No properties returned",
+      "Try another destination or different dates."
+    );
+    message("The provider returned no accommodation results.", "info");
+    return;
+  }
+
+  const fallbackCurrency = data?.meta?.currency || "INR";
+
+  listings.forEach((item) => {
+    const hotel = mapHotel(item, fallbackCurrency);
+    hotels.set(hotel.id, hotel);
+  });
+
+  renderHotels();
+
+  if (data?.meta?.sandbox) {
+    message(
+      "Sandbox results are sample properties, not live availability. Switch to a verified live API key to see real search results.",
+      "info"
+    );
+  } else if (data?.meta?.partial) {
+    message(
+      "Some provider results may be missing. These results are not a confirmed booking.",
+      "info"
+    );
+  } else {
+    message(
+      "Search results received. Availability and final prices must be confirmed by the provider.",
+      "success"
+    );
+  }
+}
+
+async function loadWishlist() {
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from("hotel_wishlists")
+    .select("hotel_id")
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.warn(
+      "[Travel Qila] Wishlist could not be loaded:",
+      error.message
+    );
+    return;
+  }
+
+  wishlistIds = new Set((data || []).map((item) => String(item.hotel_id)));
+}
+
+async function toggleWishlist(id) {
+  if (!user) {
+    window.location.href =
+      authPageUrl("login.html") + "?returnTo=hotels.html";
+    return;
+  }
+
+  const hotel = hotels.get(id);
+
+  if (!hotel) return;
+
+  const state = searchState();
+  const q = quote(hotel, state);
+
+  if (wishlistIds.has(id)) {
+    const { error } = await supabase
+      .from("hotel_wishlists")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("hotel_id", id);
+
+    if (error) {
+      message("We couldn't remove this stay. Please try again.", "error");
+      return;
+    }
+
+    wishlistIds.delete(id);
+    message("Stay removed from your wishlist.", "success");
+  } else {
+    const { error } = await supabase
+      .from("hotel_wishlists")
+      .insert({
+        user_id: user.id,
+        hotel_id: id,
+        hotel_name: hotel.name,
+        destination: hotel.city || state.destination,
+        star_rating: hotel.stars,
+        nightly_rate: hotel.nightlyRate,
+        taxes: q.taxes,
+        total_price: q.total,
+        currency: hotel.currency,
+        image_url: hotel.image || null,
+        check_in: state.checkIn || null,
+        check_out: state.checkOut || null,
+        guests: state.guests
+      });
+
+    if (error) {
+      message(
+        error.code === "23505"
+          ? "This stay is already in your wishlist."
+          : "We couldn't save this stay. Please try again.",
+        "error"
+      );
+      return;
+    }
+
+    wishlistIds.add(id);
+    message("Stay saved to your dashboard wishlist.", "success");
+  }
+
+  renderHotels();
+}
+
+async function bookHotel(id) {
+  if (!user) {
+    window.location.href =
+      authPageUrl("login.html") + "?returnTo=hotels.html";
+    return;
+  }
+
+  const state = searchState();
+  const hotel = hotels.get(id);
+
+  if (!hotel || dateNights(state.checkIn, state.checkOut) < 1) {
+    message("Please choose valid check-in and check-out dates.", "error");
+    return;
+  }
+
+  const q = quote(hotel, state);
+
+  if (q.total <= 0) {
+    message("A provider price is required before sending this enquiry.", "error");
+    return;
+  }
+
+  const name =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    "Traveller";
+
+  const { data, error } = await supabase
+    .from("hotel_booking_requests")
+    .insert({
+      user_id: user.id,
+      hotel_id: hotel.id,
+      hotel_name: hotel.name,
+      destination: hotel.city || state.destination,
+      check_in: state.checkIn,
+      check_out: state.checkOut,
+      guests: state.guests,
+      rooms: 1,
+      nightly_rate: hotel.nightlyRate,
+      taxes: q.taxes,
+      total_price: q.total,
+      currency: hotel.currency,
+      customer_name: name,
+      customer_email: user.email || "Not provided",
+      customer_phone: user.user_metadata?.phone || ""
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("[Travel Qila] Booking enquiry error:", error);
+    message(
+      "Your request could not be saved. Please try again or contact our team.",
+      "error"
+    );
+    return;
+  }
+
+  message(
+    "Your hotel enquiry has been saved. Our team will contact you to confirm availability and the final rate.",
+    "success"
+  );
+
+  const whatsappText = [
+    "Hello Travel Qila, I would like to enquire about this stay.",
+    `Property: ${hotel.name}`,
+    `Destination: ${hotel.city || state.destination}`,
+    `Provider: ${hotel.platform}`,
+    `Check-in: ${state.checkIn}`,
+    `Check-out: ${state.checkOut}`,
+    `Guests: ${state.guests}`,
+    `Estimated total: ${formatMoney(q.total, hotel.currency)}`,
+    `Enquiry ID: ${data.id}`,
+    hotel.url ? `Provider listing: ${hotel.url}` : ""
+  ].filter(Boolean).join("\n");
+
+  const link = document.querySelector("#hotelWhatsapp");
+
+  if (link) {
+    link.href =
+      `https://wa.me/${WHATSAPP_NUMBER}?text=` +
+      encodeURIComponent(whatsappText);
+    link.hidden = false;
+  }
+}
+
+form?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  await searchHotels();
+
+  document.querySelector("#hotelResultsHeading")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+results?.addEventListener("click", async (event) => {
+  const wish = event.target.closest("[data-wish]");
+  const book = event.target.closest("[data-book]");
+
+  if (wish) await toggleWishlist(wish.dataset.wish);
+  if (book) await bookHotel(book.dataset.book);
+});
+
+(async () => {
+  const checkIn = document.querySelector("#checkIn");
+  const checkOut = document.querySelector("#checkOut");
+
+  if (checkIn && checkOut) {
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+
+    const minimumDate = today.toISOString().slice(0, 10);
+
+    checkIn.min = minimumDate;
+    checkOut.min = minimumDate;
+
+    checkIn.addEventListener("change", () => {
+      checkOut.min = checkIn.value || minimumDate;
+
+      if (checkOut.value && checkOut.value <= checkIn.value) {
+        checkOut.value = "";
+      }
+    });
+  }
+
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.warn("[Travel Qila] Could not retrieve current user:", error.message);
+  }
+
+  user = data?.user || null;
+
+  await loadWishlist();
+
+  renderEmpty(
+    "Start with your destination",
+    "Enter a city and valid check-in/check-out dates to explore stays."
+  );
 })();
