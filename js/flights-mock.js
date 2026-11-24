@@ -112,44 +112,36 @@ import { supabase } from "./auth-client.js";
     return search.adults + search.children + search.infants;
   }
 
+  // Keep all infant dropdown options enabled.
+  // Passenger restrictions are enforced during form submission.
   function syncInfantLimit() {
-    const adultsInput = byId("adults");
     const infantsInput = byId("infants");
 
-    if (!adultsInput || !infantsInput) return;
+    if (!infantsInput) return;
 
-    const adults = Math.max(1, Number(adultsInput.value) || 1);
-
-    // For number inputs, dynamically update the maximum.
-    if (infantsInput.tagName === "INPUT") {
-      infantsInput.max = String(adults);
-    }
-
-    // For select inputs, make sure all valid options exist.
     if (infantsInput.tagName === "SELECT") {
-      const currentValue = infantsInput.value;
-
-      for (let i = 0; i <= adults; i++) {
-        const exists = Array.from(infantsInput.options)
-          .some(option => Number(option.value) === i);
-
-        if (!exists) {
-          infantsInput.add(new Option(String(i), String(i)));
-        }
-      }
-
       Array.from(infantsInput.options).forEach(option => {
-        option.disabled = Number(option.value) > adults;
+        option.disabled = false;
       });
-
-      infantsInput.value = currentValue;
     }
+
+    // Do not use a dynamic HTML max attribute.
+    // The JavaScript validation below handles the passenger rule.
+    if (infantsInput.tagName === "INPUT") {
+      infantsInput.removeAttribute("max");
+    }
+
+    infantsInput.setCustomValidity("");
   }
 
   function validatePassengerCounts() {
     const adultsInput = byId("adults");
     const childrenInput = byId("children");
     const infantsInput = byId("infants");
+
+    if (!adultsInput || !childrenInput || !infantsInput) {
+      return null;
+    }
 
     const adults = Number(adultsInput.value);
     const children = Number(childrenInput.value);
@@ -1088,24 +1080,27 @@ import { supabase } from "./auth-client.js";
 
   byId("adults")?.addEventListener("input", () => {
     syncInfantLimit();
-    byId("infants").setCustomValidity("");
   });
 
-  byId("infants")?.addEventListener("input", () => {
-    byId("infants").setCustomValidity("");
-  });
-
+  // SELECT dropdowns use the change event.
   byId("infants")?.addEventListener("change", () => {
     byId("infants").setCustomValidity("");
   });
 
-  byId("departDate").addEventListener("change", () => {
-    byId("returnDate").min = byId("departDate").value;
+  byId("departDate")?.addEventListener("change", () => {
+    const departure = byId("departDate");
+    const returning = byId("returnDate");
+
+    if (departure && returning) {
+      returning.min = departure.value;
+    }
   });
 
-  byId("swapCities").addEventListener("click", () => {
+  byId("swapCities")?.addEventListener("click", () => {
     const origin = byId("origin");
     const destination = byId("destination");
+
+    if (!origin || !destination) return;
 
     const value = origin.value;
     origin.value = destination.value;
@@ -1120,16 +1115,13 @@ import { supabase } from "./auth-client.js";
     event.preventDefault();
     updateTripType();
 
-    // Clear stale passenger validation before checking again.
     [
       byId("adults"),
       byId("children"),
       byId("infants")
     ].forEach(input => input?.setCustomValidity(""));
 
-    // Validate passenger counts BEFORE native form validation.
-    // This ensures infant errors are displayed instead of silently
-    // blocking submission due to an outdated HTML max attribute.
+    // Validate passenger counts before native form validation.
     const passengerCounts = validatePassengerCounts();
 
     if (!passengerCounts) return;
@@ -1307,7 +1299,7 @@ import { supabase } from "./auth-client.js";
       params.get("additionalPreferences");
   }
 
-  // Initialize the dynamic infant limit after URL values load.
+  // Initialize infant dropdown without disabling any options.
   syncInfantLimit();
 
   syncBudget();
