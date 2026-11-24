@@ -50,10 +50,54 @@ import { supabase } from "./auth-client.js";
       '"': "&quot;", "'": "&#39;"
     }[c]));
 
-  const money = value =>
-    "₹" + Number(value || 0).toLocaleString("en-IN", {
+  const money = value => {
+  const amount = Number(value || 0);
+
+  if (!Number.isFinite(amount)) return "₹0";
+
+  const currencyAPI = window.TravelQilaCurrency;
+  const selectedCurrency = currencyAPI?.getCurrency?.() || "INR";
+  const rates = currencyAPI?.getRates?.();
+
+  // Keep INR display until exchange rates are available.
+  if (!rates || !currencyAPI) {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
       maximumFractionDigits: 2
-    });
+    }).format(amount);
+  }
+
+  const converted = currencyAPI.convert(
+    amount,
+    "INR",
+    selectedCurrency
+  );
+
+  if (!Number.isFinite(converted)) {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 2
+    }).format(amount);
+  }
+
+  const locales = {
+    INR: "en-IN",
+    USD: "en-US",
+    EUR: "de-DE",
+    GBP: "en-GB"
+  };
+
+  return new Intl.NumberFormat(
+    locales[selectedCurrency] || "en-IN",
+    {
+      style: "currency",
+      currency: selectedCurrency,
+      maximumFractionDigits: 2
+    }
+  ).format(converted);
+};
 
   const durationText = minutes =>
     Math.floor(minutes / 60) + "h " +
