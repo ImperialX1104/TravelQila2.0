@@ -6,9 +6,13 @@ import { supabase } from "./auth-client.js";
 
   const form = document.getElementById("flightSearchForm");
   const results = document.getElementById("flightResults");
+
   if (!form || !results) return;
 
-  // DEMO PRICING CONFIGURATION
+  // =====================================================
+  // 1. DEMO FARE CONFIGURATION
+  // =====================================================
+
   const FARE_CONFIG = {
     adultMultiplier: 1,
     childMultiplier: 0.75,
@@ -18,32 +22,32 @@ import { supabase } from "./auth-client.js";
   };
 
   const airportMap = {
-    DEL:"New Delhi", BOM:"Mumbai", BLR:"Bengaluru",
-    HYD:"Hyderabad", MAA:"Chennai", CCU:"Kolkata",
-    GOI:"Goa", AMD:"Ahmedabad", PNQ:"Pune",
-    COK:"Kochi", JAI:"Jaipur", DXB:"Dubai",
-    SIN:"Singapore", BKK:"Bangkok", LHR:"London",
-    DOH:"Doha", AUH:"Abu Dhabi", KUL:"Kuala Lumpur",
-    HKT:"Phuket", JFK:"New York"
+    DEL: "New Delhi", BOM: "Mumbai", BLR: "Bengaluru",
+    HYD: "Hyderabad", MAA: "Chennai", CCU: "Kolkata",
+    GOI: "Goa", AMD: "Ahmedabad", PNQ: "Pune",
+    COK: "Kochi", JAI: "Jaipur", DXB: "Dubai",
+    SIN: "Singapore", BKK: "Bangkok", LHR: "London",
+    DOH: "Doha", AUH: "Abu Dhabi", KUL: "Kuala Lumpur",
+    HKT: "Phuket", JFK: "New York"
   };
 
   const sampleOffers = [
-    {airline:"IndiGo",flight:"6E 2145",depart:"06:10",duration:135,stops:0,price:6450,baggage:"15 kg check-in"},
-    {airline:"Air India",flight:"AI 887",depart:"07:35",duration:150,stops:0,price:7850,baggage:"15 kg check-in"},
-    {airline:"Akasa Air",flight:"QP 1320",depart:"09:20",duration:150,stops:0,price:6990,baggage:"15 kg check-in"},
-    {airline:"Air India Express",flight:"IX 1042",depart:"11:45",duration:205,stops:1,price:5980,baggage:"15 kg check-in"},
-    {airline:"IndiGo",flight:"6E 6087",depart:"13:15",duration:155,stops:0,price:7350,baggage:"15 kg check-in"},
-    {airline:"Air India",flight:"AI 441",depart:"16:40",duration:225,stops:1,price:8250,baggage:"25 kg check-in"},
-    {airline:"Akasa Air",flight:"QP 1718",depart:"18:30",duration:155,stops:0,price:7590,baggage:"15 kg check-in"},
-    {airline:"IndiGo",flight:"6E 9912",depart:"21:15",duration:215,stops:1,price:6250,baggage:"15 kg check-in"}
+    { airline: "IndiGo", flight: "6E 2145", depart: "06:10", duration: 135, stops: 0, price: 6450, baggage: "15 kg check-in" },
+    { airline: "Air India", flight: "AI 887", depart: "07:35", duration: 150, stops: 0, price: 7850, baggage: "15 kg check-in" },
+    { airline: "Akasa Air", flight: "QP 1320", depart: "09:20", duration: 150, stops: 0, price: 6990, baggage: "15 kg check-in" },
+    { airline: "Air India Express", flight: "IX 1042", depart: "11:45", duration: 205, stops: 1, price: 5980, baggage: "15 kg check-in" },
+    { airline: "IndiGo", flight: "6E 6087", depart: "13:15", duration: 155, stops: 0, price: 7350, baggage: "15 kg check-in" },
+    { airline: "Air India", flight: "AI 441", depart: "16:40", duration: 225, stops: 1, price: 8250, baggage: "25 kg check-in" },
+    { airline: "Akasa Air", flight: "QP 1718", depart: "18:30", duration: 155, stops: 0, price: 7590, baggage: "15 kg check-in" },
+    { airline: "IndiGo", flight: "6E 9912", depart: "21:15", duration: 215, stops: 1, price: 6250, baggage: "15 kg check-in" }
   ];
 
   const byId = id => document.getElementById(id);
 
   const safe = value =>
     String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;",
-      '"':"&quot;", "'":"&#39;"
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
     }[c]));
 
   const money = value =>
@@ -57,12 +61,13 @@ import { supabase } from "./auth-client.js";
 
   const formatDate = value =>
     value ? new Date(value + "T12:00:00").toLocaleDateString(
-      "en-IN", {day:"numeric", month:"short", year:"numeric"}
+      "en-IN", { day: "numeric", month: "short", year: "numeric" }
     ) : "";
 
   const shiftDate = (value, days) => {
     const d = new Date(value + "T12:00:00");
     d.setDate(d.getDate() + days);
+
     return d.getFullYear() + "-" +
       String(d.getMonth() + 1).padStart(2, "0") + "-" +
       String(d.getDate()).padStart(2, "0");
@@ -71,17 +76,19 @@ import { supabase } from "./auth-client.js";
   const addMinutes = (time, minutes) => {
     const p = time.split(":").map(Number);
     const n = (p[0] * 60 + p[1] + minutes) % 1440;
+
     return String(Math.floor(n / 60)).padStart(2, "0") +
       ":" + String(n % 60).padStart(2, "0");
   };
 
   function parseAirport(value) {
-    const m = String(value).trim().match(/\(([A-Za-z]{3})\)\s*$/);
-    const code = m ? m[1].toUpperCase() : "";
-    const city = String(value).trim().replace(/\s*\([A-Za-z]{3}\)\s*$/, "");
+    const text = String(value).trim();
+    const match = text.match(/\(([A-Za-z]{3})\)\s*$/);
+    const code = match ? match[1].toUpperCase() : "";
+    const city = text.replace(/\s*\([A-Za-z]{3}\)\s*$/, "");
 
     return {
-      city: city || value,
+      city: city || text,
       code,
       label: code ? (airportMap[code] || city) : city
     };
@@ -95,60 +102,60 @@ import { supabase } from "./auth-client.js";
   let stage = "outbound";
   let wishlistId = null;
 
-  function updateTripType() {
-    const round =
-      form.querySelector('input[name="tripType"]:checked').value === "Round trip";
+  // =====================================================
+  // 2. PASSENGER COUNTS
+  // =====================================================
 
-    const wrap = byId("returnDate");
-    const container = byId("returnDateWrap");
-
-    container.hidden = !round;
-    wrap.required = round;
-
-    if (!round) wrap.value = "";
+  function passengers() {
+    return search.adults + search.children + search.infants;
   }
+
+  // =====================================================
+  // 3. FLIGHT OPTION GENERATOR
+  // =====================================================
 
   function makeOptions(origin, destination, date, seedText) {
     const seed = seedText.split("").reduce(
       (n, c) => n + c.charCodeAt(0), 0
     );
 
-    return sampleOffers.map((x, i) => {
+    return sampleOffers.map((offer, index) => {
       const shift = seed % 7;
-      const depart = addMinutes(x.depart, shift * 4);
-      const duration = x.duration + shift * 3 + (i % 2 ? 10 : 0);
+      const depart = addMinutes(offer.depart, shift * 4);
+      const duration =
+        offer.duration + shift * 3 + (index % 2 ? 10 : 0);
 
-      const flex = search?.dateFlexibility || "Exact dates";
+      const flexibility = search?.dateFlexibility || "Exact dates";
 
       const offsets =
-        flex === "1 day before or after"
+        flexibility === "1 day before or after"
           ? [0, -1, 1, 0, 0, 0, 0, 0]
-          : flex === "3 days before or after" ||
-            flex === "Flexible - lowest fare matters most"
+          : flexibility === "3 days before or after" ||
+            flexibility === "Flexible - lowest fare matters most"
             ? [0, -1, 1, -2, 2, -3, 3, 0]
             : [0, 0, 0, 0, 0, 0, 0, 0];
 
-      const dateOffset = offsets[i] || 0;
+      const dateOffset = offsets[index] || 0;
 
       const price = Math.round((
-        x.price +
+        offer.price +
         (seed % 13) * 175 +
-        (i % 3) * 260 +
+        (index % 3) * 260 +
         (dateOffset < 0
           ? Math.abs(dateOffset) * -80
           : dateOffset * 40)
       ) / 10) * 10;
 
       return {
-        id: "leg-" + seed + "-" + i,
-        airline: x.airline,
-        flight: x.flight,
+        id: "leg-" + seed + "-" + index,
+        airline: offer.airline,
+        flight: offer.flight,
         depart,
         arrive: addMinutes(depart, duration),
         duration,
-        stops: x.stops,
+        stops: offer.stops,
         price,
-        baggage: x.baggage,
+        baggage: offer.baggage,
         origin,
         destination,
         departureDate: shiftDate(date, dateOffset)
@@ -156,14 +163,13 @@ import { supabase } from "./auth-client.js";
     });
   }
 
-  function passengers() {
-    return search.adults + search.children + search.infants;
-  }
+  // =====================================================
+  // 4. CATEGORY-WISE FARE ENGINE
+  // =====================================================
 
-  // CATEGORY-WISE FARE ENGINE
-  function pricing() {
-    const outboundFare = selectedOutbound?.price || 0;
-    const returnFare = selectedReturn?.price || 0;
+  function pricing(outbound = selectedOutbound, returning = selectedReturn) {
+    const outboundFare = outbound?.price || 0;
+    const returnFare = returning?.price || 0;
 
     const categories = [
       {
@@ -187,24 +193,27 @@ import { supabase } from "./auth-client.js";
     ];
 
     const breakdown = categories.map(category => {
-      const adultOutbound = Math.round(
+      const outboundPerPerson = Math.round(
         outboundFare * category.multiplier
       );
 
-      const adultReturn = Math.round(
+      const returnPerPerson = Math.round(
         returnFare * category.multiplier
       );
 
-      const outboundTotal = adultOutbound * category.count;
-      const returnTotal = adultReturn * category.count;
+      const outboundTotal =
+        outboundPerPerson * category.count;
+
+      const returnTotal =
+        returnPerPerson * category.count;
 
       return {
         key: category.key,
         label: category.label,
         count: category.count,
         multiplier: category.multiplier,
-        outboundPerPerson: adultOutbound,
-        returnPerPerson: adultReturn,
+        outboundPerPerson,
+        returnPerPerson,
         outboundTotal,
         returnTotal,
         subtotal: outboundTotal + returnTotal
@@ -219,18 +228,31 @@ import { supabase } from "./auth-client.js";
       baseFare * FARE_CONFIG.taxRate
     );
 
+    const totalFare = baseFare + taxAmount;
+    const passengerCount = passengers();
+
     return {
       baseFare,
       taxAmount,
-      totalFare: baseFare + taxAmount,
+      totalFare,
       taxRate: FARE_CONFIG.taxRate,
       currency: FARE_CONFIG.currency,
       categories: breakdown,
       outboundAdultFare: outboundFare,
       returnAdultFare: returnFare,
+
+      // Useful for comparing the budget per passenger.
+      averageFarePerPassenger: passengerCount
+        ? totalFare / passengerCount
+        : 0,
+
       pricingModel: "illustrative_category_based"
     };
   }
+
+  // =====================================================
+  // 5. ITINERARY OBJECT
+  // =====================================================
 
   function itinerary() {
     const p = pricing();
@@ -240,7 +262,8 @@ import { supabase } from "./auth-client.js";
       origin: search.origin,
       destination: search.destination,
       tripType: search.tripType,
-      departureDate: selectedOutbound?.departureDate || search.departureDate,
+      departureDate:
+        selectedOutbound?.departureDate || search.departureDate,
       returnDate: search.tripType === "Round trip"
         ? (selectedReturn?.departureDate || search.returnDate)
         : null,
@@ -262,14 +285,21 @@ import { supabase } from "./auth-client.js";
     };
   }
 
+  // =====================================================
+  // 6. FLIGHT CARD DISPLAY
+  // =====================================================
+
   function optionsMarkup(items, leg) {
     return items.map(o =>
       '<article class="flight-result-card tq-leg-card">' +
         '<div class="flight-result-top">' +
           '<div>' +
-            '<div class="flight-airline-name">' + safe(o.airline) + '</div>' +
-            '<div class="flight-flight-number">' + safe(o.flight) +
-              ' · ' + (o.stops === 0 ? "Non-stop" : o.stops + " stop") +
+            '<div class="flight-airline-name">' +
+              safe(o.airline) +
+            '</div>' +
+            '<div class="flight-flight-number">' +
+              safe(o.flight) + ' · ' +
+              (o.stops === 0 ? "Non-stop" : o.stops + " stop") +
             '</div>' +
           '</div>' +
           '<div class="flight-demo-price">' +
@@ -277,34 +307,55 @@ import { supabase } from "./auth-client.js";
             '<small>Adult demo fare / passenger</small>' +
           '</div>' +
         '</div>' +
+
         '<div class="flight-route-line">' +
-          '<div><div class="flight-time">' + safe(o.depart) + '</div>' +
-            '<div class="flight-city">' + safe(o.origin.label) +
-              ' (' + safe(o.origin.code || "—") + ')</div></div>' +
+          '<div>' +
+            '<div class="flight-time">' + safe(o.depart) + '</div>' +
+            '<div class="flight-city">' +
+              safe(o.origin.label) + ' (' +
+              safe(o.origin.code || "—") + ')' +
+            '</div>' +
+          '</div>' +
+
           '<div class="flight-route-middle">' +
             '<div>' + durationText(o.duration) + '</div>' +
             '<div class="line"></div>' +
-            '<div>' + (o.stops === 0 ? "Non-stop" : o.stops + " stop") + '</div>' +
+            '<div>' +
+              (o.stops === 0 ? "Non-stop" : o.stops + " stop") +
+            '</div>' +
           '</div>' +
-          '<div class="text-end"><div class="flight-time">' + safe(o.arrive) + '</div>' +
-            '<div class="flight-city">' + safe(o.destination.label) +
-              ' (' + safe(o.destination.code || "—") + ')</div></div>' +
+
+          '<div class="text-end">' +
+            '<div class="flight-time">' + safe(o.arrive) + '</div>' +
+            '<div class="flight-city">' +
+              safe(o.destination.label) + ' (' +
+              safe(o.destination.code || "—") + ')' +
+            '</div>' +
+          '</div>' +
         '</div>' +
+
         '<div class="flight-result-meta">' +
-          '<span><i class="far fa-calendar"></i>' + formatDate(o.departureDate) + '</span>' +
-          '<span><i class="fas fa-suitcase"></i>' + safe(o.baggage) + '</span>' +
-          '<span><i class="fas fa-chair"></i>' + safe(search.cabin) + '</span>' +
+          '<span>' + formatDate(o.departureDate) + '</span>' +
+          '<span>' + safe(o.baggage) + '</span>' +
+          '<span>' + safe(search.cabin) + '</span>' +
         '</div>' +
+
         '<div class="flight-result-actions">' +
-          '<button type="button" class="flight-select-leg" data-select-leg="' +
-            leg + '" data-offer-id="' + o.id + '">' +
-            'Select this ' + (leg === "outbound" ? "departure" : "return") +
-            ' flight <i class="fas fa-arrow-right ms-1"></i>' +
+          '<button type="button" class="flight-select-leg" ' +
+            'data-select-leg="' + leg + '" ' +
+            'data-offer-id="' + o.id + '">' +
+            'Select this ' +
+            (leg === "outbound" ? "departure" : "return") +
+            ' flight' +
           '</button>' +
         '</div>' +
       '</article>'
     ).join("");
   }
+
+  // =====================================================
+  // 7. FILTERS
+  // =====================================================
 
   function filtersMarkup() {
     const preferred =
@@ -314,27 +365,44 @@ import { supabase } from "./auth-client.js";
     return '<div class="flight-results-tools">' +
       '<label for="resultStops">Stops</label>' +
       '<select id="resultStops">' +
-        '<option value="any" ' + (preferred === "any" ? "selected" : "") + '>Any stops</option>' +
-        '<option value="nonstop" ' + (preferred === "nonstop" ? "selected" : "") + '>Non-stop</option>' +
-        '<option value="one" ' + (preferred === "one" ? "selected" : "") + '>Up to 1 stop</option>' +
+        '<option value="any" ' +
+          (preferred === "any" ? "selected" : "") +
+        '>Any stops</option>' +
+        '<option value="nonstop" ' +
+          (preferred === "nonstop" ? "selected" : "") +
+        '>Non-stop</option>' +
+        '<option value="one" ' +
+          (preferred === "one" ? "selected" : "") +
+        '>Up to 1 stop</option>' +
       '</select>' +
+
       '<label for="resultAirline">Airline</label>' +
       '<select id="resultAirline">' +
         '<option value="all">All airlines</option>' +
-        '<option>IndiGo</option>' +
-        '<option>Air India</option>' +
-        '<option>Akasa Air</option>' +
-        '<option>Air India Express</option>' +
+        '<option value="IndiGo">IndiGo</option>' +
+        '<option value="Air India">Air India</option>' +
+        '<option value="Akasa Air">Akasa Air</option>' +
+        '<option value="Air India Express">Air India Express</option>' +
       '</select>' +
+
       '<label for="resultSort">Sort by</label>' +
       '<select id="resultSort">' +
         '<option value="price">Lowest fare</option>' +
         '<option value="duration">Shortest duration</option>' +
         '<option value="departure">Departure time</option>' +
       '</select>' +
+
       '<span class="small text-muted">Budget: ' +
-        money(search.maximumBudget) + ' per passenger</span>' +
+        money(search.maximumBudget) +
+        ' average per passenger</span>' +
     '</div>';
+  }
+
+  // Calculate the estimated average fare for a proposed
+  // outbound/return combination using all passenger categories.
+  function estimatedAverageFare(outbound, returning) {
+    const p = pricing(outbound, returning);
+    return p.averageFarePerPassenger;
   }
 
   function filteredOptions(items, leg) {
@@ -353,19 +421,33 @@ import { supabase } from "./auth-client.js";
         (stops === "nonstop" && o.stops === 0) ||
         (stops === "one" && o.stops <= 1));
 
-    const minimumOther =
-      leg === "outbound" && search.tripType === "Round trip"
-        ? Math.min(...returnOptions.map(x => x.price))
-        : 0;
+    const out = items.filter(o => {
+      if (!stopAllowed(o)) return false;
+      if (airline !== "all" && o.airline !== airline) return false;
 
-    const committed =
-      leg === "return" ? (selectedOutbound?.price || 0) : 0;
+      let proposedAverage;
 
-    const out = items.filter(o =>
-      stopAllowed(o) &&
-      (airline === "all" || o.airline === airline) &&
-      ((committed + o.price + minimumOther) * 1.05) <= max
-    );
+      if (leg === "return") {
+        proposedAverage = estimatedAverageFare(
+          selectedOutbound, o
+        );
+      } else if (search.tripType === "Round trip") {
+        const cheapestReturn = returnOptions
+          .filter(r => stopAllowed(r))
+          .filter(r => airline === "all" || r.airline === airline)
+          .sort((a, b) => a.price - b.price)[0];
+
+        if (!cheapestReturn) return false;
+
+        proposedAverage = estimatedAverageFare(
+          o, cheapestReturn
+        );
+      } else {
+        proposedAverage = estimatedAverageFare(o, null);
+      }
+
+      return proposedAverage <= max;
+    });
 
     out.sort((a, b) =>
       sort === "duration" ? a.duration - b.duration :
@@ -376,9 +458,24 @@ import { supabase } from "./auth-client.js";
     return out;
   }
 
+  // =====================================================
+  // 8. RESULTS AND SELECTION FLOW
+  // =====================================================
+
   function heading(title, sub) {
     byId("resultRoute").textContent = title;
     byId("resultDates").textContent = sub;
+  }
+
+  function resetFilters() {
+    ["resultStops", "resultAirline", "resultSort"].forEach(id => {
+      const el = byId(id);
+      if (el) {
+        el.value =
+          id === "resultStops" ? "any" :
+          id === "resultAirline" ? "all" : "price";
+      }
+    });
   }
 
   function renderLegStage() {
@@ -393,31 +490,43 @@ import { supabase } from "./auth-client.js";
     const to = isReturn ? search.origin : search.destination;
 
     heading(
-      (isReturn ? "Choose your return flight" : "Choose your departure flight") +
+      (isReturn
+        ? "Choose your return flight"
+        : "Choose your departure flight") +
       " · " + from.label + " → " + to.label,
+
       formatDate(isReturn ? search.returnDate : search.departureDate) +
-      " · " + search.tripType + " · " + passengers() + " passenger(s)"
+      " · " + search.tripType +
+      " · " + passengers() + " passenger(s)"
     );
 
     const stepper =
       '<div class="tq-booking-steps">' +
-        '<span class="' + (stage === "outbound" ? "is-active" : "is-done") + '">1. Departure</span>' +
+        '<span class="' +
+          (stage === "outbound" ? "is-active" : "is-done") +
+        '">1. Departure</span>' +
         (search.tripType === "Round trip"
-          ? '<span class="' + (stage === "return" ? "is-active" : "") + '">2. Return</span>'
+          ? '<span class="' +
+              (stage === "return" ? "is-active" : "") +
+            '">2. Return</span>'
           : "") +
-        '<span> ' + (search.tripType === "Round trip" ? "3" : "2") + '. Review & save</span>' +
+        '<span>' +
+          (search.tripType === "Round trip" ? "3" : "2") +
+          '. Review & save</span>' +
       '</div>';
 
     const back = isReturn
-      ? '<button type="button" class="btn btn-outline-secondary rounded-pill mb-3" data-back-outbound>' +
-          '<i class="fas fa-arrow-left me-1"></i>Change departure flight</button>'
+      ? '<button type="button" class="btn btn-outline-secondary mb-3" data-back-outbound>' +
+          'Change departure flight</button>'
       : "";
 
     byId("flightResultsList").innerHTML =
       stepper + back + filtersMarkup() +
       (items.length
         ? optionsMarkup(items, isReturn ? "return" : "outbound")
-        : '<div class="flight-empty is-visible">No flights match these filters. Try another airline or stop preference.</div>');
+        : '<div class="flight-empty is-visible">' +
+            'No flights match these filters. Try another filter.' +
+          '</div>');
 
     byId("flightResultsEmpty").classList.remove("is-visible");
     byId("flightResultsList").hidden = false;
@@ -430,7 +539,10 @@ import { supabase } from "./auth-client.js";
       items.length + " demo flight options";
   }
 
-  // CATEGORY-WISE FARE DISPLAY
+  // =====================================================
+  // 9. CATEGORY-WISE FARE BREAKDOWN
+  // =====================================================
+
   function fareBreakdownMarkup(p) {
     const rows = p.categories
       .filter(item => item.count > 0)
@@ -439,28 +551,52 @@ import { supabase } from "./auth-client.js";
           item.outboundPerPerson + item.returnPerPerson;
 
         return '<div class="tq-fare-category">' +
-          '<div><strong>' + item.label + ' (' + item.count + ')</strong>' +
-          '<small>' + item.count + ' × ' + money(tripFarePerPerson) +
-            ' per passenger' +
-            (search.tripType === "Round trip" ? ' · outbound + return' : ' · one way') +
-          '</small></div>' +
+          '<div>' +
+            '<strong>' + item.label +
+              ' (' + item.count + ')</strong>' +
+            '<small>' +
+              item.count + ' × ' +
+              money(tripFarePerPerson) +
+              ' per passenger' +
+              (search.tripType === "Round trip"
+                ? ' · outbound + return'
+                : ' · one way') +
+            '</small>' +
+          '</div>' +
           '<strong>' + money(item.subtotal) + '</strong>' +
         '</div>';
       }).join("");
 
     return '<div class="tq-price-breakdown">' +
       '<h5 class="mb-3">Passenger fare breakdown</h5>' +
+
       (rows || '<div>No passengers selected.</div>') +
+
       '<hr>' +
-      '<div><span>Base fare · all passengers</span><strong>' +
-        money(p.baseFare) + '</strong></div>' +
-      '<div><span>Estimated taxes & fees (illustrative 5%)</span><strong>' +
-        money(p.taxAmount) + '</strong></div>' +
-      '<div class="tq-grand-total"><span>Estimated total</span><strong>' +
-        money(p.totalFare) + '</strong></div>' +
-      '<small>Demo estimate only. Adult fare is 100%, child fare is 75%, and infant fare is 25% of the adult demo fare. These are illustrative assumptions, not actual airline fare rules. Actual taxes, fees, availability and airline pricing must be reconfirmed before payment.</small>' +
+
+      '<div><span>Base fare · all passengers</span>' +
+        '<strong>' + money(p.baseFare) + '</strong></div>' +
+
+      '<div><span>Estimated taxes & fees (5%)</span>' +
+        '<strong>' + money(p.taxAmount) + '</strong></div>' +
+
+      '<div class="tq-grand-total">' +
+        '<span>Estimated total</span>' +
+        '<strong>' + money(p.totalFare) + '</strong>' +
+      '</div>' +
+
+      '<div class="small text-muted mt-2">' +
+        'Demo pricing assumptions: adults 100%, children 75%, ' +
+        'infants 25% of the adult demo fare. These are not actual ' +
+        'airline fare rules. Final fares, taxes and availability ' +
+        'must be reconfirmed before payment.' +
+      '</div>' +
     '</div>';
   }
+
+  // =====================================================
+  // 10. SUMMARY DISPLAY
+  // =====================================================
 
   function renderSummary() {
     const trip = itinerary();
@@ -471,18 +607,21 @@ import { supabase } from "./auth-client.js";
         '<div class="tq-summary-leg-title">' +
           label + ' · ' + formatDate(o.departureDate) +
         '</div>' +
-        '<strong>' + safe(o.airline) + ' · ' + safe(o.flight) + '</strong>' +
+        '<strong>' + safe(o.airline) +
+          ' · ' + safe(o.flight) + '</strong>' +
         '<div class="tq-summary-route">' +
-          safe(o.origin.label) + ' (' + safe(o.origin.code || "—") + ')' +
-          ' <i class="fas fa-arrow-right"></i> ' +
-          safe(o.destination.label) + ' (' + safe(o.destination.code || "—") + ')' +
+          safe(o.origin.label) + ' (' +
+          safe(o.origin.code || "—") + ')' +
+          ' → ' +
+          safe(o.destination.label) + ' (' +
+          safe(o.destination.code || "—") + ')' +
         '</div>' +
         '<div class="tq-summary-times">' +
           safe(o.depart) + ' – ' + safe(o.arrive) +
           ' · ' + durationText(o.duration) +
         '</div>' +
         '<div class="tq-summary-fare">' +
-          money(o.price) + ' adult fare per passenger' +
+          money(o.price) + ' adult demo fare per passenger' +
         '</div>' +
       '</div>';
 
@@ -494,7 +633,8 @@ import { supabase } from "./auth-client.js";
       '<div class="tq-booking-steps">' +
         '<span class="is-done">1. Departure</span>' +
         (search.tripType === "Round trip"
-          ? '<span class="is-done">2. Return</span>' : "") +
+          ? '<span class="is-done">2. Return</span>'
+          : "") +
         '<span class="is-active">Review & save</span>' +
       '</div>' +
 
@@ -504,36 +644,38 @@ import { supabase } from "./auth-client.js";
             '<span class="flight-eyebrow text-primary">YOUR ITINERARY</span>' +
             '<h3>' + safe(search.origin.label) + ' ↔ ' +
               safe(search.destination.label) + '</h3>' +
-            '<p>' + search.tripType + ' · ' + passengers() +
-              ' passenger(s) · ' + safe(search.cabin) + '</p>' +
+            '<p>' + search.tripType + ' · ' +
+              passengers() + ' passenger(s) · ' +
+              safe(search.cabin) + '</p>' +
           '</div>' +
-          '<button type="button" class="btn btn-link" data-edit-flights>Edit flights</button>' +
+          '<button type="button" class="btn btn-link" data-edit-flights>' +
+            'Edit flights</button>' +
         '</div>' +
 
         legs +
-
         fareBreakdownMarkup(p) +
 
         '<div class="tq-summary-actions">' +
           '<button type="button" class="btn btn-primary" data-book-itinerary>' +
-            '<i class="fas fa-lock me-2"></i>Request booking</button>' +
+            'Request booking</button>' +
           '<button type="button" class="btn btn-outline-primary" data-save-wishlist>' +
-            '<i class="far fa-heart me-2"></i>' +
             (wishlistId ? "Update saved trip" : "Save to wishlist") +
           '</button>' +
           '<button type="button" class="btn btn-outline-primary" data-share-itinerary="whatsapp">' +
-            '<i class="fab fa-whatsapp me-2"></i>WhatsApp</button>' +
+            'WhatsApp</button>' +
           '<button type="button" class="btn btn-outline-primary" data-share-itinerary="email">' +
-            '<i class="far fa-envelope me-2"></i>Email</button>' +
+            'Email</button>' +
         '</div>' +
 
         '<p class="small text-muted mt-3 mb-0" data-itinerary-message>' +
-          'Choose Request booking to send this selected itinerary to Travel Qila, or save it to your profile for later.' +
+          'Request a booking or save your selected itinerary.' +
         '</p>' +
       '</div>';
 
     byId("flightResultsList").innerHTML = html;
-    byId("flightResultsCount").textContent = "Complete itinerary selected";
+    byId("flightResultsCount").textContent =
+      "Complete itinerary selected";
+
     byId("flightResultsEmpty").classList.remove("is-visible");
     byId("flightResultsList").hidden = false;
 
@@ -551,23 +693,19 @@ import { supabase } from "./auth-client.js";
     else renderLegStage();
   }
 
-  function resetFilters() {
-    ["resultStops", "resultAirline", "resultSort"].forEach(id => {
-      const el = byId(id);
-      if (el) {
-        el.value =
-          id === "resultStops" ? "any" :
-          id === "resultAirline" ? "all" : "price";
-      }
-    });
-  }
+  // =====================================================
+  // 11. SUPABASE AUTHENTICATION
+  // =====================================================
 
   async function signedInUser() {
-    const {data, error} = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
 
     if (error) throw error;
+
     if (!data.user) {
-      throw new Error("Please sign in to save or request this itinerary.");
+      throw new Error(
+        "Please sign in to save or request this itinerary."
+      );
     }
 
     return data.user;
@@ -578,108 +716,158 @@ import { supabase } from "./auth-client.js";
       document.querySelector("[data-itinerary-message]");
   }
 
-  async function saveWishlist() {
-    const node = messageNode();
-    const btn = byId("save-wishlist");
-    const original = btn?.innerHTML;
+  // =====================================================
+  // 12. SAVE / UPDATE WISHLIST
+  // =====================================================
 
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "Saving to wishlist…";
+  async function saveWishlist(button) {
+    const node = messageNode();
+    const original = button?.innerHTML;
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Saving...";
     }
 
     try {
       const user = await signedInUser();
       const trip = itinerary();
-      const title = search.origin.label + " to " + search.destination.label;
 
-      let error;
+      const title =
+        search.origin.label + " to " + search.destination.label;
 
       if (wishlistId) {
-        const result = await supabase
+        const { error } = await supabase
           .from("flight_wishlists")
-          .update({title, itinerary:trip})
+          .update({
+            title,
+            itinerary: trip
+          })
           .eq("id", wishlistId)
-          .eq("user_id", user.id)
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabase
+          .from("flight_wishlists")
+          .insert({
+            user_id: user.id,
+            title,
+            itinerary: trip
+          })
           .select("id")
           .single();
 
-        error = result.error;
-      } else {
-        const result = await supabase
-          .from("flight_wishlists")
-          .insert({user_id:user.id, title, itinerary:trip});
+        if (error) throw error;
 
-        error = result.error;
+        wishlistId = data.id;
       }
-
-      if (error) throw error;
 
       if (node) {
-        node.textContent = wishlistId
-          ? "Your saved trip has been updated with the new fare breakdown."
-          : "Saved to your wishlist. Find it in your dashboard whenever you're ready.";
+        node.textContent =
+          "Your itinerary and passenger fare breakdown have been saved.";
       }
 
-      if (btn) {
-        btn.textContent = wishlistId ? "Saved trip updated" : "Saved to wishlist";
-        btn.disabled = true;
-      }
-    } catch (e) {
-      if (node) {
-        node.innerHTML = safe(e.message) +
-          (e.message.includes("sign in") ? ' <a href="login.html">Sign in</a>' : "");
+      if (button) {
+        button.textContent = "Saved successfully";
+        button.disabled = false;
       }
 
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = original;
+    } catch (error) {
+      if (node) node.textContent = error.message;
+
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = original;
       }
     }
   }
+
+  // =====================================================
+  // 13. BOOKING REQUEST
+  // =====================================================
 
   async function requestBooking(trip, user) {
     const o = trip.outbound;
     const r = trip.return;
     const p = trip.pricing;
-    const s = trip;
 
     const payload = {
-      user_id:user.id,
-      origin:s.origin.label,
-      destination:s.destination.label,
-      origin_code:s.origin.code || null,
-      destination_code:s.destination.code || null,
-      trip_type:s.tripType,
-      departure_date:s.departureDate,
-      return_date:s.tripType === "Round trip" ? s.returnDate : null,
-      adults:s.passengers.adults,
-      children:s.passengers.children,
-      infants:s.passengers.infants,
-      cabin_class:s.cabin,
-      airline:o.airline,
-      flight_number:o.flight,
-      departure_time:o.depart,
-      arrival_time:o.arrive,
-      return_airline:r?.airline || null,
-      return_flight_number:r?.flight || null,
-      return_departure_time:r?.depart || null,
-      return_arrival_time:r?.arrive || null,
-      base_fare:p.baseFare,
-      tax_amount:p.taxAmount,
-      demo_fare:p.totalFare,
-      additional_preferences:s.additionalPreferences || null
+      user_id: user.id,
+      origin: trip.origin.label,
+      destination: trip.destination.label,
+      origin_code: trip.origin.code || null,
+      destination_code: trip.destination.code || null,
+      trip_type: trip.tripType,
+      departure_date: trip.departureDate,
+      return_date:
+        trip.tripType === "Round trip" ? trip.returnDate : null,
+
+      adults: trip.passengers.adults,
+      children: trip.passengers.children,
+      infants: trip.passengers.infants,
+
+      cabin_class: trip.cabin,
+
+      airline: o.airline,
+      flight_number: o.flight,
+      departure_time: o.depart,
+      arrival_time: o.arrive,
+
+      return_airline: r?.airline || null,
+      return_flight_number: r?.flight || null,
+      return_departure_time: r?.depart || null,
+      return_arrival_time: r?.arrive || null,
+
+      base_fare: p.baseFare,
+      tax_amount: p.taxAmount,
+      demo_fare: p.totalFare,
+
+      additional_preferences:
+        trip.additionalPreferences || null
     };
 
-    const {data, error} = await supabase
+    const { data, error } = await supabase
       .from("flight_bookings")
       .insert(payload)
       .select("booking_reference")
       .single();
 
     if (error) throw error;
+
     return data.booking_reference;
   }
+
+  async function bookCurrent(button) {
+    const node = messageNode();
+
+    button.disabled = true;
+    button.textContent = "Submitting...";
+
+    try {
+      const user = await signedInUser();
+      const ref = await requestBooking(itinerary(), user);
+
+      if (node) {
+        node.textContent =
+          "Booking request " + ref +
+          " has been submitted. Travel Qila must reconfirm live " +
+          "availability and final fare before ticketing.";
+      }
+
+      button.textContent = "Request submitted";
+
+    } catch (error) {
+      if (node) node.textContent = error.message;
+
+      button.disabled = false;
+      button.textContent = "Request booking";
+    }
+  }
+
+  // =====================================================
+  // 14. SHARE ITINERARY
+  // =====================================================
 
   function shareItinerary(channel) {
     const trip = itinerary();
@@ -690,39 +878,44 @@ import { supabase } from "./auth-client.js";
     const lines = [
       "Hello Travel Qila, I would like to request this flight itinerary.",
       "Trip: " + trip.tripType,
-      "Route: " + trip.origin.label + " (" + (trip.origin.code || "") +
-        ") to " + trip.destination.label + " (" + (trip.destination.code || "") + ")",
+      "Route: " + trip.origin.label + " to " +
+        trip.destination.label,
       "Departure: " + formatDate(trip.departureDate),
-      trip.tripType === "Round trip" ? "Return: " + formatDate(trip.returnDate) : "",
+      trip.tripType === "Round trip"
+        ? "Return: " + formatDate(trip.returnDate) : "",
       "Passengers: " + trip.passengers.adults + " adult(s), " +
         trip.passengers.children + " child(ren), " +
         trip.passengers.infants + " infant(s)",
       "Cabin: " + trip.cabin,
-      "Outbound: " + o.airline + " " + o.flight + " | " +
-        o.depart + "–" + o.arrive + " | " + money(o.price) + " adult fare",
-      r ? "Return flight: " + r.airline + " " + r.flight + " | " +
-        r.depart + "–" + r.arrive + " | " + money(r.price) + " adult fare" : "",
+      "Outbound: " + o.airline + " " + o.flight +
+        " | " + money(o.price) + " adult demo fare",
+      r ? "Return: " + r.airline + " " + r.flight +
+        " | " + money(r.price) + " adult demo fare" : "",
       "Passenger category breakdown:",
       ...p.categories
         .filter(item => item.count > 0)
-        .map(item => item.label + " (" + item.count + "): " + money(item.subtotal)),
+        .map(item =>
+          item.label + " (" + item.count + "): " +
+          money(item.subtotal)
+        ),
       "Base fare: " + money(p.baseFare),
-      "Illustrative tax estimate: " + money(p.taxAmount),
-      "Estimated demo total: " + money(p.totalFare),
-      trip.additionalPreferences
-        ? "Additional preferences: " + trip.additionalPreferences : "",
-      "Please reconfirm live availability, final fare, taxes and terms. This is an enquiry, not a confirmed ticket."
+      "Estimated tax: " + money(p.taxAmount),
+      "Estimated total: " + money(p.totalFare),
+      "This is a demo estimate and not a confirmed ticket."
     ].filter(Boolean);
 
     const message = lines.join("\n");
 
     if (channel === "whatsapp") {
       window.open(
-        "https://wa.me/919871101345?text=" + encodeURIComponent(message),
+        "https://wa.me/919871101345?text=" +
+          encodeURIComponent(message),
         "_blank",
         "noopener,noreferrer"
       );
-    } else if (channel === "email") {
+    }
+
+    if (channel === "email") {
       window.location.href =
         "mailto:info@travelqila.com?subject=" +
         encodeURIComponent("Travel Qila - Flight booking enquiry") +
@@ -730,38 +923,9 @@ import { supabase } from "./auth-client.js";
     }
   }
 
-  async function bookCurrent() {
-    const node = messageNode();
-    const button = byId("book-itinerary");
-
-    if (button) {
-      button.disabled = true;
-      button.textContent = "Submitting…";
-    }
-
-    try {
-      const user = await signedInUser();
-      const ref = await requestBooking(itinerary(), user);
-
-      if (node) {
-        node.textContent =
-          "Booking request " + ref +
-          " is in your dashboard. Travel Qila must reconfirm live availability and final fare before ticketing.";
-      }
-
-      if (button) button.textContent = "Request submitted";
-    } catch (e) {
-      if (node) {
-        node.innerHTML = safe(e.message) +
-          (e.message.includes("sign in") ? ' <a href="login.html">Sign in</a>' : "");
-      }
-
-      if (button) {
-        button.disabled = false;
-        button.innerHTML = '<i class="fas fa-lock me-2"></i>Request booking';
-      }
-    }
-  }
+  // =====================================================
+  // 15. RESULT BUTTON EVENTS
+  // =====================================================
 
   results.addEventListener("click", async event => {
     const target = event.target.closest("button");
@@ -770,9 +934,11 @@ import { supabase } from "./auth-client.js";
     if (target.hasAttribute("data-select-leg")) {
       const id = target.dataset.offerId;
       const leg = target.dataset.selectLeg;
-      const options = leg === "return" ? returnOptions : outboundOptions;
-      const selected = options.find(x => x.id === id);
 
+      const options =
+        leg === "return" ? returnOptions : outboundOptions;
+
+      const selected = options.find(x => x.id === id);
       if (!selected) return;
 
       if (leg === "outbound") {
@@ -791,7 +957,10 @@ import { supabase } from "./auth-client.js";
       }
 
       showStage();
-      results.scrollIntoView({behavior:"smooth", block:"start"});
+      results.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
 
     } else if (target.hasAttribute("data-back-outbound")) {
       stage = "outbound";
@@ -800,26 +969,46 @@ import { supabase } from "./auth-client.js";
       showStage();
 
     } else if (target.hasAttribute("data-edit-flights")) {
-      stage = selectedOutbound && search.tripType === "Round trip"
-        ? "return" : "outbound";
+      stage =
+        selectedOutbound && search.tripType === "Round trip"
+          ? "return" : "outbound";
+
       resetFilters();
       showStage();
 
     } else if (target.hasAttribute("data-save-wishlist")) {
-      target.id = "save-wishlist";
-      await saveWishlist();
+      await saveWishlist(target);
 
     } else if (target.hasAttribute("data-book-itinerary")) {
-      target.id = "book-itinerary";
-      await bookCurrent();
+      await bookCurrent(target);
 
     } else if (target.hasAttribute("data-share-itinerary")) {
       shareItinerary(target.dataset.shareItinerary);
     }
   });
 
-  form.querySelectorAll('input[name="tripType"]').forEach(x =>
-    x.addEventListener("change", updateTripType)
+  // =====================================================
+  // 16. FORM CONTROLS
+  // =====================================================
+
+  function updateTripType() {
+    const selectedTrip =
+      form.querySelector('input[name="tripType"]:checked');
+
+    if (!selectedTrip) return;
+
+    const round = selectedTrip.value === "Round trip";
+    const wrap = byId("returnDate");
+    const container = byId("returnDateWrap");
+
+    container.hidden = !round;
+    wrap.required = round;
+
+    if (!round) wrap.value = "";
+  }
+
+  form.querySelectorAll('input[name="tripType"]').forEach(input =>
+    input.addEventListener("change", updateTripType)
   );
 
   byId("departDate").addEventListener("change", () => {
@@ -827,12 +1016,17 @@ import { supabase } from "./auth-client.js";
   });
 
   byId("swapCities").addEventListener("click", () => {
-    const a = byId("origin");
-    const b = byId("destination");
-    const v = a.value;
-    a.value = b.value;
-    b.value = v;
+    const origin = byId("origin");
+    const destination = byId("destination");
+
+    const value = origin.value;
+    origin.value = destination.value;
+    destination.value = value;
   });
+
+  // =====================================================
+  // 17. SEARCH SUBMISSION
+  // =====================================================
 
   form.addEventListener("submit", event => {
     event.preventDefault();
@@ -859,7 +1053,12 @@ import { supabase } from "./auth-client.js";
     const children = Number(byId("children").value);
     const infants = Number(byId("infants").value);
 
-    if (adults < 1 || children < 0 || infants < 0) {
+    if (
+      !Number.isInteger(adults) ||
+      !Number.isInteger(children) ||
+      !Number.isInteger(infants) ||
+      adults < 1 || children < 0 || infants < 0
+    ) {
       alert("Please enter valid passenger counts.");
       return;
     }
@@ -891,32 +1090,37 @@ import { supabase } from "./auth-client.js";
     search = {
       origin,
       destination,
-      departureDate:byId("departDate").value,
-      returnDate:tripType === "Round trip"
+      departureDate: byId("departDate").value,
+      returnDate: tripType === "Round trip"
         ? byId("returnDate").value : null,
       tripType,
       adults,
       children,
       infants,
-      cabin:byId("cabin").value,
-      stops:byId("stops").value,
-      maximumBudget:Number(byId("maxPrice").value),
-      dateFlexibility:byId("flexibility").value,
-      additionalPreferences:byId("notes").value.trim()
+      cabin: byId("cabin").value,
+      stops: byId("stops").value,
+      maximumBudget: Number(byId("maxPrice").value),
+      dateFlexibility: byId("flexibility").value,
+      additionalPreferences: byId("notes").value.trim()
     };
 
     selectedOutbound = null;
     selectedReturn = null;
+    wishlistId = null;
     stage = "outbound";
 
     outboundOptions = makeOptions(
-      origin, destination, search.departureDate,
+      origin,
+      destination,
+      search.departureDate,
       origin.code + destination.code
     );
 
     returnOptions = tripType === "Round trip"
       ? makeOptions(
-          destination, origin, search.returnDate,
+          destination,
+          origin,
+          search.returnDate,
           destination.code + origin.code
         )
       : [];
@@ -926,10 +1130,19 @@ import { supabase } from "./auth-client.js";
 
     results.hidden = false;
     showStage();
-    results.scrollIntoView({behavior:"smooth", block:"start"});
+
+    results.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
 
+  // =====================================================
+  // 18. URL PARAMETERS / PREFILLED SEARCH
+  // =====================================================
+
   const params = new URLSearchParams(window.location.search);
+
   wishlistId = params.get("wishlistId") || null;
 
   if (params.has("origin") && params.has("destination")) {
@@ -945,12 +1158,17 @@ import { supabase } from "./auth-client.js";
 
     if (radio) radio.checked = true;
 
-    byId("departDate").value = params.get("departureDate") || "";
-    byId("returnDate").value = params.get("returnDate") || "";
+    byId("departDate").value =
+      params.get("departureDate") || "";
+
+    byId("returnDate").value =
+      params.get("returnDate") || "";
 
     ["adults", "children", "infants"].forEach(id => {
       const value = params.get(id);
-      if (value !== null && byId(id)) byId(id).value = value;
+      if (value !== null && byId(id)) {
+        byId(id).value = value;
+      }
     });
 
     if (params.get("cabin")) {
@@ -960,6 +1178,7 @@ import { supabase } from "./auth-client.js";
 
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+
   const today = now.toISOString().slice(0, 10);
 
   byId("departDate").min = today;
@@ -969,12 +1188,14 @@ import { supabase } from "./auth-client.js";
   const budgetOutput = byId("priceOutput");
 
   const syncBudget = () => {
-    if (budgetOutput) {
+    if (budgetOutput && budget) {
       budgetOutput.textContent = money(budget.value);
     }
   };
 
-  if (budget) budget.addEventListener("input", syncBudget);
+  if (budget) {
+    budget.addEventListener("input", syncBudget);
+  }
 
   if (params.has("stops") && byId("stops")) {
     byId("stops").value = params.get("stops");
@@ -985,11 +1206,13 @@ import { supabase } from "./auth-client.js";
   }
 
   if (params.has("dateFlexibility") && byId("flexibility")) {
-    byId("flexibility").value = params.get("dateFlexibility");
+    byId("flexibility").value =
+      params.get("dateFlexibility");
   }
 
   if (params.has("additionalPreferences") && byId("notes")) {
-    byId("notes").value = params.get("additionalPreferences");
+    byId("notes").value =
+      params.get("additionalPreferences");
   }
 
   syncBudget();
@@ -1008,12 +1231,21 @@ import { supabase } from "./auth-client.js";
     const validDestination = byId("destination").value.trim();
     const validDeparture = byId("departDate").value;
 
+    const selectedTrip =
+      form.querySelector('input[name="tripType"]:checked');
+
     const validReturn =
-      form.querySelector('input[name="tripType"]:checked').value !== "Round trip" ||
+      selectedTrip?.value !== "Round trip" ||
       !!byId("returnDate").value;
 
-    if (validOrigin && validDestination && validDeparture && validReturn) {
+    if (
+      validOrigin &&
+      validDestination &&
+      validDeparture &&
+      validReturn
+    ) {
       form.requestSubmit();
     }
   }
+
 })();
