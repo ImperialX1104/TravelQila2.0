@@ -10,7 +10,7 @@ import { supabase } from "./auth-client.js";
   if (!form || !results) return;
 
   // =====================================================
-  // 1. DEMO FARE CONFIGURATION
+  // 1. CONFIGURATION
   // =====================================================
 
   const FARE_CONFIG = {
@@ -46,67 +46,89 @@ import { supabase } from "./auth-client.js";
 
   const safe = value =>
     String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;",
-      '"': "&quot;", "'": "&#39;"
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
     }[c]));
 
+  // =====================================================
+  // 2. CURRENCY FORMATTING
+  // =====================================================
+
   const money = value => {
-  const amount = Number(value || 0);
+    const amount = Number(value || 0);
 
-  if (!Number.isFinite(amount)) return "₹0";
+    if (!Number.isFinite(amount)) return "₹0";
 
-  const currencyAPI = window.TravelQilaCurrency;
-  const selectedCurrency = currencyAPI?.getCurrency?.() || "INR";
-  const rates = currencyAPI?.getRates?.();
+    const currencyAPI = window.TravelQilaCurrency;
+    const selectedCurrency =
+      currencyAPI?.getCurrency?.() || "INR";
+    const rates = currencyAPI?.getRates?.();
 
-  // Keep INR display until exchange rates are available.
-  if (!rates || !currencyAPI) {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2
-    }).format(amount);
-  }
+    if (!currencyAPI || !rates) {
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2
+      }).format(amount);
+    }
 
-  const converted = currencyAPI.convert(
-    amount,
-    "INR",
-    selectedCurrency
-  );
+    const converted = currencyAPI.convert(
+      amount,
+      "INR",
+      selectedCurrency
+    );
 
-  if (!Number.isFinite(converted)) {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2
-    }).format(amount);
-  }
+    if (!Number.isFinite(converted)) {
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2
+      }).format(amount);
+    }
 
-  const locales = {
-    INR: "en-IN",
-    USD: "en-US",
-    EUR: "de-DE",
-    GBP: "en-GB"
+    const locales = {
+      INR: "en-IN",
+      USD: "en-US",
+      EUR: "de-DE",
+      GBP: "en-GB"
+    };
+
+    try {
+      return new Intl.NumberFormat(
+        locales[selectedCurrency] || "en-IN",
+        {
+          style: "currency",
+          currency: selectedCurrency,
+          maximumFractionDigits: 2
+        }
+      ).format(converted);
+    } catch {
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2
+      }).format(amount);
+    }
   };
 
-  return new Intl.NumberFormat(
-    locales[selectedCurrency] || "en-IN",
-    {
-      style: "currency",
-      currency: selectedCurrency,
-      maximumFractionDigits: 2
-    }
-  ).format(converted);
-};
+  // =====================================================
+  // 3. DATE / TIME HELPERS
+  // =====================================================
 
   const durationText = minutes =>
     Math.floor(minutes / 60) + "h " +
     (minutes % 60 ? minutes % 60 + "m" : "");
 
   const formatDate = value =>
-    value ? new Date(value + "T12:00:00").toLocaleDateString(
-      "en-IN", { day: "numeric", month: "short", year: "numeric" }
-    ) : "";
+    value
+      ? new Date(value + "T12:00:00").toLocaleDateString(
+          "en-IN",
+          { day: "numeric", month: "short", year: "numeric" }
+        )
+      : "";
 
   const shiftDate = (value, days) => {
     const d = new Date(value + "T12:00:00");
@@ -138,6 +160,10 @@ import { supabase } from "./auth-client.js";
     };
   }
 
+  // =====================================================
+  // 4. APPLICATION STATE
+  // =====================================================
+
   let search = null;
   let outboundOptions = [];
   let returnOptions = [];
@@ -146,7 +172,6 @@ import { supabase } from "./auth-client.js";
   let stage = "outbound";
   let wishlistId = null;
 
-  // Persistent filter state.
   let resultFilters = {
     stops: "any",
     airline: "all",
@@ -154,7 +179,7 @@ import { supabase } from "./auth-client.js";
   };
 
   // =====================================================
-  // 2. PASSENGER VALIDATION
+  // 5. PASSENGER VALIDATION
   // =====================================================
 
   function passengers() {
@@ -227,7 +252,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 3. FLIGHT OPTION GENERATOR
+  // 6. FLIGHT OPTION GENERATOR
   // =====================================================
 
   function makeOptions(origin, destination, date, seedText) {
@@ -280,10 +305,13 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 4. CATEGORY-WISE FARE ENGINE
+  // 7. CATEGORY-WISE FARE ENGINE
   // =====================================================
 
-  function pricing(outbound = selectedOutbound, returning = selectedReturn) {
+  function pricing(
+    outbound = selectedOutbound,
+    returning = selectedReturn
+  ) {
     const outboundFare = outbound?.price || 0;
     const returnFare = returning?.price || 0;
 
@@ -364,7 +392,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 5. ITINERARY OBJECT
+  // 8. ITINERARY OBJECT
   // =====================================================
 
   function itinerary() {
@@ -399,7 +427,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 6. FLIGHT CARD DISPLAY
+  // 9. FLIGHT CARD DISPLAY
   // =====================================================
 
   function optionsMarkup(items, leg) {
@@ -467,7 +495,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 7. FILTERS
+  // 10. FILTERS
   // =====================================================
 
   function filtersMarkup() {
@@ -594,7 +622,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 8. RESULTS AND SELECTION FLOW
+  // 11. RESULTS AND SELECTION FLOW
   // =====================================================
 
   function heading(title, sub) {
@@ -680,7 +708,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 9. CATEGORY-WISE FARE BREAKDOWN
+  // 12. CATEGORY-WISE FARE BREAKDOWN
   // =====================================================
 
   function fareBreakdownMarkup(p) {
@@ -729,10 +757,12 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-  // 10. SUMMARY DISPLAY
+  // 13. SUMMARY DISPLAY
   // =====================================================
 
   function renderSummary() {
+    if (!selectedOutbound || !search) return;
+
     const trip = itinerary();
     const p = trip.pricing;
 
@@ -823,41 +853,41 @@ import { supabase } from "./auth-client.js";
   }
 
   // =====================================================
-// CURRENCY CHANGE — REFRESH FLIGHT RESULTS
-// =====================================================
+  // 14. STAGE CONTROLLER — REQUIRED BY ALL FLOW EVENTS
+  // =====================================================
 
-document.addEventListener(
-  "travelqila:currency-changed",
-  () => {
-    // Refresh budget display without calling showStage().
-    const budget = byId("maxPrice");
-    const budgetOutput = byId("priceOutput");
+  function showStage() {
+    if (!search) return;
 
-    if (budget && budgetOutput) {
-      budgetOutput.textContent = money(budget.value);
-    }
-
-    // Refresh currently displayed flight prices.
-    if (typeof renderSummary === "function" && stage === "summary") {
+    if (stage === "summary") {
       renderSummary();
-    } else if (typeof renderLegStage === "function" && search) {
+    } else {
       renderLegStage();
     }
   }
-);
-
-    // Refresh the budget display too.
-    const budget = byId("maxPrice");
-    const budgetOutput = byId("priceOutput");
-
-    if (budget && budgetOutput) {
-      budgetOutput.textContent = money(budget.value);
-    }
-  }
-);
 
   // =====================================================
-  // 11. SUPABASE AUTHENTICATION
+  // 15. CURRENCY CHANGE LISTENER
+  // =====================================================
+
+  document.addEventListener(
+    "travelqila:currency-changed",
+    () => {
+      const budget = byId("maxPrice");
+      const budgetOutput = byId("priceOutput");
+
+      if (budget && budgetOutput) {
+        budgetOutput.textContent = money(budget.value);
+      }
+
+      if (search) {
+        showStage();
+      }
+    }
+  );
+
+  // =====================================================
+  // 16. SUPABASE AUTHENTICATION
   // =====================================================
 
   async function signedInUser() {
@@ -880,7 +910,7 @@ document.addEventListener(
   }
 
   // =====================================================
-  // 12. SAVE / UPDATE WISHLIST
+  // 17. SAVE / UPDATE WISHLIST
   // =====================================================
 
   async function saveWishlist(button) {
@@ -912,7 +942,9 @@ document.addEventListener(
           .single();
 
         if (error) throw error;
-        if (!data) throw new Error("Could not update this saved trip.");
+        if (!data) {
+          throw new Error("Could not update this saved trip.");
+        }
       } else {
         const { data, error } = await supabase
           .from("flight_wishlists")
@@ -929,7 +961,6 @@ document.addEventListener(
         wishlistId = data.id;
       }
 
-      // Show the success message and direct wishlist link.
       if (node) {
         node.replaceChildren(
           document.createTextNode(
@@ -957,6 +988,8 @@ document.addEventListener(
       }
 
     } catch (error) {
+      console.error("Wishlist error:", error);
+
       if (node) node.textContent = error.message;
 
       if (button) {
@@ -967,7 +1000,7 @@ document.addEventListener(
   }
 
   // =====================================================
-  // 13. BOOKING REQUEST
+  // 18. BOOKING REQUEST
   // =====================================================
 
   async function requestBooking(trip, user) {
@@ -1041,6 +1074,8 @@ document.addEventListener(
       button.textContent = "Request submitted";
 
     } catch (error) {
+      console.error("Booking request error:", error);
+
       if (node) node.textContent = error.message;
 
       button.disabled = false;
@@ -1049,7 +1084,7 @@ document.addEventListener(
   }
 
   // =====================================================
-  // 14. SHARE ITINERARY
+  // 19. SHARE ITINERARY
   // =====================================================
 
   function shareItinerary(channel) {
@@ -1107,7 +1142,7 @@ document.addEventListener(
   }
 
   // =====================================================
-  // 15. RESULT BUTTON EVENTS
+  // 20. RESULT BUTTON EVENTS
   // =====================================================
 
   results.addEventListener("click", async event => {
@@ -1140,6 +1175,7 @@ document.addEventListener(
       }
 
       showStage();
+
       results.scrollIntoView({
         behavior: "smooth",
         block: "start"
@@ -1171,7 +1207,7 @@ document.addEventListener(
   });
 
   // =====================================================
-  // 16. FORM CONTROLS
+  // 21. FORM CONTROLS
   // =====================================================
 
   function updateTripType() {
@@ -1225,7 +1261,7 @@ document.addEventListener(
   });
 
   // =====================================================
-  // 17. SEARCH SUBMISSION
+  // 22. SEARCH SUBMISSION
   // =====================================================
 
   form.addEventListener("submit", event => {
@@ -1346,7 +1382,7 @@ document.addEventListener(
   });
 
   // =====================================================
-  // 18. URL PARAMETERS / PREFILLED SEARCH
+  // 23. URL PARAMETERS / PREFILLED SEARCH
   // =====================================================
 
   const params = new URLSearchParams(window.location.search);
@@ -1374,6 +1410,7 @@ document.addEventListener(
 
     ["adults", "children", "infants"].forEach(id => {
       const value = params.get(id);
+
       if (value !== null && byId(id)) {
         byId(id).value = value;
       }
@@ -1424,7 +1461,6 @@ document.addEventListener(
   }
 
   syncInfantLimit();
-
   syncBudget();
   updateTripType();
 
