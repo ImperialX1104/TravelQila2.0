@@ -102,6 +102,14 @@ import { supabase } from "./auth-client.js";
   let stage = "outbound";
   let wishlistId = null;
 
+  // Persistent filter state.
+  // This prevents filters resetting whenever results rerender.
+  let resultFilters = {
+    stops: "any",
+    airline: "all",
+    sort: "price"
+  };
+
   // =====================================================
   // 2. PASSENGER VALIDATION
   // =====================================================
@@ -112,8 +120,6 @@ import { supabase } from "./auth-client.js";
     return search.adults + search.children + search.infants;
   }
 
-  // Keep every infant dropdown option enabled.
-  // No infant-to-adult ratio restriction is applied.
   function syncInfantLimit() {
     const infantsInput = byId("infants");
 
@@ -163,9 +169,6 @@ import { supabase } from "./auth-client.js";
       return null;
     }
 
-    // ONLY INFANT RULE:
-    // Infants require at least one adult.
-    // Multiple infants per adult are allowed.
     if (infants > 0 && adults === 0) {
       infantsInput.setCustomValidity(
         "At least one adult is required when travelling with an infant."
@@ -425,38 +428,50 @@ import { supabase } from "./auth-client.js";
   // =====================================================
 
   function filtersMarkup() {
-    const preferred =
-      search.stops === "Non-stop only" ? "nonstop" :
-      search.stops === "1 stop or fewer" ? "one" : "any";
-
     return '<div class="flight-results-tools">' +
       '<label for="resultStops">Stops</label>' +
       '<select id="resultStops">' +
         '<option value="any" ' +
-          (preferred === "any" ? "selected" : "") +
+          (resultFilters.stops === "any" ? "selected" : "") +
         '>Any stops</option>' +
         '<option value="nonstop" ' +
-          (preferred === "nonstop" ? "selected" : "") +
+          (resultFilters.stops === "nonstop" ? "selected" : "") +
         '>Non-stop</option>' +
         '<option value="one" ' +
-          (preferred === "one" ? "selected" : "") +
+          (resultFilters.stops === "one" ? "selected" : "") +
         '>Up to 1 stop</option>' +
       '</select>' +
 
       '<label for="resultAirline">Airline</label>' +
       '<select id="resultAirline">' +
-        '<option value="all">All airlines</option>' +
-        '<option value="IndiGo">IndiGo</option>' +
-        '<option value="Air India">Air India</option>' +
-        '<option value="Akasa Air">Akasa Air</option>' +
-        '<option value="Air India Express">Air India Express</option>' +
+        '<option value="all" ' +
+          (resultFilters.airline === "all" ? "selected" : "") +
+        '>All airlines</option>' +
+        '<option value="IndiGo" ' +
+          (resultFilters.airline === "IndiGo" ? "selected" : "") +
+        '>IndiGo</option>' +
+        '<option value="Air India" ' +
+          (resultFilters.airline === "Air India" ? "selected" : "") +
+        '>Air India</option>' +
+        '<option value="Akasa Air" ' +
+          (resultFilters.airline === "Akasa Air" ? "selected" : "") +
+        '>Akasa Air</option>' +
+        '<option value="Air India Express" ' +
+          (resultFilters.airline === "Air India Express" ? "selected" : "") +
+        '>Air India Express</option>' +
       '</select>' +
 
       '<label for="resultSort">Sort by</label>' +
       '<select id="resultSort">' +
-        '<option value="price">Lowest fare</option>' +
-        '<option value="duration">Shortest duration</option>' +
-        '<option value="departure">Departure time</option>' +
+        '<option value="price" ' +
+          (resultFilters.sort === "price" ? "selected" : "") +
+        '>Lowest fare</option>' +
+        '<option value="duration" ' +
+          (resultFilters.sort === "duration" ? "selected" : "") +
+        '>Shortest duration</option>' +
+        '<option value="departure" ' +
+          (resultFilters.sort === "departure" ? "selected" : "") +
+        '>Departure time</option>' +
       '</select>' +
 
       '<span class="small text-muted">Budget: ' +
@@ -471,9 +486,9 @@ import { supabase } from "./auth-client.js";
   }
 
   function filteredOptions(items, leg) {
-    const stops = byId("resultStops")?.value || "any";
-    const airline = byId("resultAirline")?.value || "all";
-    const sort = byId("resultSort")?.value || "price";
+    const stops = resultFilters.stops;
+    const airline = resultFilters.airline;
+    const sort = resultFilters.sort;
 
     const preference = search.stops || "Any";
     const max = Number(search.maximumBudget) || Infinity;
@@ -514,11 +529,24 @@ import { supabase } from "./auth-client.js";
       return proposedAverage <= max;
     });
 
-    out.sort((a, b) =>
-      sort === "duration" ? a.duration - b.duration :
-      sort === "departure" ? a.depart.localeCompare(b.depart) :
-      a.price - b.price
-    );
+    // Sort using numeric values, with deterministic tie-breakers.
+    if (sort === "duration") {
+      out.sort((a, b) =>
+        (a.duration - b.duration) ||
+        (a.price - b.price) ||
+        a.depart.localeCompare(b.depart)
+      );
+    } else if (sort === "departure") {
+      out.sort((a, b) =>
+        a.depart.localeCompare(b.depart) ||
+        (a.duration - b.duration)
+      );
+    } else {
+      out.sort((a, b) =>
+        (a.price - b.price) ||
+        (a.duration - b.duration)
+      );
+    }
 
     return out;
   }
@@ -533,14 +561,11 @@ import { supabase } from "./auth-client.js";
   }
 
   function resetFilters() {
-    ["resultStops", "resultAirline", "resultSort"].forEach(id => {
-      const el = byId(id);
-      if (el) {
-        el.value =
-          id === "resultStops" ? "any" :
-          id === "resultAirline" ? "all" : "price";
-      }
-    });
+    resultFilters = {
+      stops: "any",
+      airline: "all",
+      sort: "price"
+    };
   }
 
   function renderLegStage() {
@@ -596,8 +621,17 @@ import { supabase } from "./auth-client.js";
     byId("flightResultsEmpty").classList.remove("is-visible");
     byId("flightResultsList").hidden = false;
 
+    // Capture the selected values before rerendering.
     ["resultStops", "resultAirline", "resultSort"].forEach(id => {
-      byId(id)?.addEventListener("change", renderLegStage);
+      byId(id)?.addEventListener("change", () => {
+        resultFilters = {
+          stops: byId("resultStops")?.value || "any",
+          airline: byId("resultAirline")?.value || "all",
+          sort: byId("resultSort")?.value || "price"
+        };
+
+        renderLegStage();
+      });
     });
 
     byId("flightResultsCount").textContent =
@@ -1188,6 +1222,14 @@ import { supabase } from "./auth-client.js";
     wishlistId = null;
     stage = "outbound";
 
+    resultFilters = {
+      stops:
+        search.stops === "Non-stop only" ? "nonstop" :
+        search.stops === "1 stop or fewer" ? "one" : "any",
+      airline: "all",
+      sort: "price"
+    };
+
     outboundOptions = makeOptions(
       origin,
       destination,
@@ -1294,7 +1336,6 @@ import { supabase } from "./auth-client.js";
       params.get("additionalPreferences");
   }
 
-  // Initialize without disabling any infant options.
   syncInfantLimit();
 
   syncBudget();
