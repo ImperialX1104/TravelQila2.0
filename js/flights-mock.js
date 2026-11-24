@@ -112,8 +112,8 @@ import { supabase } from "./auth-client.js";
     return search.adults + search.children + search.infants;
   }
 
-  // Keep all infant dropdown options enabled.
-  // Passenger restrictions are enforced during form submission.
+  // Keep every infant dropdown option enabled.
+  // No infant-to-adult ratio restriction is applied.
   function syncInfantLimit() {
     const infantsInput = byId("infants");
 
@@ -123,12 +123,6 @@ import { supabase } from "./auth-client.js";
       Array.from(infantsInput.options).forEach(option => {
         option.disabled = false;
       });
-    }
-
-    // Do not use a dynamic HTML max attribute.
-    // The JavaScript validation below handles the passenger rule.
-    if (infantsInput.tagName === "INPUT") {
-      infantsInput.removeAttribute("max");
     }
 
     infantsInput.setCustomValidity("");
@@ -155,12 +149,12 @@ import { supabase } from "./auth-client.js";
       !Number.isInteger(adults) ||
       !Number.isInteger(children) ||
       !Number.isInteger(infants) ||
-      adults < 1 ||
+      adults < 0 ||
       children < 0 ||
       infants < 0
     ) {
       adultsInput.setCustomValidity(
-        "Please enter valid passenger counts. At least one adult is required."
+        "Please enter valid passenger counts."
       );
 
       adultsInput.reportValidity();
@@ -169,9 +163,12 @@ import { supabase } from "./auth-client.js";
       return null;
     }
 
-    if (infants > adults) {
+    // ONLY INFANT RULE:
+    // Infants require at least one adult.
+    // Multiple infants per adult are allowed.
+    if (infants > 0 && adults === 0) {
       infantsInput.setCustomValidity(
-        "Each infant must be accompanied by an adult. Infants cannot exceed adults."
+        "At least one adult is required when travelling with an infant."
       );
 
       infantsInput.reportValidity();
@@ -1082,7 +1079,6 @@ import { supabase } from "./auth-client.js";
     syncInfantLimit();
   });
 
-  // SELECT dropdowns use the change event.
   byId("infants")?.addEventListener("change", () => {
     byId("infants").setCustomValidity("");
   });
@@ -1121,7 +1117,6 @@ import { supabase } from "./auth-client.js";
       byId("infants")
     ].forEach(input => input?.setCustomValidity(""));
 
-    // Validate passenger counts before native form validation.
     const passengerCounts = validatePassengerCounts();
 
     if (!passengerCounts) return;
@@ -1299,7 +1294,7 @@ import { supabase } from "./auth-client.js";
       params.get("additionalPreferences");
   }
 
-  // Initialize infant dropdown without disabling any options.
+  // Initialize without disabling any infant options.
   syncInfantLimit();
 
   syncBudget();
