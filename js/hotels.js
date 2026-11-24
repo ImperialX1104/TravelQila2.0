@@ -3,6 +3,8 @@ import { supabase, authPageUrl } from "./auth-client.js";
 
 const HOTEL_FUNCTION = "search-hotels";
 const WHATSAPP_NUMBER = "919871101345";
+const CACHE_DURATION = 30 * 60 * 1000;
+const MAX_POLL_DURATION = 10 * 60 * 1000;
 
 const form = document.querySelector("#hotelSearchForm");
 const results = document.querySelector("#hotelResults");
@@ -14,14 +16,18 @@ let wishlistIds = new Set();
 let hotels = new Map();
 let searchSequence = 0;
 
+const searchCache = new Map();
+
 function message(text, type = "info") {
   if (!statusBox) return;
+
   statusBox.className = "hotel-status is-visible " + type;
   statusBox.textContent = text;
 }
 
 function clearMessage() {
   if (!statusBox) return;
+
   statusBox.className = "hotel-status";
   statusBox.textContent = "";
 }
@@ -75,7 +81,17 @@ function formatMoney(amount, currencyCode = "INR") {
 }
 
 function validImage(value) {
+  if (typeof value === "object" && value !== null) {
+    value =
+      value.url ||
+      value.src ||
+      value.imageUrl ||
+      value.href ||
+      "";
+  }
+
   if (typeof value !== "string") return "";
+
   try {
     const url = new URL(value);
     return url.protocol === "https:" ? url.href : "";
@@ -84,15 +100,17 @@ function validImage(value) {
   }
 }
 
+function numeric(value) {
+  const number = Number(value);
+
+  return Number.isFinite(number) && number >= 0
+    ? number
+    : 0;
+}
+
 function mapHotel(item, fallbackCurrency = "INR") {
   const price = item.price || {};
   const location = item.location || {};
-  const fees = price.fees || {};
-
-  const numeric = (value) => {
-    const number = Number(value);
-    return Number.isFinite(number) && number >= 0 ? number : 0;
-  };
 
   const id = String(
     item.id ||
@@ -104,58 +122,78 @@ function mapHotel(item, fallbackCurrency = "INR") {
     ? item.amenities
     : [];
 
-  const feeCleaning = numeric(fees.cleaning);
-  const feeService = numeric(fees.service);
-  const feeTaxes = numeric(fees.taxes);
+  const fees = price.fees || {};
+
+  const firstImage = images[0];
+
+  const image = validImage(firstImage);
 
   return {
     id,
     name: item.name || "Unnamed accommodation",
+
     city: location.city || location.address || "",
     region: location.region || "",
     country: location.country || "",
     address: location.address || "",
-    propertyType: item.propertyType || "accommodation",
-    stars: item.starRating == null ? null : numeric(item.starRating),
+
+    propertyType: item.propertyType || "hotel",
+
+    stars: item.starRating == null
+      ? null
+      : numeric(item.starRating),
+
     guestRating: item.guestRating == null
       ? null
       : numeric(item.guestRating),
+
     ratingScale: numeric(item.ratingScale) || 5,
     reviewCount: numeric(item.reviewCount),
+
     guests: numeric(item.maxOccupancy),
     bedrooms: numeric(item.bedrooms),
     bathrooms: numeric(item.bathrooms),
+
     amenities,
-    image: validImage(images[0]),
-    platform: item.platform || price.platform || "provider",
-    url: validImage(item.url) ? item.url : "",
-    currency: String(price.currency || fallbackCurrency).toUpperCase(),
+
+    image,
+
+    platform: item.platform || price.platform || "Booking.com",
+
+    url: validImage(item.url)
+      ? validImage(item.url)
+      : "",
+
+    currency: String(
+      price.currency || fallbackCurrency
+    ).toUpperCase(),
+
     nightlyRate: numeric(price.nightlyPrice),
     providerTotal: numeric(price.totalPrice),
     nights: numeric(price.nights),
-    feeCleaning,
-    feeService,
-    feeTaxes,
-    feeTotal: feeCleaning + feeService + feeTaxes
+
+    feeCleaning: numeric(fees.cleaning),
+    feeService: numeric(fees.service),
+    feeTaxes: numeric(fees.taxes)
   };
 }
 
 function quote(hotel, state) {
   const nights = dateNights(state.checkIn, state.checkOut);
-  const base = hotel.providerTotal > 0
-    ? hotel.providerTotal
-    : hotel.nightlyRate * nights;
 
-  const total = base + hotel.feeTotal;
+  // Never calculate a stay total from an unverified nightly rate.
+  // The provider's total is usable only when its night count matches.
+  const totalAvailable =
+    hotel.providerTotal > 0 &&
+    hotel.nights === nights;
 
   return {
     nights,
-    base,
+    total: totalAvailable ? hotel.providerTotal : 0,
+    totalAvailable,
     cleaning: hotel.feeCleaning,
     service: hotel.feeService,
     taxes: hotel.feeTaxes,
-    fees: hotel.feeTotal,
-    total,
     currency: hotel.currency
   };
 }
@@ -181,6 +219,7 @@ function renderEmpty(title, description) {
       <p>${safe(description)}</p>
     </div>
   `;
+
   resultCount.textContent = "";
 }
 
@@ -207,7 +246,9 @@ function renderHotels() {
 
   const found = [...hotels.values()]
     .filter((hotel) => {
-      if (hotel.guests && hotel.guests < state.guests) return false;
+      if (hotel.guests && hotel.guests < state.guests) {
+        return false;
+      }
 
       if (
         state.stars &&
@@ -216,9 +257,17 @@ function renderHotels() {
         return false;
       }
 
-      const total = quote(hotel, state).total;
+      const q = quote(hotel, state);
 
-      if (state.maxPrice && total > state.maxPrice) return false;
+      // Unknown totals remain visible instead of being
+      // incorrectly treated as exceeding the user's budget.
+      if (
+        state.maxPrice &&
+        q.totalAvailable &&
+        q.total > state.maxPrice
+      ) {
+        return false;
+      }
 
       return true;
     })
@@ -240,8 +289,10 @@ function renderHotels() {
 
   results.innerHTML = found.map((hotel) => {
     const saved = wishlistIds.has(hotel.id);
+
     const image = hotel.image
-      ? `<img src="${safe(hotel.image)}" alt="${safe(hotel.name)}"
+      ? `<img src="${safe(hotel.image)}"
+           alt="${safe(hotel.name)}"
            loading="lazy"
            onerror="this.style.display='none'">`
       : "";
@@ -252,7 +303,7 @@ function renderHotels() {
       : `<span>Guest rating unavailable</span>`;
 
     const stars = hotel.stars
-      ? `${"★".repeat(Math.min(5, hotel.stars))} <span>${hotel.stars}-star property</span>`
+      ? `${"★".repeat(Math.min(5, Math.floor(hotel.stars)))} <span>${hotel.stars}-star property</span>`
       : `<span>Star classification unavailable</span>`;
 
     const location = [
@@ -261,17 +312,26 @@ function renderHotels() {
       hotel.country
     ].filter(Boolean).join(", ");
 
-    const amenities = hotel.amenities.slice(0, 6).map((item) =>
-      `<span>${safe(String(item).replaceAll("_", " "))}</span>`
-    ).join("");
+    const amenities = hotel.amenities
+      .slice(0, 6)
+      .map((item) => {
+        const label = typeof item === "object"
+          ? item.name || item.title || ""
+          : item;
+
+        return label
+          ? `<span>${safe(String(label).replaceAll("_", " "))}</span>`
+          : "";
+      })
+      .join("");
 
     const nightly = hotel.nightlyRate > 0
       ? `${formatMoney(hotel.nightlyRate, hotel.currency)} <small>/ night</small>`
       : "Nightly rate unavailable";
 
-    const total = hotel.quote.total > 0
+    const total = hotel.quote.totalAvailable
       ? formatMoney(hotel.quote.total, hotel.currency)
-      : "Price unavailable";
+      : "Total unavailable for selected dates";
 
     const feeLines = [
       hotel.quote.cleaning > 0
@@ -287,13 +347,16 @@ function renderHotels() {
 
     return `
       <article class="hotel-result">
+
         <div class="hotel-photo">
           ${image}
           <span>${safe(propertyLabel(hotel.propertyType))}</span>
         </div>
 
         <div class="hotel-info">
+
           <div class="hotel-stars">${stars}</div>
+
           <h3>${safe(hotel.name)}</h3>
 
           <p class="hotel-location">
@@ -315,32 +378,38 @@ function renderHotels() {
           <small class="hotel-capacity">
             Provider: ${safe(hotel.platform)}
           </small>
+
         </div>
 
         <div class="hotel-price">
+
           <div class="hotel-rate">${nightly}</div>
 
           <div class="hotel-total">
-            ${total}
-            <small>estimated total</small>
+            ${safe(total)}
+            <small>provider-reported stay total</small>
           </div>
 
           <div class="hotel-breakdown">
             ${hotel.quote.nights} nights
             ${feeLines ? ` · ${safe(feeLines)}` : ""}
-            <br>Provider-reported prices; final charges may vary.
+            <br>Availability and final charges require provider confirmation.
           </div>
 
-          <button class="btn btn-primary hotel-book"
+          <button
+            class="btn btn-primary hotel-book"
             data-book="${safe(hotel.id)}"
-            ${hotel.quote.total <= 0 ? "disabled" : ""}>
+            ${!hotel.quote.totalAvailable ? "disabled" : ""}>
             Send booking enquiry
           </button>
 
-          <button class="btn hotel-wish ${saved ? "saved" : ""}"
+          <button
+            class="btn hotel-wish ${saved ? "saved" : ""}"
             data-wish="${safe(hotel.id)}">
+
             <i class="fas fa-heart"></i>
             ${saved ? "Saved to wishlist" : "Save to wishlist"}
+
           </button>
 
           ${hotel.url
@@ -349,10 +418,134 @@ function renderHotels() {
                  target="_blank"
                  rel="noopener noreferrer">View provider listing</a>`
             : ""}
+
         </div>
+
       </article>
     `;
   }).join("");
+}
+
+function cacheKey(state) {
+  return [
+    state.destination.toLowerCase(),
+    state.checkIn,
+    state.checkOut,
+    state.guests
+  ].join("|");
+}
+
+function getCachedSearch(key) {
+  const cached = searchCache.get(key);
+
+  if (!cached) return null;
+
+  if (Date.now() - cached.timestamp > CACHE_DURATION) {
+    searchCache.delete(key);
+    return null;
+  }
+
+  return cached.data;
+}
+
+function saveCachedSearch(key, data) {
+  searchCache.set(key, {
+    timestamp: Date.now(),
+    data
+  });
+}
+
+function wait(seconds) {
+  const safeSeconds = Math.max(
+    2,
+    Math.min(Number(seconds) || 10, 60)
+  );
+
+  return new Promise((resolve) => {
+    setTimeout(resolve, safeSeconds * 1000);
+  });
+}
+
+async function invokeHotelFunction(body) {
+  const { data, error } = await supabase.functions.invoke(
+    HOTEL_FUNCTION,
+    { body }
+  );
+
+  if (error) {
+    console.error("[Travel Qila] Hotel function error:", error);
+    throw new Error(
+      error.message || "Unable to contact the hotel search service."
+    );
+  }
+
+  if (!data) {
+    throw new Error("The hotel search service returned an empty response.");
+  }
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data;
+}
+
+async function pollHotelJob(jobId, currentRequest, startedAt, retryAfter) {
+  let delaySeconds = retryAfter || 10;
+
+  while (Date.now() - startedAt < MAX_POLL_DURATION) {
+    if (currentRequest !== searchSequence) {
+      return null;
+    }
+
+    await wait(delaySeconds);
+
+    if (currentRequest !== searchSequence) {
+      return null;
+    }
+
+    const response = await invokeHotelFunction({
+      action: "poll",
+      jobId
+    });
+
+    const job = response.data;
+
+    if (!job || typeof job !== "object") {
+      throw new Error("The hotel provider returned an invalid job response.");
+    }
+
+    if (job.status === "completed") {
+      return {
+        listings: Array.isArray(job.result) ? job.result : [],
+        meta: response.meta || {}
+      };
+    }
+
+    if (job.status === "failed") {
+      throw new Error(
+        job.error?.message ||
+        "The hotel provider could not complete this search."
+      );
+    }
+
+    if (job.status !== "pending" && job.status !== "running") {
+      throw new Error("The hotel provider returned an unknown job status.");
+    }
+
+    delaySeconds = response.retryAfterSeconds || 10;
+
+    message(
+      job.status === "pending"
+        ? "Your hotel search is queued. Waiting for results..."
+        : "Searching Booking.com for available properties...",
+      "info"
+    );
+  }
+
+  throw new Error(
+    "This hotel search is taking longer than expected. Please try again later."
+  );
 }
 
 async function searchHotels() {
@@ -369,82 +562,165 @@ async function searchHotels() {
   }
 
   const currentRequest = ++searchSequence;
+  const key = cacheKey(state);
 
   clearMessage();
   hotels.clear();
   resultCount.textContent = "";
+
   results.innerHTML = `
     <div class="hotel-empty">
       <i class="fas fa-spinner fa-spin"></i>
       <h3>Searching available stays...</h3>
-      <p>Getting accommodation results from our hotel provider.</p>
+      <p>Getting accommodation results from Booking.com.</p>
     </div>
   `;
 
-  const { data, error } = await supabase.functions.invoke(
-    HOTEL_FUNCTION,
-    {
-      body: {
+  try {
+    let listings = null;
+    let meta = {};
+
+    // Reuse completed searches in this page session.
+    const cached = getCachedSearch(key);
+
+    if (cached) {
+      listings = cached.listings;
+      meta = cached.meta || {};
+
+      message(
+        "Showing recently retrieved results. Availability and prices may have changed.",
+        "info"
+      );
+    } else {
+      const startedAt = Date.now();
+
+      const response = await invokeHotelFunction({
+        action: "search",
         location: state.destination,
         checkIn: state.checkIn,
         checkOut: state.checkOut,
         adults: state.guests,
         rooms: 1,
-        currency: "INR",
-        limit: 40
+        currency: "INR"
+      });
+
+      if (currentRequest !== searchSequence) return;
+
+      meta = response.meta || {};
+
+      // Synchronous response, such as a cached or sandbox result.
+      if (Array.isArray(response.data)) {
+        listings = response.data;
+      }
+
+      // Asynchronous live search.
+      else if (
+        response.data?.jobId &&
+        ["pending", "running"].includes(response.data.status)
+      ) {
+        message(
+          "Booking.com search started. This may take a few minutes...",
+          "info"
+        );
+
+        const completed = await pollHotelJob(
+          response.data.jobId,
+          currentRequest,
+          startedAt,
+          response.retryAfterSeconds ||
+            response.data.estimatedSeconds ||
+            10
+        );
+
+        if (!completed) return;
+
+        listings = completed.listings;
+        meta = completed.meta || meta;
+      }
+
+      // Some providers may return an already-completed job.
+      else if (response.data?.status === "completed") {
+        listings = Array.isArray(response.data.result)
+          ? response.data.result
+          : [];
+      }
+
+      else if (response.data?.status === "failed") {
+        throw new Error(
+          response.data.error?.message ||
+          "The hotel provider could not complete this search."
+        );
+      }
+
+      else {
+        throw new Error("Unexpected response from the hotel provider.");
+      }
+
+      if (currentRequest !== searchSequence) return;
+
+      if (Array.isArray(listings)) {
+        saveCachedSearch(key, {
+          listings,
+          meta
+        });
       }
     }
-  );
 
-  if (currentRequest !== searchSequence) return;
+    if (currentRequest !== searchSequence) return;
 
-  if (error) {
+    if (!Array.isArray(listings) || !listings.length) {
+      renderEmpty(
+        "No properties returned",
+        "Try another destination or different dates."
+      );
+
+      message(
+        "The provider returned no accommodation results.",
+        "info"
+      );
+
+      return;
+    }
+
+    const fallbackCurrency = meta.currency || "INR";
+
+    listings.forEach((item) => {
+      const hotel = mapHotel(item, fallbackCurrency);
+      hotels.set(hotel.id, hotel);
+    });
+
+    renderHotels();
+
+    if (meta.sandbox) {
+      message(
+        "Sandbox results are sample properties, not live availability.",
+        "info"
+      );
+    } else if (meta.partial) {
+      message(
+        "Some provider results may be missing. These results are not a confirmed booking.",
+        "info"
+      );
+    } else {
+      message(
+        "Hotel results received. Availability and final prices must be confirmed by the provider.",
+        "success"
+      );
+    }
+
+  } catch (error) {
+    if (currentRequest !== searchSequence) return;
+
     console.error("[Travel Qila] Hotel search error:", error);
+
     renderEmpty(
       "Hotel search is temporarily unavailable",
-      "Please try again in a moment."
+      error.message || "Please try again later."
     );
+
     message(
-      error.message || "Unable to contact the hotel search service.",
+      error.message || "Unable to complete hotel search.",
       "error"
-    );
-    return;
-  }
-
-  const listings = Array.isArray(data?.data) ? data.data : [];
-
-  if (!listings.length) {
-    renderEmpty(
-      "No properties returned",
-      "Try another destination or different dates."
-    );
-    message("The provider returned no accommodation results.", "info");
-    return;
-  }
-
-  const fallbackCurrency = data?.meta?.currency || "INR";
-
-  listings.forEach((item) => {
-    const hotel = mapHotel(item, fallbackCurrency);
-    hotels.set(hotel.id, hotel);
-  });
-
-  renderHotels();
-
-  if (data?.meta?.sandbox) {
-    message(
-      "Sandbox results are sample properties, not live availability. Switch to a verified live API key to see real search results.",
-      "info"
-    );
-  } else if (data?.meta?.partial) {
-    message(
-      "Some provider results may be missing. These results are not a confirmed booking.",
-      "info"
-    );
-  } else {
-    message(
-      "Search results received. Availability and final prices must be confirmed by the provider.",
-      "success"
     );
   }
 }
@@ -465,7 +741,9 @@ async function loadWishlist() {
     return;
   }
 
-  wishlistIds = new Set((data || []).map((item) => String(item.hotel_id)));
+  wishlistIds = new Set(
+    (data || []).map((item) => String(item.hotel_id))
+  );
 }
 
 async function toggleWishlist(id) {
@@ -490,12 +768,16 @@ async function toggleWishlist(id) {
       .eq("hotel_id", id);
 
     if (error) {
-      message("We couldn't remove this stay. Please try again.", "error");
+      message(
+        "We couldn't remove this stay. Please try again.",
+        "error"
+      );
       return;
     }
 
     wishlistIds.delete(id);
     message("Stay removed from your wishlist.", "success");
+
   } else {
     const { error } = await supabase
       .from("hotel_wishlists")
@@ -543,14 +825,20 @@ async function bookHotel(id) {
   const hotel = hotels.get(id);
 
   if (!hotel || dateNights(state.checkIn, state.checkOut) < 1) {
-    message("Please choose valid check-in and check-out dates.", "error");
+    message(
+      "Please choose valid check-in and check-out dates.",
+      "error"
+    );
     return;
   }
 
   const q = quote(hotel, state);
 
-  if (q.total <= 0) {
-    message("A provider price is required before sending this enquiry.", "error");
+  if (!q.totalAvailable || q.total <= 0) {
+    message(
+      "A verified provider total for your selected dates is required before sending this enquiry.",
+      "error"
+    );
     return;
   }
 
@@ -582,11 +870,16 @@ async function bookHotel(id) {
     .single();
 
   if (error) {
-    console.error("[Travel Qila] Booking enquiry error:", error);
+    console.error(
+      "[Travel Qila] Booking enquiry error:",
+      error
+    );
+
     message(
       "Your request could not be saved. Please try again or contact our team.",
       "error"
     );
+
     return;
   }
 
@@ -603,7 +896,7 @@ async function bookHotel(id) {
     `Check-in: ${state.checkIn}`,
     `Check-out: ${state.checkOut}`,
     `Guests: ${state.guests}`,
-    `Estimated total: ${formatMoney(q.total, hotel.currency)}`,
+    `Provider-reported total: ${formatMoney(q.total, hotel.currency)}`,
     `Enquiry ID: ${data.id}`,
     hotel.url ? `Provider listing: ${hotel.url}` : ""
   ].filter(Boolean).join("\n");
@@ -614,24 +907,34 @@ async function bookHotel(id) {
     link.href =
       `https://wa.me/${WHATSAPP_NUMBER}?text=` +
       encodeURIComponent(whatsappText);
+
     link.hidden = false;
   }
 }
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
+
   await searchHotels();
 
   document.querySelector("#hotelResultsHeading")
-    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
 });
 
 results?.addEventListener("click", async (event) => {
   const wish = event.target.closest("[data-wish]");
   const book = event.target.closest("[data-book]");
 
-  if (wish) await toggleWishlist(wish.dataset.wish);
-  if (book) await bookHotel(book.dataset.book);
+  if (wish) {
+    await toggleWishlist(wish.dataset.wish);
+  }
+
+  if (book) {
+    await bookHotel(book.dataset.book);
+  }
 });
 
 (async () => {
@@ -640,7 +943,10 @@ results?.addEventListener("click", async (event) => {
 
   if (checkIn && checkOut) {
     const today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+
+    today.setMinutes(
+      today.getMinutes() - today.getTimezoneOffset()
+    );
 
     const minimumDate = today.toISOString().slice(0, 10);
 
@@ -659,7 +965,10 @@ results?.addEventListener("click", async (event) => {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    console.warn("[Travel Qila] Could not retrieve current user:", error.message);
+    console.warn(
+      "[Travel Qila] Could not retrieve current user:",
+      error.message
+    );
   }
 
   user = data?.user || null;
