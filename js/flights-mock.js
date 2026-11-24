@@ -822,10 +822,26 @@ import { supabase } from "./auth-client.js";
     );
   }
 
-  function showStage() {
-    if (stage === "summary") renderSummary();
-    else renderLegStage();
+  // =====================================================
+// CURRENCY CHANGE — REFRESH FLIGHT RESULTS
+// =====================================================
+
+document.addEventListener(
+  "travelqila:currency-changed",
+  () => {
+    if (search) {
+      showStage();
+    }
+
+    // Refresh the budget display too.
+    const budget = byId("maxPrice");
+    const budgetOutput = byId("priceOutput");
+
+    if (budget && budgetOutput) {
+      budgetOutput.textContent = money(budget.value);
+    }
   }
+);
 
   // =====================================================
   // 11. SUPABASE AUTHENTICATION
