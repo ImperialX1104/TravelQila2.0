@@ -103,11 +103,92 @@ import { supabase } from "./auth-client.js";
   let wishlistId = null;
 
   // =====================================================
-  // 2. PASSENGER COUNTS
+  // 2. PASSENGER VALIDATION
   // =====================================================
 
   function passengers() {
+    if (!search) return 0;
+
     return search.adults + search.children + search.infants;
+  }
+
+  function syncInfantLimit() {
+    const adultsInput = byId("adults");
+    const infantsInput = byId("infants");
+
+    if (!adultsInput || !infantsInput) return;
+
+    const adults = Math.max(1, Number(adultsInput.value) || 1);
+
+    // For number inputs, dynamically update the maximum.
+    if (infantsInput.tagName === "INPUT") {
+      infantsInput.max = String(adults);
+    }
+
+    // For select inputs, make sure all valid options exist.
+    if (infantsInput.tagName === "SELECT") {
+      const currentValue = infantsInput.value;
+
+      for (let i = 0; i <= adults; i++) {
+        const exists = Array.from(infantsInput.options)
+          .some(option => Number(option.value) === i);
+
+        if (!exists) {
+          infantsInput.add(new Option(String(i), String(i)));
+        }
+      }
+
+      Array.from(infantsInput.options).forEach(option => {
+        option.disabled = Number(option.value) > adults;
+      });
+
+      infantsInput.value = currentValue;
+    }
+  }
+
+  function validatePassengerCounts() {
+    const adultsInput = byId("adults");
+    const childrenInput = byId("children");
+    const infantsInput = byId("infants");
+
+    const adults = Number(adultsInput.value);
+    const children = Number(childrenInput.value);
+    const infants = Number(infantsInput.value);
+
+    [adultsInput, childrenInput, infantsInput].forEach(input => {
+      input.setCustomValidity("");
+    });
+
+    if (
+      !Number.isInteger(adults) ||
+      !Number.isInteger(children) ||
+      !Number.isInteger(infants) ||
+      adults < 1 ||
+      children < 0 ||
+      infants < 0
+    ) {
+      adultsInput.setCustomValidity(
+        "Please enter valid passenger counts. At least one adult is required."
+      );
+
+      adultsInput.reportValidity();
+      adultsInput.focus();
+
+      return null;
+    }
+
+    if (infants > adults) {
+      infantsInput.setCustomValidity(
+        "Each infant must be accompanied by an adult. Infants cannot exceed adults."
+      );
+
+      infantsInput.reportValidity();
+      infantsInput.focus();
+
+      return null;
+    }
+
+    return { adults, children, infants };
   }
 
   // =====================================================
@@ -240,12 +321,9 @@ import { supabase } from "./auth-client.js";
       categories: breakdown,
       outboundAdultFare: outboundFare,
       returnAdultFare: returnFare,
-
-      // Useful for comparing the budget per passenger.
       averageFarePerPassenger: passengerCount
         ? totalFare / passengerCount
         : 0,
-
       pricingModel: "illustrative_category_based"
     };
   }
@@ -398,8 +476,6 @@ import { supabase } from "./auth-client.js";
     '</div>';
   }
 
-  // Calculate the estimated average fare for a proposed
-  // outbound/return combination using all passenger categories.
   function estimatedAverageFare(outbound, returning) {
     const p = pricing(outbound, returning);
     return p.averageFarePerPassenger;
@@ -569,22 +645,16 @@ import { supabase } from "./auth-client.js";
 
     return '<div class="tq-price-breakdown">' +
       '<h5 class="mb-3">Passenger fare breakdown</h5>' +
-
       (rows || '<div>No passengers selected.</div>') +
-
       '<hr>' +
-
       '<div><span>Base fare · all passengers</span>' +
         '<strong>' + money(p.baseFare) + '</strong></div>' +
-
       '<div><span>Estimated taxes & fees (5%)</span>' +
         '<strong>' + money(p.taxAmount) + '</strong></div>' +
-
       '<div class="tq-grand-total">' +
         '<span>Estimated total</span>' +
         '<strong>' + money(p.totalFare) + '</strong>' +
       '</div>' +
-
       '<div class="small text-muted mt-2">' +
         'Demo pricing assumptions: adults 100%, children 75%, ' +
         'infants 25% of the adult demo fare. These are not actual ' +
@@ -737,16 +807,19 @@ import { supabase } from "./auth-client.js";
         search.origin.label + " to " + search.destination.label;
 
       if (wishlistId) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("flight_wishlists")
           .update({
             title,
             itinerary: trip
           })
           .eq("id", wishlistId)
-          .eq("user_id", user.id);
+          .eq("user_id", user.id)
+          .select("id")
+          .single();
 
         if (error) throw error;
+        if (!data) throw new Error("Could not update this saved trip.");
       } else {
         const { data, error } = await supabase
           .from("flight_wishlists")
@@ -1001,6 +1074,8 @@ import { supabase } from "./auth-client.js";
     const wrap = byId("returnDate");
     const container = byId("returnDateWrap");
 
+    if (!wrap || !container) return;
+
     container.hidden = !round;
     wrap.required = round;
 
@@ -1010,6 +1085,19 @@ import { supabase } from "./auth-client.js";
   form.querySelectorAll('input[name="tripType"]').forEach(input =>
     input.addEventListener("change", updateTripType)
   );
+
+  byId("adults")?.addEventListener("input", () => {
+    syncInfantLimit();
+    byId("infants").setCustomValidity("");
+  });
+
+  byId("infants")?.addEventListener("input", () => {
+    byId("infants").setCustomValidity("");
+  });
+
+  byId("infants")?.addEventListener("change", () => {
+    byId("infants").setCustomValidity("");
+  });
 
   byId("departDate").addEventListener("change", () => {
     byId("returnDate").min = byId("departDate").value;
@@ -1032,6 +1120,22 @@ import { supabase } from "./auth-client.js";
     event.preventDefault();
     updateTripType();
 
+    // Clear stale passenger validation before checking again.
+    [
+      byId("adults"),
+      byId("children"),
+      byId("infants")
+    ].forEach(input => input?.setCustomValidity(""));
+
+    // Validate passenger counts BEFORE native form validation.
+    // This ensures infant errors are displayed instead of silently
+    // blocking submission due to an outdated HTML max attribute.
+    const passengerCounts = validatePassengerCounts();
+
+    if (!passengerCounts) return;
+
+    syncInfantLimit();
+
     if (!form.reportValidity()) return;
 
     const origin = parseAirport(byId("origin").value);
@@ -1044,36 +1148,22 @@ import { supabase } from "./auth-client.js";
       byId("destination").setCustomValidity(
         "Choose a different arrival airport."
       );
+
       byId("destination").reportValidity();
       byId("destination").setCustomValidity("");
+
       return;
     }
 
-    const adults = Number(byId("adults").value);
-    const children = Number(byId("children").value);
-    const infants = Number(byId("infants").value);
-
-    if (
-      !Number.isInteger(adults) ||
-      !Number.isInteger(children) ||
-      !Number.isInteger(infants) ||
-      adults < 1 || children < 0 || infants < 0
-    ) {
-      alert("Please enter valid passenger counts.");
-      return;
-    }
-
-    if (infants > adults) {
-      byId("infants").setCustomValidity(
-        "Infants cannot exceed the number of adults."
-      );
-      byId("infants").reportValidity();
-      byId("infants").setCustomValidity("");
-      return;
-    }
+    const { adults, children, infants } = passengerCounts;
 
     const tripType =
-      form.querySelector('input[name="tripType"]:checked').value;
+      form.querySelector('input[name="tripType"]:checked')?.value;
+
+    if (!tripType) {
+      alert("Please select a trip type.");
+      return;
+    }
 
     if (
       tripType === "Round trip" &&
@@ -1082,8 +1172,10 @@ import { supabase } from "./auth-client.js";
       byId("returnDate").setCustomValidity(
         "Return date must be on or after the departure date."
       );
+
       byId("returnDate").reportValidity();
       byId("returnDate").setCustomValidity("");
+
       return;
     }
 
@@ -1214,6 +1306,9 @@ import { supabase } from "./auth-client.js";
     byId("notes").value =
       params.get("additionalPreferences");
   }
+
+  // Initialize the dynamic infant limit after URL values load.
+  syncInfantLimit();
 
   syncBudget();
   updateTripType();
