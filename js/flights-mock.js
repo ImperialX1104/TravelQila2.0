@@ -1,3 +1,4 @@
+
 import { supabase } from "./auth-client.js";
 
 (() => {
@@ -9,877 +10,9 @@ import { supabase } from "./auth-client.js";
   if (!form || !results) return;
 
   // =========================================================
-  // 01. DESIGN SYSTEM — TRAVEL QILA / FLIGHT COMMAND
-  // =========================================================
-
-  function injectFlightStyles() {
-    if (document.getElementById("tq-flight-command-styles")) return;
-
-    const style = document.createElement("style");
-    style.id = "tq-flight-command-styles";
-
-    style.textContent = `
-      #flightResults {
-        --tq-bg: #080b12;
-        --tq-panel: #101722;
-        --tq-panel-2: #151f2d;
-        --tq-line: rgba(255,255,255,.12);
-        --tq-muted: #8d9bad;
-        --tq-white: #f5f7fa;
-        --tq-cyan: #00e5ff;
-        --tq-lime: #c7ff4a;
-        --tq-red: #ff4668;
-        --tq-purple: #9c7bff;
-        color: var(--tq-white);
-        font-family: inherit;
-      }
-
-      #flightResults .tq-results-hero {
-        position: relative;
-        overflow: hidden;
-        isolation: isolate;
-        padding: clamp(22px,4vw,42px);
-        margin: 20px 0 24px;
-        border: 1px solid rgba(0,229,255,.28);
-        border-radius: 22px;
-        background:
-          radial-gradient(ellipse at 90% 0%,rgba(0,229,255,.18),transparent 38%),
-          radial-gradient(ellipse at 0% 100%,rgba(156,123,255,.15),transparent 38%),
-          linear-gradient(125deg,#080d16,#111b2a 58%,#101421);
-        box-shadow: 0 22px 65px rgba(0,0,0,.32);
-      }
-
-      #flightResults .tq-results-hero:after {
-        content:"";
-        position:absolute;
-        z-index:-1;
-        width:300px;
-        height:300px;
-        right:-100px;
-        top:-150px;
-        border:1px solid rgba(0,229,255,.2);
-        border-radius:50%;
-        box-shadow:0 0 0 25px rgba(0,229,255,.025),
-                   0 0 0 55px rgba(0,229,255,.02),
-                   0 0 0 90px rgba(0,229,255,.015);
-      }
-
-      #flightResults .tq-hero-kicker {
-        display:inline-flex;
-        align-items:center;
-        gap:9px;
-        color:var(--tq-cyan);
-        font-size:10px;
-        font-weight:900;
-        letter-spacing:3px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-hero-kicker:before {
-        content:"";
-        width:8px;
-        height:8px;
-        border-radius:50%;
-        background:var(--tq-lime);
-        box-shadow:0 0 14px var(--tq-lime);
-      }
-
-      #flightResults .tq-hero-title {
-        margin:13px 0 7px;
-        color:#fff;
-        font-size:clamp(25px,4vw,43px);
-        line-height:1.05;
-        font-weight:950;
-        letter-spacing:-1.8px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-hero-title span {
-        color:var(--tq-cyan);
-      }
-
-      #flightResults .tq-hero-subtitle {
-        margin:0;
-        color:#aab7c8;
-        font-size:13px;
-      }
-
-      #flightResults .tq-hero-stats {
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px;
-        margin-top:23px;
-      }
-
-      #flightResults .tq-hero-stat {
-        min-width:105px;
-        padding:10px 14px;
-        border:1px solid rgba(255,255,255,.12);
-        border-radius:10px;
-        background:rgba(255,255,255,.045);
-      }
-
-      #flightResults .tq-hero-stat strong {
-        display:block;
-        color:#fff;
-        font-size:17px;
-        font-weight:900;
-      }
-
-      #flightResults .tq-hero-stat small {
-        color:#91a0b3;
-        font-size:9px;
-        font-weight:800;
-        letter-spacing:1.4px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-booking-steps {
-        display:flex;
-        flex-wrap:wrap;
-        gap:8px;
-        margin:18px 0;
-      }
-
-      #flightResults .tq-booking-steps span {
-        padding:9px 13px;
-        border:1px solid var(--tq-line);
-        border-radius:8px;
-        color:#8e9caf;
-        background:#101722;
-        font-size:11px;
-        font-weight:800;
-        letter-spacing:.5px;
-      }
-
-      #flightResults .tq-booking-steps span.is-active {
-        color:#071017;
-        border-color:var(--tq-cyan);
-        background:var(--tq-cyan);
-        box-shadow:0 0 22px rgba(0,229,255,.22);
-      }
-
-      #flightResults .tq-booking-steps span.is-done {
-        color:var(--tq-lime);
-        border-color:rgba(199,255,74,.4);
-        background:rgba(199,255,74,.07);
-      }
-
-      #flightResults .flight-results-tools {
-        display:flex;
-        flex-wrap:wrap;
-        align-items:center;
-        gap:10px;
-        padding:15px;
-        margin:18px 0 22px;
-        border:1px solid var(--tq-line);
-        border-radius:13px;
-        background:#101722;
-      }
-
-      #flightResults .flight-results-tools label {
-        color:#aab8c9;
-        font-size:10px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .flight-results-tools select {
-        min-width:125px;
-        padding:9px 28px 9px 10px;
-        color:#fff;
-        border:1px solid rgba(255,255,255,.16);
-        border-radius:8px;
-        background:#192536;
-        font-size:12px;
-      }
-
-      #flightResults .flight-results-tools select:focus {
-        outline:2px solid var(--tq-cyan);
-        outline-offset:2px;
-      }
-
-      #flightResults .flight-results-tools .small {
-        margin-left:auto;
-        color:#aab8c9 !important;
-        font-size:11px;
-      }
-
-      #flightResults .tq-leg-card {
-        position:relative;
-        overflow:hidden;
-        isolation:isolate;
-        padding:0;
-        margin:0 0 20px;
-        border:1px solid rgba(255,255,255,.13);
-        border-radius:17px;
-        color:#f5f7fa;
-        background:
-          radial-gradient(ellipse at 100% 0%,rgba(0,229,255,.09),transparent 35%),
-          linear-gradient(145deg,#111a27,#0b111b 72%);
-        box-shadow:0 13px 35px rgba(0,0,0,.2);
-        transition:transform .22s ease,border-color .22s ease,
-                   box-shadow .22s ease;
-      }
-
-      #flightResults .tq-leg-card:hover {
-        transform:translateY(-4px);
-        border-color:rgba(0,229,255,.55);
-        box-shadow:0 22px 50px rgba(0,0,0,.35),
-                   0 0 25px rgba(0,229,255,.07);
-      }
-
-      #flightResults .tq-leg-card:before {
-        content:"";
-        position:absolute;
-        z-index:-1;
-        top:0;
-        left:0;
-        width:4px;
-        height:100%;
-        background:linear-gradient(var(--tq-cyan),var(--tq-purple),var(--tq-lime));
-      }
-
-      #flightResults .tq-card-top {
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:16px;
-        padding:21px 23px 17px;
-        border-bottom:1px solid var(--tq-line);
-      }
-
-      #flightResults .tq-airline-block {
-        display:flex;
-        align-items:center;
-        gap:13px;
-        min-width:0;
-      }
-
-      #flightResults .tq-airline-mark {
-        display:grid;
-        place-items:center;
-        flex:0 0 45px;
-        width:45px;
-        height:45px;
-        border:1px solid rgba(0,229,255,.38);
-        border-radius:12px;
-        color:var(--tq-cyan);
-        background:rgba(0,229,255,.08);
-        font-size:15px;
-        font-weight:950;
-        letter-spacing:-1px;
-      }
-
-      #flightResults .tq-airline-name {
-        color:#fff;
-        font-size:17px;
-        font-weight:950;
-        letter-spacing:-.3px;
-      }
-
-      #flightResults .tq-flight-code {
-        margin-top:4px;
-        color:#91a2b6;
-        font-size:11px;
-        font-weight:700;
-        letter-spacing:1px;
-      }
-
-      #flightResults .tq-price-block {
-        text-align:right;
-        flex:0 0 auto;
-      }
-
-      #flightResults .tq-price-label {
-        display:block;
-        color:#8c9bae;
-        font-size:9px;
-        font-weight:900;
-        letter-spacing:2px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-price-value {
-        display:block;
-        margin-top:2px;
-        color:var(--tq-lime);
-        font-size:clamp(23px,3vw,32px);
-        line-height:1;
-        font-weight:950;
-        letter-spacing:-1.2px;
-        text-shadow:0 0 20px rgba(199,255,74,.14);
-      }
-
-      #flightResults .tq-price-note {
-        display:block;
-        margin-top:6px;
-        color:#8c9bae;
-        font-size:10px;
-      }
-
-      #flightResults .tq-route-panel {
-        display:grid;
-        grid-template-columns:minmax(0,1fr) minmax(100px,.75fr) minmax(0,1fr);
-        align-items:center;
-        gap:12px;
-        padding:25px 23px 20px;
-      }
-
-      #flightResults .tq-route-end:last-child {
-        text-align:right;
-      }
-
-      #flightResults .tq-route-time {
-        color:#fff;
-        font-size:clamp(25px,4vw,36px);
-        line-height:1;
-        font-weight:950;
-        letter-spacing:-1.5px;
-      }
-
-      #flightResults .tq-route-code {
-        margin-top:7px;
-        color:var(--tq-cyan);
-        font-size:12px;
-        font-weight:950;
-        letter-spacing:1px;
-      }
-
-      #flightResults .tq-route-city {
-        margin-top:3px;
-        color:#9baabd;
-        font-size:11px;
-      }
-
-      #flightResults .tq-route-middle {
-        text-align:center;
-      }
-
-      #flightResults .tq-route-duration {
-        color:#fff;
-        font-size:12px;
-        font-weight:900;
-      }
-
-      #flightResults .tq-route-track {
-        position:relative;
-        height:2px;
-        margin:13px 5px 11px;
-        background:linear-gradient(90deg,var(--tq-cyan),var(--tq-purple),var(--tq-lime));
-      }
-
-      #flightResults .tq-route-track:before,
-      #flightResults .tq-route-track:after {
-        content:"";
-        position:absolute;
-        top:50%;
-        width:7px;
-        height:7px;
-        border:2px solid var(--tq-cyan);
-        border-radius:50%;
-        background:#101722;
-        transform:translateY(-50%);
-      }
-
-      #flightResults .tq-route-track:before { left:0; }
-      #flightResults .tq-route-track:after {
-        right:0;
-        border-color:var(--tq-lime);
-      }
-
-      #flightResults .tq-route-plane {
-        position:absolute;
-        top:50%;
-        left:50%;
-        padding:0 7px;
-        color:var(--tq-cyan);
-        background:#101722;
-        font-size:17px;
-        transform:translate(-50%,-50%);
-      }
-
-      #flightResults .tq-stop-label {
-        display:inline-block;
-        color:var(--tq-lime);
-        font-size:10px;
-        font-weight:900;
-        letter-spacing:1px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-card-tags {
-        display:flex;
-        flex-wrap:wrap;
-        gap:7px;
-        padding:0 23px 18px;
-      }
-
-      #flightResults .tq-tag {
-        display:inline-flex;
-        align-items:center;
-        gap:5px;
-        padding:7px 10px;
-        border:1px solid rgba(255,255,255,.11);
-        border-radius:6px;
-        color:#b9c6d5;
-        background:rgba(255,255,255,.035);
-        font-size:10px;
-        font-weight:800;
-      }
-
-      #flightResults .tq-tag.highlight {
-        color:var(--tq-cyan);
-        border-color:rgba(0,229,255,.25);
-        background:rgba(0,229,255,.06);
-      }
-
-      #flightResults .tq-tag.warning {
-        color:#ffcb70;
-        border-color:rgba(255,203,112,.25);
-        background:rgba(255,203,112,.06);
-      }
-
-      #flightResults .tq-connection-details {
-        margin:0 23px 18px;
-        overflow:hidden;
-        border:1px solid rgba(0,229,255,.22);
-        border-radius:11px;
-        background:rgba(0,229,255,.025);
-      }
-
-      #flightResults .tq-connection-details summary {
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:10px;
-        padding:13px 15px;
-        color:var(--tq-cyan);
-        cursor:pointer;
-        list-style:none;
-        font-size:11px;
-        font-weight:900;
-        letter-spacing:.8px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-connection-details summary::-webkit-details-marker {
-        display:none;
-      }
-
-      #flightResults .tq-connection-details summary:after {
-        content:"+";
-        color:var(--tq-lime);
-        font-size:21px;
-        line-height:1;
-      }
-
-      #flightResults .tq-connection-details[open] summary:after {
-        content:"−";
-      }
-
-      #flightResults .tq-connection-content {
-        padding:5px 15px 16px;
-        border-top:1px solid rgba(255,255,255,.08);
-      }
-
-      #flightResults .tq-journey-overview {
-        display:flex;
-        flex-wrap:wrap;
-        gap:8px;
-        margin:12px 0 17px;
-      }
-
-      #flightResults .tq-journey-overview span {
-        padding:6px 9px;
-        border-radius:5px;
-        color:#c0ccda;
-        background:rgba(255,255,255,.06);
-        font-size:10px;
-        font-weight:800;
-      }
-
-      #flightResults .tq-timeline {
-        position:relative;
-        padding-left:26px;
-      }
-
-      #flightResults .tq-timeline:before {
-        content:"";
-        position:absolute;
-        top:10px;
-        bottom:12px;
-        left:7px;
-        width:2px;
-        background:linear-gradient(var(--tq-cyan),var(--tq-purple),var(--tq-lime));
-        opacity:.7;
-      }
-
-      #flightResults .tq-timeline-leg {
-        position:relative;
-        padding:0 0 17px;
-      }
-
-      #flightResults .tq-timeline-leg:before {
-        content:"";
-        position:absolute;
-        top:4px;
-        left:-24px;
-        width:10px;
-        height:10px;
-        border:2px solid var(--tq-cyan);
-        border-radius:50%;
-        background:#101722;
-        box-shadow:0 0 12px rgba(0,229,255,.35);
-      }
-
-      #flightResults .tq-timeline-leg:last-child:before {
-        border-color:var(--tq-lime);
-      }
-
-      #flightResults .tq-leg-label {
-        color:var(--tq-cyan);
-        font-size:9px;
-        font-weight:950;
-        letter-spacing:1.5px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-leg-airports {
-        margin-top:5px;
-        color:#fff;
-        font-size:13px;
-        font-weight:900;
-      }
-
-      #flightResults .tq-leg-meta {
-        margin-top:5px;
-        color:#94a4b8;
-        font-size:11px;
-      }
-
-      #flightResults .tq-layover {
-        position:relative;
-        padding:11px 13px;
-        margin:0 0 17px;
-        border:1px dashed rgba(255,203,112,.35);
-        border-radius:8px;
-        background:rgba(255,203,112,.045);
-      }
-
-      #flightResults .tq-layover-title {
-        color:#ffcb70;
-        font-size:10px;
-        font-weight:950;
-        letter-spacing:1px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-layover-meta {
-        margin-top:5px;
-        color:#c4b49b;
-        font-size:11px;
-      }
-
-      #flightResults .tq-card-footer {
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:14px;
-        padding:15px 23px;
-        border-top:1px solid var(--tq-line);
-        background:rgba(0,0,0,.14);
-      }
-
-      #flightResults .tq-card-footer-info {
-        display:flex;
-        flex-wrap:wrap;
-        gap:7px 13px;
-        color:#9baabd;
-        font-size:10px;
-        font-weight:700;
-      }
-
-      #flightResults .flight-select-leg {
-        padding:12px 18px;
-        border:1px solid var(--tq-cyan);
-        border-radius:8px;
-        color:#061018;
-        background:var(--tq-cyan);
-        font-size:11px;
-        font-weight:950;
-        letter-spacing:.8px;
-        text-transform:uppercase;
-        cursor:pointer;
-        transition:.2s ease;
-      }
-
-      #flightResults .flight-select-leg:hover {
-        color:#061018;
-        background:var(--tq-lime);
-        border-color:var(--tq-lime);
-        box-shadow:0 0 24px rgba(199,255,74,.2);
-        transform:translateY(-2px);
-      }
-
-      #flightResults button:disabled {
-        opacity:.55;
-        cursor:not-allowed;
-        transform:none;
-      }
-
-      #flightResults .tq-summary-card {
-        overflow:hidden;
-        border:1px solid rgba(0,229,255,.25);
-        border-radius:17px;
-        background:linear-gradient(145deg,#111a27,#090f18);
-        box-shadow:0 20px 50px rgba(0,0,0,.25);
-      }
-
-      #flightResults .tq-summary-heading {
-        display:flex;
-        justify-content:space-between;
-        gap:15px;
-        align-items:center;
-        padding:22px;
-        background:radial-gradient(ellipse at 100% 0%,rgba(0,229,255,.12),transparent 55%);
-        border-bottom:1px solid var(--tq-line);
-      }
-
-      #flightResults .tq-summary-heading h3 {
-        margin:6px 0;
-        color:#fff;
-        font-size:clamp(20px,3vw,30px);
-        font-weight:950;
-      }
-
-      #flightResults .tq-summary-heading p {
-        margin:0;
-        color:#9baabd;
-        font-size:12px;
-      }
-
-      #flightResults .tq-summary-leg {
-        padding:20px 22px;
-        border-bottom:1px solid var(--tq-line);
-      }
-
-      #flightResults .tq-summary-leg-title {
-        margin-bottom:9px;
-        color:var(--tq-cyan);
-        font-size:10px;
-        font-weight:950;
-        letter-spacing:1.5px;
-        text-transform:uppercase;
-      }
-
-      #flightResults .tq-summary-leg > strong {
-        color:#fff;
-        font-size:16px;
-      }
-
-      #flightResults .tq-summary-route {
-        margin-top:8px;
-        color:#dce5ef;
-        font-size:13px;
-        font-weight:800;
-      }
-
-      #flightResults .tq-summary-times {
-        margin-top:5px;
-        color:#91a2b6;
-        font-size:11px;
-      }
-
-      #flightResults .tq-summary-fare {
-        margin-top:10px;
-        color:var(--tq-lime);
-        font-size:12px;
-        font-weight:900;
-      }
-
-      #flightResults .tq-price-breakdown {
-        padding:22px;
-        color:#dce5ef;
-      }
-
-      #flightResults .tq-price-breakdown h5 {
-        color:#fff;
-        font-weight:950;
-        letter-spacing:.3px;
-      }
-
-      #flightResults .tq-fare-category,
-      #flightResults .tq-price-breakdown > div:not(.tq-grand-total) {
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:15px;
-        padding:11px 0;
-        border-bottom:1px solid rgba(255,255,255,.08);
-        font-size:12px;
-      }
-
-      #flightResults .tq-fare-category strong,
-      #flightResults .tq-price-breakdown strong {
-        color:#fff;
-      }
-
-      #flightResults .tq-fare-category small {
-        display:block;
-        margin-top:4px;
-        color:#91a2b6;
-        font-size:10px;
-      }
-
-      #flightResults .tq-grand-total {
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:15px;
-        padding:17px;
-        margin-top:13px;
-        border:1px solid rgba(199,255,74,.3);
-        border-radius:10px;
-        color:var(--tq-lime);
-        background:rgba(199,255,74,.06);
-        font-size:13px;
-        font-weight:950;
-      }
-
-      #flightResults .tq-grand-total strong {
-        color:var(--tq-lime);
-        font-size:24px;
-      }
-
-      #flightResults .tq-summary-actions {
-        display:flex;
-        flex-wrap:wrap;
-        gap:9px;
-        padding:0 22px 20px;
-      }
-
-      #flightResults .tq-summary-actions button {
-        border-radius:8px;
-        font-size:11px;
-        font-weight:900;
-      }
-
-      #flightResults .tq-empty-state {
-        padding:40px 20px;
-        border:1px dashed rgba(255,255,255,.2);
-        border-radius:15px;
-        color:#9baabd;
-        background:#101722;
-        text-align:center;
-      }
-
-      #flightResults .tq-empty-state strong {
-        display:block;
-        margin-bottom:7px;
-        color:#fff;
-        font-size:18px;
-      }
-
-      #flightResults .tq-demo-notice {
-        padding:10px 13px;
-        margin:12px 0 20px;
-        border-left:3px solid #ffcb70;
-        border-radius:4px;
-        color:#c4b49b;
-        background:rgba(255,203,112,.055);
-        font-size:10px;
-      }
-
-      @media(max-width:650px) {
-        #flightResults .tq-card-top {
-          padding:16px;
-        }
-
-        #flightResults .tq-route-panel {
-          grid-template-columns:minmax(0,1fr) minmax(70px,.65fr) minmax(0,1fr);
-          gap:6px;
-          padding:22px 15px 17px;
-        }
-
-        #flightResults .tq-route-time {
-          font-size:25px;
-        }
-
-        #flightResults .tq-route-city {
-          font-size:10px;
-        }
-
-        #flightResults .tq-card-tags {
-          padding:0 15px 15px;
-        }
-
-        #flightResults .tq-connection-details {
-          margin:0 15px 15px;
-        }
-
-        #flightResults .tq-card-footer {
-          align-items:stretch;
-          flex-direction:column;
-          padding:14px 15px;
-        }
-
-        #flightResults .flight-select-leg {
-          width:100%;
-        }
-
-        #flightResults .tq-price-value {
-          font-size:23px;
-        }
-
-        #flightResults .tq-airline-name {
-          font-size:14px;
-        }
-
-        #flightResults .tq-airline-mark {
-          width:38px;
-          height:38px;
-          flex-basis:38px;
-        }
-
-        #flightResults .flight-results-tools .small {
-          width:100%;
-          margin-left:0;
-        }
-
-        #flightResults .tq-summary-heading {
-          align-items:flex-start;
-          flex-direction:column;
-        }
-
-        #flightResults .tq-summary-actions {
-          padding:0 15px 17px;
-        }
-
-        #flightResults .tq-summary-actions button {
-          flex:1 1 42%;
-        }
-      }
-
-      @media(prefers-reduced-motion:reduce) {
-        #flightResults *,
-        #flightResults *:before,
-        #flightResults *:after {
-          scroll-behavior:auto !important;
-          transition:none !important;
-          animation:none !important;
-        }
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-  injectFlightStyles();
-
-  // =========================================================
-  // 02. CONFIGURATION
+  // 01. CONFIGURATION
+  // Uses the existing Travel Qila stylesheet.
+  // No CSS is injected or overridden by this script.
   // =========================================================
 
   const FARE_CONFIG = {
@@ -936,6 +69,10 @@ import { supabase } from "./auth-client.js";
       '"': "&quot;",
       "'": "&#39;"
     }[c]));
+
+  // =========================================================
+  // 02. CURRENCY FORMATTER
+  // =========================================================
 
   const money = value => {
     const amount = Number(value || 0);
@@ -994,6 +131,10 @@ import { supabase } from "./auth-client.js";
     }
   };
 
+  // =========================================================
+  // 03. DATE AND TIME HELPERS
+  // =========================================================
+
   const durationText = minutes => {
     const value = Math.max(0, Math.floor(Number(minutes) || 0));
     const hours = Math.floor(value / 60);
@@ -1044,7 +185,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 03. CONNECTION ENGINE
+  // 04. CONNECTION ENGINE
   // =========================================================
 
   const CONNECTION_HUBS = [
@@ -1218,6 +359,11 @@ import { supabase } from "./auth-client.js";
       "Unknown airport";
   }
 
+  // =========================================================
+  // 05. CONNECTION DETAILS MARKUP
+  // Uses the existing white flight-card styling.
+  // =========================================================
+
   function connectionMarkup(option) {
     if (
       !option?.stops ||
@@ -1244,82 +390,84 @@ import { supabase } from "./auth-client.js";
     );
 
     const segmentRows = segments.map((segment, index) => {
-      const flightDate = formatDate(segment.departureDate);
-
       const segmentMarkup =
-        '<div class="tq-timeline-leg">' +
-          '<div class="tq-leg-label">FLIGHT LEG ' +
+        '<div class="flight-result-meta">' +
+          '<span><strong>Flight leg ' +
             String(index + 1).padStart(2, "0") +
-          '</div>' +
-          '<div class="tq-leg-airports">' +
+          '</strong></span>' +
+          '<span>' +
             safe(airportName(segment.from)) +
             ' (' + safe(segment.from.code || "—") + ')' +
             ' → ' +
             safe(airportName(segment.to)) +
             ' (' + safe(segment.to.code || "—") + ')' +
-          '</div>' +
-          '<div class="tq-leg-meta">' +
+          '</span>' +
+          '<span>' +
             safe(segment.flight || option.flight) +
-            ' &nbsp;·&nbsp; ' +
-            safe(segment.depart) +
-            ' – ' +
+          '</span>' +
+          '<span>' +
+            safe(segment.depart) + ' – ' +
             safe(segment.arrive) +
-            ' &nbsp;·&nbsp; ' +
+          '</span>' +
+          '<span>' +
             durationText(segment.duration) +
-            ' &nbsp;·&nbsp; ' +
-            safe(flightDate) +
-          '</div>' +
+          '</span>' +
+          '<span>' +
+            formatDate(segment.departureDate) +
+          '</span>' +
         '</div>';
 
       const layover = option.layovers[index];
 
       const layoverMarkup = layover
-        ? '<div class="tq-layover">' +
-            '<div class="tq-layover-title">' +
-              'CONNECTION / ' +
+        ? '<div class="flight-result-meta">' +
+            '<span><strong>Connection · ' +
               safe(airportName(layover.airport)) +
               ' (' + safe(layover.airport.code || "—") + ')' +
-            '</div>' +
-            '<div class="tq-layover-meta">' +
-              'Arrive ' + safe(layover.arrival) +
-              ' · Depart ' + safe(layover.departure) +
-              ' · ' + durationText(layover.duration) +
-              (layover.arrivalDate !== layover.departureDate
-                ? ' · Overnight connection'
-                : '') +
-            '</div>' +
+            '</strong></span>' +
+            '<span>Arrive ' +
+              safe(layover.arrival) +
+            '</span>' +
+            '<span>Depart ' +
+              safe(layover.departure) +
+            '</span>' +
+            '<span>' +
+              durationText(layover.duration) +
+            '</span>' +
+            (layover.arrivalDate !== layover.departureDate
+              ? '<span>Overnight connection</span>'
+              : '') +
           '</div>'
         : "";
 
       return segmentMarkup + layoverMarkup;
     }).join("");
 
-    return '<details class="tq-connection-details">' +
-      '<summary>' +
-        '<span>EXPLORE FLIGHT CONNECTIONS</span>' +
-        '<span>' +
-          option.stops + ' STOP' +
-          (option.stops > 1 ? "S" : "") +
+    return (
+      '<details class="flight-result-card flight-connection-details">' +
+        '<summary>' +
+          '<strong>View flight connections</strong>' +
+          ' · ' +
+          option.stops + ' stop' +
+          (option.stops > 1 ? "s" : "") +
           ' · ' + durationText(totalLayover) +
-          ' TOTAL LAYOVER' +
-        '</span>' +
-      '</summary>' +
-      '<div class="tq-connection-content">' +
-        '<div class="tq-journey-overview">' +
+          ' total layover' +
+        '</summary>' +
+
+        '<div class="flight-result-meta">' +
           '<span>' + segments.length + ' flight legs</span>' +
-          '<span>' + durationText(totalFlying) + ' in the air</span>' +
-          '<span>' + durationText(totalLayover) + ' layover</span>' +
+          '<span>' + durationText(totalFlying) + ' flying time</span>' +
+          '<span>' + durationText(totalLayover) + ' total layover</span>' +
           (overnight ? '<span>Overnight connection</span>' : '') +
         '</div>' +
-        '<div class="tq-timeline">' +
-          segmentRows +
-        '</div>' +
-      '</div>' +
-    '</details>';
+
+        segmentRows +
+      '</details>'
+    );
   }
 
   // =========================================================
-  // 04. AIRPORT AND SEARCH STATE
+  // 06. AIRPORT AND SEARCH STATE
   // =========================================================
 
   function parseAirport(value) {
@@ -1358,7 +506,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 05. PASSENGER VALIDATION
+  // 07. PASSENGER VALIDATION
   // =========================================================
 
   function syncInfantLimit() {
@@ -1410,6 +558,17 @@ import { supabase } from "./auth-client.js";
       return null;
     }
 
+    if (infants > adults) {
+      infantsInput.setCustomValidity(
+        "The number of infants cannot exceed the number of adults."
+      );
+
+      infantsInput.reportValidity();
+      infantsInput.focus();
+
+      return null;
+    }
+
     if (infants > 0 && adults === 0) {
       infantsInput.setCustomValidity(
         "At least one adult is required when travelling with an infant."
@@ -1421,11 +580,22 @@ import { supabase } from "./auth-client.js";
       return null;
     }
 
+    if (adults + children + infants < 1) {
+      adultsInput.setCustomValidity(
+        "At least one passenger is required."
+      );
+
+      adultsInput.reportValidity();
+      adultsInput.focus();
+
+      return null;
+    }
+
     return { adults, children, infants };
   }
 
   // =========================================================
-  // 06. FLIGHT DATA GENERATOR
+  // 08. FLIGHT DATA GENERATOR
   // =========================================================
 
   function makeOptions(origin, destination, date, seedText) {
@@ -1506,7 +676,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 07. PASSENGER FARE ENGINE
+  // 09. PASSENGER FARE ENGINE
   // =========================================================
 
   function pricing(
@@ -1594,7 +764,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 08. ITINERARY OBJECT
+  // 10. ITINERARY OBJECT
   // =========================================================
 
   function itinerary() {
@@ -1629,7 +799,8 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 09. FLIGHT CARD GENERATOR
+  // 11. FLIGHT CARD GENERATOR
+  // Matches the classes in your existing stylesheet.
   // =========================================================
 
   function airlineInitials(name) {
@@ -1644,124 +815,90 @@ import { supabase } from "./auth-client.js";
   function optionsMarkup(items, leg) {
     return items.map((o, index) => {
       const stopText = o.stops === 0
-        ? "NON-STOP"
-        : o.stops + (o.stops === 1 ? " STOP" : " STOPS");
-
-      const stopClass = o.stops === 0
-        ? "highlight"
-        : "warning";
+        ? "Non-stop"
+        : o.stops + (o.stops === 1 ? " stop" : " stops");
 
       const dateText = formatDate(o.departureDate);
 
       return (
-        '<article class="flight-result-card tq-leg-card">' +
+        '<article class="flight-result-card">' +
 
-          '<div class="tq-card-top">' +
+          '<div class="flight-result-top">' +
 
-            '<div class="tq-airline-block">' +
-              '<div class="tq-airline-mark">' +
+            '<div class="flight-airline">' +
+              '<div class="flight-airline-mark">' +
                 safe(airlineInitials(o.airline)) +
               '</div>' +
 
               '<div>' +
-                '<div class="tq-airline-name">' +
+                '<div class="flight-airline-name">' +
                   safe(o.airline) +
                 '</div>' +
 
-                '<div class="tq-flight-code">' +
+                '<div class="flight-flight-number">' +
                   safe(o.flight) +
-                  ' &nbsp; / &nbsp; OPTION ' +
+                  ' · Option ' +
                   String(index + 1).padStart(2, "0") +
                 '</div>' +
               '</div>' +
             '</div>' +
 
-            '<div class="tq-price-block">' +
-              '<span class="tq-price-label">Adult demo fare</span>' +
-              '<strong class="tq-price-value">' +
-                money(o.price) +
-              '</strong>' +
-              '<small class="tq-price-note">Per passenger · one leg</small>' +
+            '<div class="flight-demo-price">' +
+              '<strong>' + money(o.price) + '</strong>' +
+              '<small>Adult demo fare · per passenger</small>' +
             '</div>' +
 
           '</div>' +
 
-          '<div class="tq-route-panel">' +
+          '<div class="flight-route-line">' +
 
-            '<div class="tq-route-end">' +
-              '<div class="tq-route-time">' +
+            '<div>' +
+              '<div class="flight-time">' +
                 safe(o.depart) +
               '</div>' +
-              '<div class="tq-route-code">' +
-                safe(o.origin.code || "—") +
-              '</div>' +
-              '<div class="tq-route-city">' +
+              '<div class="flight-city">' +
                 safe(o.origin.label) +
+                ' (' + safe(o.origin.code || "—") + ')' +
               '</div>' +
             '</div>' +
 
-            '<div class="tq-route-middle">' +
-              '<div class="tq-route-duration">' +
-                durationText(o.duration) +
-              '</div>' +
-              '<div class="tq-route-track">' +
-                '<span class="tq-route-plane">✈</span>' +
-              '</div>' +
-              '<span class="tq-stop-label">' +
-                stopText +
-              '</span>' +
+            '<div class="flight-route-middle">' +
+              '<span>' + durationText(o.duration) + '</span>' +
+              '<div class="line"></div>' +
+              '<span>' + safe(stopText) + '</span>' +
             '</div>' +
 
-            '<div class="tq-route-end">' +
-              '<div class="tq-route-time">' +
+            '<div style="text-align:right">' +
+              '<div class="flight-time">' +
                 safe(o.arrive) +
               '</div>' +
-              '<div class="tq-route-code">' +
-                safe(o.destination.code || "—") +
-              '</div>' +
-              '<div class="tq-route-city">' +
+              '<div class="flight-city">' +
                 safe(o.destination.label) +
+                ' (' + safe(o.destination.code || "—") + ')' +
               '</div>' +
             '</div>' +
 
           '</div>' +
 
-          '<div class="tq-card-tags">' +
-            '<span class="tq-tag ' + stopClass + '">' +
-              '✈ ' + stopText +
-            '</span>' +
-            '<span class="tq-tag highlight">' +
-              '◷ ' + durationText(o.duration) +
-            '</span>' +
-            '<span class="tq-tag">' +
-              '▣ ' + safe(dateText) +
-            '</span>' +
-            '<span class="tq-tag">' +
-              'BAGGAGE · ' + safe(o.baggage) +
-            '</span>' +
-            '<span class="tq-tag">' +
-              safe(search.cabin) +
-            '</span>' +
+          '<div class="flight-result-meta">' +
+            '<span>✈ ' + safe(stopText) + '</span>' +
+            '<span>◷ ' + durationText(o.duration) + '</span>' +
+            '<span>▣ ' + safe(dateText) + '</span>' +
+            '<span> Baggage · ' + safe(o.baggage) + '</span>' +
+            '<span>' + safe(search.cabin) + '</span>' +
+            '<span>Demo inventory</span>' +
           '</div>' +
 
           connectionMarkup(o) +
 
-          '<div class="tq-card-footer">' +
-
-            '<div class="tq-card-footer-info">' +
-              '<span>TRAVEL QILA DEMO INVENTORY</span>' +
-              '<span>·</span>' +
-              '<span>' + safe(dateText) + '</span>' +
-            '</div>' +
-
+          '<div class="flight-result-actions">' +
             '<button type="button" class="flight-select-leg" ' +
               'data-select-leg="' + leg + '" ' +
               'data-offer-id="' + safe(o.id) + '">' +
-              'SELECT ' +
-              (leg === "outbound" ? "DEPARTURE" : "RETURN") +
-              ' FLIGHT →' +
+              'Select ' +
+              (leg === "outbound" ? "departure" : "return") +
+              ' flight →' +
             '</button>' +
-
           '</div>' +
 
         '</article>'
@@ -1770,7 +907,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 10. FILTER CONTROLS
+  // 12. FILTER CONTROLS
   // =========================================================
 
   function filtersMarkup() {
@@ -1824,7 +961,7 @@ import { supabase } from "./auth-client.js";
         '>Departure time</option>' +
       '</select>' +
 
-      '<span class="small text-muted">' +
+      '<span class="flight-results-count">' +
         'Budget: ' + money(search.maximumBudget) +
         ' average per passenger' +
       '</span>' +
@@ -1833,12 +970,11 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 11. FILTER AND SORT ENGINE
+  // 13. FILTER AND SORT ENGINE
   // =========================================================
 
   function estimatedAverageFare(outbound, returning) {
     const p = pricing(outbound, returning);
-
     return p.averageFarePerPassenger;
   }
 
@@ -1914,7 +1050,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 12. RESULTS HEADER AND STEPPER
+  // 14. RESULTS HEADER AND BOOKING STEPPER
   // =========================================================
 
   function heading(title, sub) {
@@ -1934,28 +1070,27 @@ import { supabase } from "./auth-client.js";
   }
 
   function heroMarkup(title, subtitle, stats) {
-    return '<section class="tq-results-hero">' +
-      '<div class="tq-hero-kicker">TRAVEL QILA / FLIGHT COMMAND</div>' +
-      '<h2 class="tq-hero-title">' +
-        safe(title) +
-        ' <span>ACTIVE.</span>' +
-      '</h2>' +
-      '<p class="tq-hero-subtitle">' +
-        safe(subtitle) +
-      '</p>' +
-      '<div class="tq-hero-stats">' +
-        stats.map(item =>
-          '<div class="tq-hero-stat">' +
-            '<strong>' + safe(item.value) + '</strong>' +
-            '<small>' + safe(item.label) + '</small>' +
-          '</div>'
-        ).join("") +
-      '</div>' +
-    '</section>';
+    return (
+      '<div class="flight-results-heading">' +
+        '<div>' +
+          '<span class="flight-demo-chip">Travel Qila · Flight results</span>' +
+          '<h2>' + safe(title) + '</h2>' +
+          '<p>' + safe(subtitle) + '</p>' +
+        '</div>' +
+        '<div class="flight-results-count">' +
+          stats.map(item =>
+            '<span>' +
+              '<strong>' + safe(item.value) + '</strong> ' +
+              safe(item.label) +
+            '</span>'
+          ).join(' · ') +
+        '</div>' +
+      '</div>'
+    );
   }
 
   // =========================================================
-  // 13. RENDER FLIGHT RESULTS
+  // 15. RENDER FLIGHT RESULTS
   // =========================================================
 
   function renderLegStage() {
@@ -2000,40 +1135,49 @@ import { supabase } from "./auth-client.js";
       '</div>';
 
     const back = isReturn
-      ? '<button type="button" class="btn btn-outline-secondary mb-3" data-back-outbound>' +
+      ? '<button type="button" class="btn btn-outline-primary mb-3" data-back-outbound>' +
           '← Change departure flight</button>'
       : "";
 
     const hero = heroMarkup(
-      isReturn ? "Return flight selection" : "Departure selection",
+      isReturn ? "Choose your return flight" : "Choose your departure flight",
       from.label + " → " + to.label +
-        " / " + formatDate(
+        " · " + formatDate(
           isReturn ? search.returnDate : search.departureDate
         ),
       [
         {
           value: items.length,
-          label: "Available options"
+          label: "available options"
         },
         {
           value: passengers(),
-          label: "Passengers"
+          label: "passengers"
         },
         {
           value: search.stops,
-          label: "Stop preference"
+          label: "stop preference"
         }
       ]
     );
 
     const demoNotice =
-      '<div class="tq-demo-notice">' +
-        '<strong>DEMO INVENTORY:</strong> These are illustrative ' +
-        'flight options, not live airline inventory. Prices, ' +
-        'schedules and connections must be verified before booking.' +
+      '<div class="flight-demo-banner">' +
+        '<span aria-hidden="true">ⓘ</span>' +
+        '<div>' +
+          '<strong>Demo inventory:</strong> These are illustrative ' +
+          'flight options, not live airline inventory. Prices, ' +
+          'schedules and connections must be verified before booking.' +
+        '</div>' +
       '</div>';
 
-    byId("flightResultsList").innerHTML =
+    const list = byId("flightResultsList");
+    const empty = byId("flightResultsEmpty");
+    const count = byId("flightResultsCount");
+
+    if (!list || !empty || !count) return;
+
+    list.innerHTML =
       hero +
       stepper +
       back +
@@ -2044,13 +1188,13 @@ import { supabase } from "./auth-client.js";
             items,
             isReturn ? "return" : "outbound"
           )
-        : '<div class="tq-empty-state">' +
-            '<strong>NO MATCHES FOUND</strong>' +
-            'No flights match these filters. Adjust your search criteria.' +
+        : '<div class="flight-empty is-visible">' +
+            '<strong>No matching flights found</strong>' +
+            '<p>No flights match these filters. Adjust your search criteria.</p>' +
           '</div>');
 
-    byId("flightResultsEmpty").classList.remove("is-visible");
-    byId("flightResultsList").hidden = false;
+    empty.classList.remove("is-visible");
+    list.hidden = false;
 
     ["resultStops", "resultAirline", "resultSort"].forEach(id => {
       byId(id)?.addEventListener("change", () => {
@@ -2064,12 +1208,11 @@ import { supabase } from "./auth-client.js";
       });
     });
 
-    byId("flightResultsCount").textContent =
-      items.length + " demo flight options";
+    count.textContent = items.length + " demo flight options";
   }
 
   // =========================================================
-  // 14. FARE BREAKDOWN
+  // 16. FARE BREAKDOWN
   // =========================================================
 
   function fareBreakdownMarkup(p) {
@@ -2098,7 +1241,7 @@ import { supabase } from "./auth-client.js";
       }).join("");
 
     return '<div class="tq-price-breakdown">' +
-      '<h5 class="mb-3">PASSENGER FARE BREAKDOWN</h5>' +
+      '<h5 class="mb-3">Passenger fare breakdown</h5>' +
 
       (rows || '<div>No passengers selected.</div>') +
 
@@ -2115,7 +1258,7 @@ import { supabase } from "./auth-client.js";
       '</div>' +
 
       '<div class="tq-grand-total">' +
-        '<span>ESTIMATED TOTAL</span>' +
+        '<span>Estimated total</span>' +
         '<strong>' + money(p.totalFare) + '</strong>' +
       '</div>' +
 
@@ -2129,7 +1272,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 15. SUMMARY AND REVIEW SCREEN
+  // 17. SUMMARY AND REVIEW SCREEN
   // =========================================================
 
   function renderSummary() {
@@ -2190,8 +1333,8 @@ import { supabase } from "./auth-client.js";
 
         '<div class="tq-summary-heading">' +
           '<div>' +
-            '<span class="flight-eyebrow text-primary">' +
-              'YOUR ITINERARY / CONFIRMED SELECTION' +
+            '<span class="flight-demo-chip">' +
+              'Your itinerary · Selected flights' +
             '</span>' +
 
             '<h3>' +
@@ -2243,13 +1386,18 @@ import { supabase } from "./auth-client.js";
 
       '</div>';
 
-    byId("flightResultsList").innerHTML = html;
+    const list = byId("flightResultsList");
+    const empty = byId("flightResultsEmpty");
+    const count = byId("flightResultsCount");
 
-    byId("flightResultsCount").textContent =
-      "Complete itinerary selected";
+    if (!list || !empty || !count) return;
 
-    byId("flightResultsEmpty").classList.remove("is-visible");
-    byId("flightResultsList").hidden = false;
+    list.innerHTML = html;
+
+    count.textContent = "Complete itinerary selected";
+
+    empty.classList.remove("is-visible");
+    list.hidden = false;
 
     heading(
       "Review your trip",
@@ -2271,7 +1419,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 16. CURRENCY EVENT
+  // 18. CURRENCY EVENT
   // =========================================================
 
   document.addEventListener(
@@ -2291,7 +1439,7 @@ import { supabase } from "./auth-client.js";
   );
 
   // =========================================================
-  // 17. AUTHENTICATION
+  // 19. AUTHENTICATION
   // =========================================================
 
   async function signedInUser() {
@@ -2314,7 +1462,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 18. WISHLIST
+  // 20. WISHLIST
   // =========================================================
 
   async function saveWishlist(button) {
@@ -2405,7 +1553,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 19. BOOKING REQUEST
+  // 21. BOOKING REQUEST
   // =========================================================
 
   async function requestBooking(trip, user) {
@@ -2482,7 +1630,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 20. ITINERARY SHARING
+  // 22. ITINERARY SHARING
   // =========================================================
 
   function shareItinerary(channel) {
@@ -2569,7 +1717,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 21. CENTRAL RESULTS EVENT HANDLER
+  // 23. CENTRAL RESULTS EVENT HANDLER
   // =========================================================
 
   results.addEventListener("click", async event => {
@@ -2638,7 +1786,7 @@ import { supabase } from "./auth-client.js";
   });
 
   // =========================================================
-  // 22. TRIP TYPE CONTROLS
+  // 24. TRIP TYPE CONTROLS
   // =========================================================
 
   function updateTripType() {
@@ -2665,7 +1813,7 @@ import { supabase } from "./auth-client.js";
   );
 
   // =========================================================
-  // 23. PASSENGER FIELD EVENTS
+  // 25. PASSENGER FIELD EVENTS
   // =========================================================
 
   byId("adults")?.addEventListener("input", () => {
@@ -2677,7 +1825,7 @@ import { supabase } from "./auth-client.js";
   });
 
   // =========================================================
-  // 24. DATE CONTROLS
+  // 26. DATE CONTROLS
   // =========================================================
 
   byId("departDate")?.addEventListener("change", () => {
@@ -2690,7 +1838,7 @@ import { supabase } from "./auth-client.js";
   });
 
   // =========================================================
-  // 25. CITY SWAP
+  // 27. CITY SWAP
   // =========================================================
 
   byId("swapCities")?.addEventListener("click", () => {
@@ -2706,7 +1854,7 @@ import { supabase } from "./auth-client.js";
   });
 
   // =========================================================
-  // 26. MAIN SEARCH SUBMISSION
+  // 28. MAIN SEARCH SUBMISSION
   // =========================================================
 
   form.addEventListener("submit", event => {
@@ -2839,7 +1987,7 @@ import { supabase } from "./auth-client.js";
   });
 
   // =========================================================
-  // 27. URL PARAMETERS
+  // 29. URL PARAMETERS
   // =========================================================
 
   const params = new URLSearchParams(window.location.search);
@@ -2880,7 +2028,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 28. DATE INITIALIZATION
+  // 30. DATE INITIALIZATION
   // =========================================================
 
   const now = new Date();
@@ -2895,7 +2043,7 @@ import { supabase } from "./auth-client.js";
   byId("returnDate").min = today;
 
   // =========================================================
-  // 29. BUDGET DISPLAY
+  // 31. BUDGET DISPLAY
   // =========================================================
 
   const budget = byId("maxPrice");
@@ -2912,7 +2060,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 30. RESTORE SEARCH PARAMETERS
+  // 32. RESTORE SEARCH PARAMETERS
   // =========================================================
 
   if (params.has("stops") && byId("stops")) {
@@ -2934,7 +2082,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 31. FINAL INITIALIZATION
+  // 33. FINAL INITIALIZATION
   // =========================================================
 
   syncInfantLimit();
@@ -2946,7 +2094,7 @@ import { supabase } from "./auth-client.js";
   }
 
   // =========================================================
-  // 32. AUTO-SEARCH FROM URL
+  // 34. AUTO-SEARCH FROM URL
   // =========================================================
 
   if (
