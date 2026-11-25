@@ -1,5 +1,4 @@
-
-import { supabase } from "./auth-client.js";
+  import { supabase } from "./auth-client.js";
 (() => {
   "use strict";
   const form = document.getElementById("flightSearchForm");
@@ -42,6 +41,36 @@ import { supabase } from "./auth-client.js";
       '"': "&quot;",
       "'": "&#39;"
     }[c]));
+
+  // Clean, responsive connection timeline styles.
+  if (!document.getElementById("tq-connection-ui-styles")) {
+    const style = document.createElement("style");
+    style.id = "tq-connection-ui-styles";
+    style.textContent = `
+      .tq-connection-details { margin: 14px 0 2px; border: 1px solid #e5eaf1; border-radius: 12px; background: #f8fafc; overflow: hidden; color: #253247; }
+      .tq-connection-details > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; cursor: pointer; user-select: none; }
+      .tq-connection-details > summary::-webkit-details-marker { display: none; }
+      .tq-connection-summary-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+      .tq-connection-summary-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: #e8efff; color: #2457c5; font-size: 16px; flex-shrink: 0; }
+      .tq-connection-summary-title { display: block; font-size: 13px; font-weight: 700; line-height: 1.25; }
+      .tq-connection-summary-subtitle { display: block; margin-top: 3px; color: #69778b; font-size: 12px; font-weight: 500; line-height: 1.4; }
+      .tq-connection-chevron { color: #64748b; font-size: 17px; transition: transform .18s ease; flex-shrink: 0; }
+      .tq-connection-details[open] .tq-connection-chevron { transform: rotate(180deg); }
+      .tq-connection-timeline { padding: 2px 14px 14px 26px; }
+      .tq-connection-stop { position: relative; padding: 9px 0 11px 22px; border-left: 2px solid #cbd7eb; }
+      .tq-connection-stop:last-child { padding-bottom: 2px; border-left-color: transparent; }
+      .tq-connection-stop:before { content: ""; position: absolute; left: -6px; top: 13px; width: 10px; height: 10px; border: 2px solid #4776d0; border-radius: 50%; background: #fff; }
+      .tq-connection-stop.is-layover:before { border-color: #d18a26; background: #fff7e8; }
+      .tq-connection-stop-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+      .tq-connection-airport { font-size: 13px; font-weight: 700; line-height: 1.35; }
+      .tq-connection-time { font-size: 13px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+      .tq-connection-meta { margin-top: 4px; color: #69778b; font-size: 12px; line-height: 1.45; }
+      .tq-connection-layover-pill { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; padding: 5px 8px; border-radius: 7px; background: #fff3df; color: #875514; font-size: 11px; font-weight: 700; }
+      @media (max-width: 575px) { .tq-connection-details > summary { padding: 11px; } .tq-connection-timeline { padding: 0 10px 12px 19px; } .tq-connection-stop-head { gap: 8px; } .tq-connection-time { font-size: 12px; } }
+    `;
+    document.head.appendChild(style);
+  }
+
   const money = value => {
     const amount = Number(value || 0);
     if (!Number.isFinite(amount)) return "₹0";
@@ -214,10 +243,6 @@ import { supabase } from "./auth-client.js";
         clockTime = nextDeparture.time;
       }
     }
-    segments.forEach((segment, i) => {
-      segment.flight = (i === 0 ? "" : "") +
-        (i === 0 ? " " : " ") + String(i + 1);
-    });
     return {
       segments,
       layovers,
@@ -229,35 +254,81 @@ import { supabase } from "./auth-client.js";
     if (!option?.stops || !Array.isArray(option.layovers) || !option.layovers.length) {
       return "";
     }
-    const segments = option.segments || [];
-    const segmentRows = segments.map((segment, index) =>
-      '<div class="tq-connection-segment">' +
-        '<span><strong>' + safe(segment.from.label || segment.from.city || segment.from.code) +
-          ' (' + safe(segment.from.code || "—") + ')</strong> → ' +
-          '<strong>' + safe(segment.to.label || segment.to.city || segment.to.code) +
-          ' (' + safe(segment.to.code || "—") + ')</strong></span>' +
-        '<span>' + safe(segment.flight || option.flight) + ' · ' +
-          safe(segment.depart) + ' – ' + safe(segment.arrive) +
-          ' · ' + durationText(segment.duration) + '</span>' +
-      '</div>' +
-      (index < option.layovers.length
-        ? '<div class="tq-connection-layover">' +
-            '<span>Layover at <strong>' +
-              safe(option.layovers[index].airport.label ||
-                option.layovers[index].airport.city ||
-                option.layovers[index].airport.code) +
-              ' (' + safe(option.layovers[index].airport.code || "—") + ')</strong></span>' +
-            '<span>' + durationText(option.layovers[index].duration) +
-              ' · ' + safe(option.layovers[index].arrival) +
-              ' to ' + safe(option.layovers[index].departure) + '</span>' +
-          '</div>'
-        : '')
-    ).join("");
-    return '<div class="tq-connection-details">' +
-      '<div class="tq-connection-heading">Connection details · ' +
-        option.stops + ' stop' + (option.stops > 1 ? 's' : '') + '</div>' +
-      segmentRows +
-    '</div>';
+    const segments = Array.isArray(option.segments) ? option.segments : [];
+    if (!segments.length) return "";
+
+    const totalLayover = option.layovers.reduce(
+      (sum, stop) => sum + (Number(stop.duration) || 0), 0
+    );
+    const stopCodes = option.layovers.map(stop =>
+      stop.airport?.code || "Airport"
+    ).join(" · ");
+
+    const timeline = segments.map((segment, index) => {
+      const from = segment.from || {};
+      const to = segment.to || {};
+      const fromName = from.label || from.city || from.code || "Origin";
+      const toName = to.label || to.city || to.code || "Destination";
+      const fromCode = from.code || "—";
+      const toCode = to.code || "—";
+      const flight = segment.flight || option.flight || "Flight details";
+      const departureDate = formatDate(segment.departureDate);
+      const layover = option.layovers[index];
+
+      let html =
+        '<div class="tq-connection-stop">' +
+          '<div class="tq-connection-stop-head">' +
+            '<div>' +
+              '<div class="tq-connection-airport">' + safe(fromName) + ' (' + safe(fromCode) + ')</div>' +
+              '<div class="tq-connection-meta">' + safe(flight) +
+                (departureDate ? ' · ' + safe(departureDate) : '') + '</div>' +
+            '</div>' +
+            '<div class="tq-connection-time">' + safe(segment.depart || "—") + '</div>' +
+          '</div>' +
+          '<div class="tq-connection-meta">' +
+            'Flight time · ' + durationText(segment.duration) +
+            ' · Arrives ' + safe(segment.arrive || "—") +
+            ' at ' + safe(toName) + ' (' + safe(toCode) + ')' +
+          '</div>' +
+        '</div>';
+
+      if (layover) {
+        const airport = layover.airport || {};
+        const airportName = airport.label || airport.city || airport.code || "Connection airport";
+        const airportCode = airport.code || "—";
+        html +=
+          '<div class="tq-connection-stop is-layover">' +
+            '<div class="tq-connection-stop-head">' +
+              '<div>' +
+                '<div class="tq-connection-airport">' + safe(airportName) + ' (' + safe(airportCode) + ')</div>' +
+                '<div class="tq-connection-meta">Change planes</div>' +
+              '</div>' +
+              '<div class="tq-connection-time">' + safe(layover.arrival || "—") + ' – ' + safe(layover.departure || "—") + '</div>' +
+            '</div>' +
+            '<div class="tq-connection-layover-pill">⌛ ' + durationText(layover.duration) + ' layover</div>' +
+          '</div>';
+      }
+      return html;
+    }).join("");
+
+    return (
+      '<details class="tq-connection-details">' +
+        '<summary>' +
+          '<span class="tq-connection-summary-main">' +
+            '<span class="tq-connection-summary-icon" aria-hidden="true">✈</span>' +
+            '<span>' +
+              '<span class="tq-connection-summary-title">View flight details</span>' +
+              '<span class="tq-connection-summary-subtitle">' +
+                option.stops + ' stop' + (option.stops > 1 ? 's' : '') +
+                ' · ' + durationText(totalLayover) + ' total layover · ' + safe(stopCodes) +
+              '</span>' +
+            '</span>' +
+          '</span>' +
+          '<span class="tq-connection-chevron" aria-hidden="true">⌄</span>' +
+        '</summary>' +
+        '<div class="tq-connection-timeline">' + timeline + '</div>' +
+      '</details>'
+    );
   }
   function parseAirport(value) {
     const text = String(value).trim();
