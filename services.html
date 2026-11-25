@@ -257,12 +257,14 @@ body{font-family:Roboto,Arial,sans-serif;color:var(--flight-ink);background:#f7f
                                 <div class="col-xl-6">
                                     <form>
                                         <div class="form-floating">
-                                            <select class="form-select bg-dark border" id="footerCurrency">
-                                                <option value="1">USD</option>
-                                                <option value="2">EUR</option>
-                                                <option value="3">INR</option>
-                                                <option value="3">GBP</option>
-                                            </select>
+                                            <select class="form-select bg-dark border"
+        id="footerCurrency"
+        onchange="updateDisplayedPrices(this.value)">
+    <option value="USD">USD</option>
+    <option value="EUR">EUR</option>
+    <option value="INR">INR</option>
+    <option value="GBP">GBP</option>
+</select>
                                             <label for="footerCurrency">$</label>
                                         </div>
                                     </form>
