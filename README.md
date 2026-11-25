@@ -1,69 +1,149 @@
-# 🌍 Travel Qila — Explore the World Together!
+# 🌍 Travel Qila 2.0 — Your Journey, Intelligently Planned
 
 <p align="center">
-  <strong>A modern, responsive tourism website designed to make discovering destinations and planning travel experiences more engaging.</strong>
+  <strong>An AI-powered travel planning and booking platform designed to make discovering, planning and experiencing the world effortless.</strong>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Project-Travel%20Qila-17458F?style=for-the-badge" alt="Project"/>
-  <img src="https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge" alt="Status"/>
-  <img src="https://img.shields.io/badge/Platform-Web-brightgreen?style=for-the-badge" alt="Platform"/>
+  <img src="https://img.shields.io/badge/Project-Travel%20Qila-17458F?style=for-the-badge" alt="Travel Qila"/>
+  <img src="https://img.shields.io/badge/Version-2.0-blue?style=for-the-badge" alt="Version 2.0"/>
+  <img src="https://img.shields.io/badge/Status-Under%20Development-orange?style=for-the-badge" alt="Development Status"/>
+  <img src="https://img.shields.io/badge/Platform-Web-brightgreen?style=for-the-badge" alt="Web Platform"/>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ImperialX1104/TravelQila2.0">Repository</a> •
+  <a href="https://github.com/ImperialX1104/TravelQila2.0/tree/qa/bug-free-homepage-redesign">Development Branch</a> •
+  <a href="https://github.com/ImperialX1104">Developer</a>
 </p>
 
 ---
 
-## 📸 Project Preview
+## ✈️ About Travel Qila
 
-<p align="center">
-  <img src="tourism-website-template.jpg" alt="Travel Qila website preview" width="90%"/>
-</p>
+**Travel Qila 2.0** is an evolving travel technology platform focused on simplifying the way people discover destinations, plan holidays and organise their journeys.
 
-*Travel Qila brings destinations, travel packages and travel-related information together in one website experience.*
+The project is being developed with a long-term vision of combining traditional travel booking functionality with intelligent automation and AI-powered personalisation.
 
----
+Instead of making customers navigate multiple websites and manually organise every aspect of their holidays, Travel Qila aims to provide a unified experience where customers can describe their ideal trip and receive personalised recommendations.
 
-## ✨ About the Project
+Our vision is to make travel planning more intelligent, accessible and convenient.
 
-**Travel Qila** is a tourism and travel website project built to provide visitors with an engaging platform for exploring destinations, discovering travel packages and learning about travel services.
+## 🎯 Our Vision — AI Travel Concierge
 
-The website features a multi-page layout with dedicated sections for destinations, tours, packages, galleries, travel guides, blogs and booking enquiries.
+The next major milestone for Travel Qila is an intelligent AI Travel Concierge.
 
-The goal is to create a clean, accessible and visually appealing travel experience that makes it easier for visitors to explore their next journey.
+Customers will be able to describe their travel requirements in natural language, specify their budget and preferences, and receive a personalised travel itinerary.
 
-## 🚀 Key Features
+### Planned customer experience
 
-- **Modern Homepage:** A visually engaging landing page with a hero banner and destination-focused messaging.
-- **About Us:** Dedicated page introducing the travel platform.
-- **Travel Services:** A section showcasing available travel services.
-- **Tour Packages:** Dedicated pages for exploring travel packages and tours.
-- **Destinations:** A dedicated destination discovery experience.
-- **Travel Blog:** Space for travel-related articles and updates.
-- **Travel Guides:** Helpful travel information for visitors.
-- **Gallery:** Visual presentation of travel experiences.
-- **Enquiry Flow:** A shared trip enquiry form for customized holiday requests.
-- **Contact Page:** A dedicated point of contact for visitor enquiries.
-- **Responsive Design:** Intended for a consistent experience across desktop, tablet and mobile screens.
+1. **Tell us about your trip**
 
-*Note: The availability of backend-connected functionality depends on the implementation and integrations of the individual pages.*
+   Customers provide their destination, departure location, dates, budget, number of travellers and travel preferences.
+
+2. **AI-powered travel planning**
+
+   The AI understands customer requirements and generates personalised travel recommendations.
+
+3. **Intelligent itinerary generation**
+
+   Customers receive day-by-day travel plans with suggested destinations, accommodation, activities and experiences.
+
+4. **Budget optimisation**
+
+   The planning engine evaluates estimated trip costs and recommends suitable combinations within the customer's budget.
+
+5. **Travel comparisons**
+
+   Customers can compare available flights, accommodation and activities through connected travel providers.
+
+6. **Personalised modifications**
+
+   Customers can request changes conversationally, such as replacing hotels, changing destinations or finding cheaper alternatives.
+
+7. **Wishlist management**
+
+   Customers can save individual recommendations or complete itineraries for future reference.
+
+8. **Booking and checkout**
+
+   The long-term objective is to support actual reservations, payments and booking confirmations through integrated suppliers.
+
+## ✨ Existing Project Capabilities
+
+Travel Qila already has a multi-page website foundation.
+
+The repository includes the following website sections:
+
+- **Homepage:** Destination-focused landing page.
+- **About:** Information about the platform.
+- **Services:** Travel-related services.
+- **Tour Packages:** Travel package discovery.
+- **Destinations:** Destination exploration.
+- **Tours:** Tour details.
+- **Gallery:** Travel imagery and experiences.
+- **Blog:** Travel-related articles.
+- **Guides:** Travel information.
+- **Testimonials:** Customer feedback section.
+- **Contact:** Customer enquiries.
+
+### Existing development work
+
+The project also includes development work around:
+
+- Flight search and result presentation.
+- Flight result filtering and sorting.
+- Flight connection and layover handling.
+- Passenger input validation.
+- Currency conversion integration.
+- Supabase client integration.
+- Flight wishlist-related functionality.
+
+The availability and behaviour of individual features depend on their current implementation and connected services.
+
+## 🧠 Planned AI Capabilities
+
+The AI Concierge will progressively introduce:
+
+| Feature | Description |
+|---|---|
+| Conversational Travel Assistant | Understands customer travel requests |
+| Preference Extraction | Identifies destinations, budgets and travel preferences |
+| AI Itinerary Planner | Creates personalised day-by-day itineraries |
+| Budget Optimiser | Evaluates travel combinations against customer budgets |
+| Flight Recommendations | Compares suitable flight options |
+| Accommodation Recommendations | Suggests suitable hotels and stays |
+| Activity Recommendations | Suggests sightseeing and travel experiences |
+| Alternative Suggestions | Finds alternative options when requirements change |
+| Wishlist Manager | Saves selected travel options and itineraries |
+| Booking Manager | Supports the future booking workflow |
 
 ## 🛠️ Technology Stack
 
+The project uses a web-based development architecture.
+
 | Technology | Purpose |
 |---|---|
-| HTML5 | Website structure and content |
-| CSS3 | Styling and layout |
-| JavaScript | Frontend interactions |
+| HTML5 | Website structure |
+| CSS3 | Styling and responsive layouts |
+| JavaScript | Frontend functionality and application logic |
 | SCSS | Maintainable stylesheet authoring |
-| Assets (Images) | Visual content and website imagery |
+| Supabase | Backend services and data management integration |
+| AI Integration | Planned conversational intelligence and itinerary generation |
+| Travel APIs | Travel inventory, pricing and availability integrations |
+
+The AI and travel provider integrations will evolve as development progresses.
 
 ## 📂 Project Structure
 
+The following represents the existing documented project structure. Individual files and integrations may evolve as the application develops.
+
 ```text
-Travel-Qila/
+TravelQila2.0/
 │
-├── css/                         # Stylesheets
+├── css/                         # Website stylesheets
 ├── img/                         # Images and visual assets
-├── js/                          # JavaScript files
+├── js/                          # JavaScript functionality
 ├── lib/                         # Supporting libraries
 ├── scss/                        # SCSS source files
 │
@@ -71,111 +151,184 @@ Travel-Qila/
 ├── about.html                   # About page
 ├── services.html                # Services page
 ├── packages.html                # Travel packages
-├── destination.html             # Destinations
+├── destination.html             # Destination discovery
 ├── tour.html                    # Tour details
 ├── gallery.html                 # Travel gallery
-├── blog.html                    # Blog page
+├── blog.html                    # Blog
 ├── guides.html                  # Travel guides
 ├── testimonial.html             # Testimonials
 ├── contact.html                 # Contact page
 ├── 404.html                     # Error page
 │
 ├── README.md                    # Project documentation
-├── LICENSE
-└── .gitignore
+├── LICENSE                      # License information
+└── .gitignore                   # Git exclusions
 ```
+
+Additional modules and directories will be introduced as the AI Concierge architecture is implemented.
+
+## 🏗️ Development Roadmap
+
+Travel Qila 2.0 is being developed incrementally.
+
+### Phase 1 — Existing Platform Foundation
+
+- Maintain the existing multi-page website.
+- Improve existing flight-search functionality.
+- Maintain currency conversion functionality.
+- Preserve existing Supabase integrations.
+- Improve reliability and responsive behaviour.
+
+### Phase 2 — AI Travel Concierge
+
+- Develop the customer-facing AI interface.
+- Implement conversational preference collection.
+- Build destination and travel recommendation logic.
+- Generate personalised itineraries.
+
+### Phase 3 — Intelligent Travel Planning
+
+- Implement budget optimisation.
+- Introduce day-by-day itinerary generation.
+- Integrate flight recommendations.
+- Develop accommodation and activity recommendations.
+- Support alternative travel combinations.
+
+### Phase 4 — Customer Accounts and Wishlists
+
+- Persistent customer preferences.
+- Saved itineraries.
+- Saved flights and accommodation.
+- Wishlist management.
+- Trip modification and retrieval.
+
+### Phase 5 — Booking and Payments
+
+- Booking workflow.
+- Supplier integrations.
+- Availability and price revalidation.
+- Checkout experience.
+- Payment gateway integration.
+- Booking confirmations and management.
+
+### Phase 6 — Commercial Readiness
+
+- End-to-end testing.
+- Security improvements.
+- Performance optimisation.
+- Production integrations.
+- Customer experience improvements.
+- Commercial deployment preparation.
+
+## 💰 Development Philosophy
+
+Travel Qila is initially being developed with a zero-investment development strategy.
+
+The objective is to establish a functional and demonstrable product using existing infrastructure, open-source technologies and available free-tier resources wherever practical.
+
+The development strategy is:
+
+**Build → Demonstrate → Pitch → Secure Investment → Integrate → Launch.**
+
+Paid third-party services and commercial integrations may be introduced as funding becomes available.
+
+### Data transparency
+
+Travel Qila distinguishes between:
+
+- Live supplier-provided information.
+- Estimated travel costs.
+- Demonstration inventory.
+- Simulated booking workflows.
+
+Demonstration prices and availability must never be presented as confirmed live inventory.
+
+Actual reservations require supplier confirmation and appropriate payment processing.
 
 ## 💻 Getting Started
 
-Follow these steps to run Travel Qila locally.
+### Prerequisites
+
+- Git
+- A modern web browser
+- A code editor such as Visual Studio Code
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/ImperialX1104/REPOSITORY-NAME.git
+git clone https://github.com/ImperialX1104/TravelQila2.0.git
 ```
 
-### 2. Navigate to the project directory
+### 2. Navigate to the project
 
 ```bash
-cd REPOSITORY-NAME
+cd TravelQila2.0
 ```
 
-### 3. Open the website
+### 3. Switch to the development branch
 
-You can open `index.html` directly in your browser.
+```bash
+git checkout qa/bug-free-homepage-redesign
+```
 
-Alternatively, use the **Live Server** extension in Visual Studio Code for a local development environment.
+### 4. Run the website
 
-### 4. Start exploring
+Open `index.html` in your browser.
 
-Navigate through the homepage and explore the individual website pages.
+For a more convenient development environment, use a local development server where available.
 
-## ⚙️ Customization
+### 5. Explore
 
-You can customize the project to suit your requirements:
+Navigate through the website pages and explore the existing functionality.
 
-- Update website content and text in the HTML files.
-- Replace images and visual assets inside the `img/` directory.
-- Modify styling through the CSS files.
-- Update interactive elements through the JavaScript files.
-- Edit SCSS source files in the `scss/` directory.
+**Important:** Features requiring backend services or external APIs may require their respective configurations and credentials.
 
-## 🌐 Deployment
+## 🔐 Security Guidelines
 
-Travel Qila can be hosted using static website hosting services.
-
-For GitHub Pages:
-
-1. Open the repository on GitHub.
-2. Navigate to **Settings → Pages**.
-3. Select the deployment branch.
-4. Choose the root directory.
-5. Save the configuration.
-6. Access the published website through the generated GitHub Pages URL.
-
-Other hosting options include Netlify, Vercel and traditional web hosting providers.
-
-## 🔮 Future Improvements
-
-Potential enhancements for future versions include:
-
-- Backend-powered booking management.
-- User registration and authentication.
-- Destination search and filtering.
-- Integrated payment gateway.
-- Dynamic travel package management.
-- Admin dashboard for managing bookings and content.
-- API integration for live travel information.
-- Improved accessibility and performance optimization.
+- Never commit API keys, private tokens or passwords.
+- Never expose Supabase service-role keys in browser JavaScript.
+- Keep privileged credentials on secure server-side infrastructure.
+- Validate customer input before processing.
+- Protect customer information and saved itineraries.
+- Revalidate travel availability before booking.
+- Apply appropriate authentication and database access policies.
 
 ## 🤝 Contributing
 
-Contributions, suggestions and improvements are welcome.
+Development should follow the active development branch.
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Make your changes.
-4. Commit your changes.
-5. Push your branch.
-6. Open a Pull Request.
+Current development branch:
+
+`qa/bug-free-homepage-redesign`
+
+Contribution workflow:
+
+1. Review the existing implementation.
+2. Create or use an appropriate feature branch.
+3. Preserve existing functionality.
+4. Test changes before committing.
+5. Commit changes with descriptive messages.
+6. Push changes to GitHub.
+7. Submit a Pull Request when appropriate.
 
 ## 📄 License
 
-This project includes license files in the repository. Please refer to the applicable `LICENSE` file for the terms governing its use and distribution.
+Refer to the repository's `LICENSE` file for applicable licensing terms.
 
-## 👨‍💻 Author
+## 👨‍💻 Project
 
 **Imperial Technologies**
 
 GitHub: [@ImperialX1104](https://github.com/ImperialX1104)
 
+Repository: [Travel Qila 2.0](https://github.com/ImperialX1104/TravelQila2.0)
+
 ---
 
 <p align="center">
-  <strong>Travel Qila — Let's Explore the World Together! 🌍</strong>
+  <strong>Travel Qila 2.0 — Your Journey, Intelligently Planned. 🌍</strong>
 </p>
 
 <p align="center">
-  Made with ❤️ and a passion for technology and travel.
+  Built with ❤️ and a passion for travel, technology and innovation.
 </p>
